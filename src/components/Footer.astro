@@ -1,0 +1,59 @@
+---
+import { SITE } from '../config';
+const year = 2026;
+---
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <div class="footer-brand">
+      <img src="/brand/logo-lockup.png" alt={`${SITE.name} logo`} width="92" class="footer-logo" />
+      <p class="footer-tag">{SITE.tagline}</p>
+    </div>
+
+    <nav class="footer-cols" aria-label="Footer">
+      <div class="footer-col">
+        <span class="footer-h">Product</span>
+        <a href="/#how">How it works</a>
+        <a href="/#mr-bite">Mr Bite</a>
+        <a href="/#faq">FAQ</a>
+        <a href="/#download">Get the app</a>
+      </div>
+      <div class="footer-col">
+        <span class="footer-h">Legal</span>
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+      </div>
+      <div class="footer-col">
+        <span class="footer-h">Support</span>
+        <a href="/support">Help &amp; contact</a>
+        <a href={`mailto:${SITE.supportEmail}`}>{SITE.supportEmail}</a>
+      </div>
+    </nav>
+  </div>
+
+  <div class="container footer-base">
+    <span>© {year} {SITE.name}. All rights reserved.</span>
+    <span class="footer-made">Focus on living, not logging.</span>
+  </div>
+</footer>
+
+<style>
+  .footer { background: var(--ink-surface); color: rgba(255, 255, 255, 0.7); padding-top: 72px; }
+  .footer-inner { display: grid; grid-template-columns: 1.4fr 2fr; gap: 48px; padding-bottom: 44px; }
+  .footer-logo { height: auto; display: block; }
+  .footer-tag { margin-top: 18px; max-width: 30ch; color: rgba(255, 255, 255, 0.55); font-size: 0.95rem; }
+  .footer-cols { display: flex; gap: 56px; flex-wrap: wrap; }
+  .footer-col { display: flex; flex-direction: column; gap: 12px; }
+  .footer-h {
+    font-size: 0.82rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.5); margin-bottom: 6px;
+  }
+  .footer-col a { color: rgba(255, 255, 255, 0.7); font-size: 0.95rem; transition: color var(--dur-fast) var(--ease); }
+  .footer-col a:hover { color: var(--coral-300); }
+  .footer-base {
+    display: flex; justify-content: space-between; align-items: center; gap: 16px;
+    padding-block: 26px; border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.85rem; color: rgba(255, 255, 255, 0.55); flex-wrap: wrap;  /* 0.45 failed AA (4.44:1); 0.55 ~5.3:1 */
+  }
+  @media (max-width: 900px) { .footer-inner { grid-template-columns: 1fr; gap: 36px; } }
+</style>

@@ -1,0 +1,103 @@
+---
+import { Image } from 'astro:assets';
+import mascot from '../../assets/mr-bite.png';
+---
+
+<section id="mr-bite" class="section mrbite">
+  <div class="container">
+    <div class="mrbite-panel">
+      <div class="mrbite-inner">
+        <div class="mrbite-copy reveal">
+          <h2 class="display">Meet <span class="coral-text">Mr Bite.</span></h2>
+          <p class="mrbite-lede">Your AI nutrition coach, built around your targets, not a generic chatbot. Tell Mr Bite your goals, your constraints, or just a craving, and he sends back plans and swaps that fit your real life.</p>
+          <div class="chat-bubble">
+            <strong>You're 28g short on protein today.</strong>
+            <span>Want three high-protein lunches under 500 kcal?</span>
+          </div>
+          <a href="#download" class="btn btn-primary mrbite-cta">Get BITE and meet your coach</a>
+        </div>
+
+        <div class="mrbite-art reveal">
+          <div class="mrbite-glow" aria-hidden="true"></div>
+          <Image
+            class="mrbite-mascot"
+            src={mascot}
+            alt="Mr Bite, the BITE mascot"
+            widths={[360, 677]}
+            sizes="(max-width: 560px) 60vw, 360px"
+            loading="lazy"
+            decoding="async"
+          />
+          <div class="float macro-card">
+            <div class="macro-head"><span>Daily targets</span><span class="macro-check" aria-hidden="true">✓</span></div>
+            <div class="macro-row"><span>Protein</span><span class="macro-val">90 / 120g</span></div>
+            <div class="bar"><i style="--w:75%;background:var(--protein)"></i></div>
+            <div class="macro-row"><span>Carbs</span><span class="macro-val">150 / 200g</span></div>
+            <div class="bar"><i style="--w:75%;background:var(--carbs)"></i></div>
+            <div class="macro-row"><span>Fat</span><span class="macro-val">60 / 80g</span></div>
+            <div class="bar"><i style="--w:75%;background:var(--fat)"></i></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .mrbite { background: #fff; padding-block: clamp(40px, 6vw, 84px); }
+  .mrbite-panel {
+    position: relative; overflow: hidden; border-radius: var(--r-panel);
+    background: linear-gradient(152deg, #fffafa 0%, #fff0f0 100%);
+    border: 1px solid var(--coral-100);
+    box-shadow: var(--shadow-panel);
+    padding: clamp(30px, 5vw, 60px);
+  }
+  .mrbite-inner { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 48px; }
+  .mrbite-copy h2 { margin: 0 0 18px; }
+  .mrbite-lede { color: var(--ink-soft); font-size: 1.12rem; line-height: 1.6; max-width: 46ch; margin-bottom: 24px; }
+  .chat-bubble {
+    position: relative; display: inline-flex; flex-direction: column; gap: 3px;
+    background: #fff; border: 1px solid var(--line);
+    border-radius: 18px; border-bottom-left-radius: 6px; padding: 14px 18px; margin-bottom: 30px;
+    box-shadow: var(--shadow-sm); max-width: 40ch;
+  }
+  .chat-bubble strong { font-size: 1rem; color: var(--ink); }
+  .chat-bubble span { color: var(--muted); font-size: 0.95rem; }
+
+  .mrbite-art { position: relative; display: flex; justify-content: center; align-items: center; min-height: 420px; }
+  .mrbite-glow { position: absolute; width: 66%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, rgba(255, 118, 118, 0.16), transparent 64%); filter: blur(10px); animation: glow 7s ease-in-out infinite; }
+  .mrbite-mascot { width: min(72%, 360px); height: auto; position: relative; filter: drop-shadow(0 18px 40px rgba(17, 24, 39, 0.18)); animation: bob 8s ease-in-out infinite; }
+  .float { position: absolute; z-index: 3; background: #fff; border: 1px solid var(--line); border-radius: var(--r-lg); box-shadow: var(--shadow-lg); padding: 14px 16px; }
+  .macro-card { width: min(210px, 54vw); right: 0; bottom: 14%; display: flex; flex-direction: column; gap: 5px; }
+  .macro-head { display: flex; align-items: center; justify-content: space-between; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.02em; margin-bottom: 5px; }
+  .macro-check { width: 18px; height: 18px; border-radius: 50%; background: var(--carbs); color: #fff; font-size: 0.7rem; display: grid; place-items: center; }
+  .macro-row { display: flex; justify-content: space-between; font-size: 0.74rem; font-weight: 600; color: var(--ink-soft); }
+  .macro-val { color: var(--muted); }
+  .bar { height: 6px; border-radius: 6px; background: var(--line); overflow: hidden; margin-bottom: 4px; }
+  .bar i { display: block; height: 100%; border-radius: 6px; width: var(--w); }
+
+  @keyframes bob { 0%, 100% { transform: translateY(0) } 50% { transform: translateY(-7px) } }
+  @keyframes glow { 0%, 100% { opacity: 0.7; transform: scale(1) } 50% { opacity: 0.95; transform: scale(1.05) } }
+  @keyframes fillbar { from { width: 0 } to { width: var(--w) } }
+  .reveal.in .bar i { animation: fillbar 1.1s var(--ease) both; }
+
+  @media (max-width: 900px) {
+    .mrbite-inner { grid-template-columns: 1fr; gap: 40px; }
+    .mrbite-copy { text-align: center; display: flex; flex-direction: column; align-items: center; }
+    .mrbite-cta { display: none; }          /* sticky bar covers conversion; avoid an orphaned button */
+    .mrbite-art { min-height: 360px; }
+  }
+
+  @media (max-width: 560px) {
+    /* stack the mascot and the stats card so the floating card no longer covers Mr Bite's face */
+    .mrbite-art { flex-direction: column; min-height: auto; gap: 20px; }
+    .mrbite-mascot { width: 58%; }
+    .macro-card { position: relative; right: auto; bottom: auto; width: min(280px, 86%); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mrbite-mascot, .macro-card, .chat-bubble, .mrbite-glow { animation: none !important; }
+    .reveal.in .bar i { animation: none !important; }
+    .bar i { width: var(--w); }
+  }
+</style>

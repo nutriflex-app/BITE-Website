@@ -1,0 +1,21 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/sections/Hero.astro';
+import Proof from '../components/sections/Proof.astro';
+import HowTimeline from '../components/sections/HowTimeline.astro';
+import MrBite from '../components/sections/MrBite.astro';
+import Faq from '../components/sections/Faq.astro';
+import DownloadCta from '../components/sections/DownloadCta.astro';
+---
+
+<Base title="BITE | AI nutrition tracker & coach" description="Log any meal in seconds by photo, barcode, voice, or search. Mr Bite plans your week from recipes that hit your targets, then builds the shopping list. Free on Android, iPhone beta on TestFlight.">
+  <Hero />
+  <HowTimeline />
+  <Proof />
+  <MrBite />
+  <Faq />
+  <DownloadCta />
+
+  <!-- Mobile-only sticky CTA (lives outside the sections; spans the whole page) -->
+  <a href="#download" class="getbar">Get the app <span aria-hidden="true">→</span></a>
+</Base>

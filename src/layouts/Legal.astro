@@ -1,0 +1,79 @@
+---
+import Base from './Base.astro';
+import { SITE } from '../config';
+
+interface Props {
+  title: string;
+  updated?: string;
+}
+const { title, updated = SITE.legalLastUpdated } = Astro.props;
+---
+
+<Base title={`${title} | ${SITE.name}`} description={`${title} for ${SITE.name}, the meal-prep and nutrition app.`}>
+  <article class="legal">
+    <div class="legal-inner">
+      <a href="/" class="legal-back">← Back to BITE</a>
+      <h1 class="display">{title}</h1>
+      <p class="legal-updated">Last updated: {updated}</p>
+      <div class="legal-body">
+        <slot />
+      </div>
+      <div class="legal-foot">
+        <a href="/privacy">Privacy Policy</a>
+        <span>·</span>
+        <a href="/terms">Terms &amp; Conditions</a>
+        <span>·</span>
+        <a href="/support">Support</a>
+      </div>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .legal { padding-block: clamp(48px, 8vw, 96px); }
+  .legal-inner { width: 100%; max-width: 760px; margin-inline: auto; padding-inline: 24px; }
+  .legal-back {
+    display: inline-block;
+    margin-bottom: 28px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--muted);
+    transition: color var(--dur-fast) var(--ease);
+  }
+  .legal-back:hover { color: var(--coral-600); }
+  .legal h1 { font-size: clamp(2.4rem, 6vw, 3.6rem); margin: 16px 0 10px; }
+  .legal-updated { color: var(--muted); font-size: 0.92rem; margin-bottom: 40px; }
+
+  .legal-body { color: var(--ink-soft); }
+  .legal-body :global(h2) {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.5rem;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin: 40px 0 12px;
+    padding-top: 22px;
+    border-top: 1px solid var(--line-soft);
+  }
+  .legal-body :global(h2:first-child) { border-top: none; padding-top: 0; margin-top: 0; }
+  .legal-body :global(h3) {
+    font-weight: 700;
+    font-size: 1.08rem;
+    color: var(--ink);
+    margin: 24px 0 8px;
+  }
+  .legal-body :global(p) { margin: 12px 0; line-height: 1.7; }
+  .legal-body :global(ul) { margin: 12px 0 12px 2px; padding-left: 22px; }
+  .legal-body :global(li) { margin: 7px 0; line-height: 1.6; }
+  .legal-body :global(li)::marker { color: var(--coral); }
+  .legal-body :global(a) { color: var(--coral-600); font-weight: 500; text-decoration: underline; text-underline-offset: 2px; }
+
+  .legal-foot {
+    display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+    margin-top: 56px; padding-top: 28px;
+    border-top: 1px solid var(--line);
+    color: var(--muted); font-size: 0.92rem;
+  }
+  .legal-foot a { color: var(--ink-soft); font-weight: 500; transition: color var(--dur-fast) var(--ease); }
+  .legal-foot a:hover { color: var(--coral-600); }
+</style>

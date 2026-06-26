@@ -1,0 +1,266 @@
+---
+import { Image } from 'astro:assets';
+import DownloadButtons from '../DownloadButtons.astro';
+import { icon } from '../../lib/icons';
+import foodA from '../../assets/food-a.jpg';
+---
+
+<section class="top">
+  <div class="top-bg" aria-hidden="true"></div>
+
+  <div class="container">
+    <div class="top-hero">
+      <!-- Hero ships with `reveal in` pre-applied so the LCP headline + composer
+           paint immediately and never fade in on load. Keep this if .reveal changes. -->
+      <div class="top-copy reveal in">
+        <h1 class="display">Nutrition,<br /><span class="coral-text">made effortless.</span></h1>
+        <p class="lede">Log any meal in seconds, then let Mr Bite plan your week.</p>
+        <div class="top-cta">
+          <DownloadButtons />
+          <p class="top-trust">Free. Private. Delete anytime.</p>
+        </div>
+      </div>
+
+      <div class="top-visual reveal in">
+        <!-- Decorative demo: one widget that slides through each logging method.
+             Hidden from assistive tech; the real content is the headline + CTA. -->
+        <div class="composer" aria-hidden="true">
+          <div class="composer-head">
+            <span class="composer-dot"></span>
+            <span class="composer-title">Add a meal</span>
+          </div>
+
+          <div class="seg" style="--i:0">
+            <span class="seg-ind" aria-hidden="true"></span>
+            <span class="sg is-active"><span set:html={icon('camera')} /><b>Photo</b></span>
+            <span class="sg"><span set:html={icon('barcode')} /><b>Scan</b></span>
+            <span class="sg"><span set:html={icon('mic')} /><b>Voice</b></span>
+            <span class="sg"><span set:html={icon('search')} /><b>Search</b></span>
+          </div>
+
+          <div class="composer-body">
+            <div class="cres-track">
+              <div class="cres" data-m="photo">
+                <div class="cres-row">
+                  <Image class="cres-thumb" src={foodA} alt="" widths={[60, 120]} sizes="54px" loading="eager" />
+                  <div class="cres-info"><b>Chicken &amp; avocado bowl</b><small>Recognised from your photo</small></div>
+                  <span class="cres-kcal">420<i>kcal</i></span>
+                </div>
+                <div class="cres-macros">
+                  <span><i class="d-p"></i>P 32g</span><span><i class="d-c"></i>C 28g</span><span><i class="d-f"></i>F 18g</span>
+                  <span class="cres-done">Logged ✓</span>
+                </div>
+              </div>
+
+              <div class="cres" data-m="barcode">
+                <div class="cres-row">
+                  <span class="cres-glyph" set:html={icon('barcode')} aria-hidden="true" />
+                  <div class="cres-info"><b>Chobani 0% yogurt</b><small>Scanned · 170g serving</small></div>
+                  <span class="cres-kcal">120<i>kcal</i></span>
+                </div>
+                <div class="cres-macros">
+                  <span><i class="d-p"></i>P 18g</span><span><i class="d-c"></i>C 9g</span><span><i class="d-f"></i>F 0g</span>
+                  <span class="cres-done">Logged ✓</span>
+                </div>
+              </div>
+
+              <div class="cres" data-m="voice">
+                <div class="cres-voicewrap">
+                  <span class="cres-quote">“Two eggs and a slice of toast”</span>
+                  <small>Heard · 2 items added</small>
+                </div>
+                <div class="cres-macros">
+                  <span><i class="d-p"></i>P 19g</span><span><i class="d-c"></i>C 16g</span><span><i class="d-f"></i>F 11g</span>
+                  <span class="cres-done">Logged ✓</span>
+                </div>
+              </div>
+
+              <div class="cres" data-m="search">
+                <div class="cres-field"><span set:html={icon('search')} aria-hidden="true" /><span class="cres-q">banana</span></div>
+                <div class="cres-hit">
+                  <div class="cres-info"><b>Banana, medium</b><small>1 medium · 118g</small></div>
+                  <span class="cres-kcal">105<i>kcal</i></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  // "Add a meal" demo: one widget that slides FORWARD through the four logging
+  // methods in a seamless loop. A clone of the first slide is appended so the wrap
+  // from Search back to Photo slides rightward like every other step, then snaps
+  // back invisibly once it lands - no backward sweep across all panels.
+  (() => {
+    const c = document.querySelector('.composer');
+    if (!c) return;
+    const seg = c.querySelector('.seg');
+    const segs = [...c.querySelectorAll('.sg')];
+    const track = c.querySelector('.cres-track');
+    if (!seg || !segs.length || !track) return;
+    const n = segs.length;
+    const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (track.children.length === n) track.appendChild(track.children[0].cloneNode(true));
+
+    let pos = 0, timer = null, hovering = false, visible = false;
+    const paint = (k) => {
+      seg.style.setProperty('--i', k % n);
+      segs.forEach((s, j) => s.classList.toggle('is-active', j === k % n));
+    };
+    const reset = () => {
+      track.style.transition = 'none';
+      pos = 0; track.style.transform = 'translateX(0%)'; paint(0);
+      void track.offsetWidth; track.style.transition = '';
+    };
+    const advance = () => {
+      pos += 1;
+      track.style.transition = '';
+      track.style.transform = 'translateX(' + (-pos * 100) + '%)';
+      paint(pos);
+      if (pos === n) {
+        const onEnd = (e) => {
+          if (e.propertyName && e.propertyName !== 'transform') return;
+          track.removeEventListener('transitionend', onEnd);
+          if (pos === n) reset();
+        };
+        track.addEventListener('transitionend', onEnd);
+      }
+    };
+    const jump = (k) => { track.style.transition = ''; pos = k; track.style.transform = 'translateX(' + (-k * 100) + '%)'; paint(k); };
+    const start = () => { if (reduce || timer || hovering || !visible) return; timer = setInterval(advance, 1400); };
+    const stop = () => { clearInterval(timer); timer = null; };
+    segs.forEach((s, k) => s.addEventListener('click', () => { stop(); jump(k); start(); }));
+    c.addEventListener('mouseenter', () => { hovering = true; stop(); });
+    c.addEventListener('mouseleave', () => { hovering = false; start(); });
+    document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); else start(); });
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver((entries) => {
+        entries.forEach((e) => { visible = e.isIntersecting; if (visible) { reset(); start(); } else { stop(); } });
+      }, { threshold: 0.4 }).observe(c);
+    } else { visible = true; reset(); start(); }
+  })();
+</script>
+
+<style>
+  .top { position: relative; overflow: hidden; padding-top: clamp(28px, 5vw, 52px); padding-bottom: clamp(40px, 6vw, 72px); }
+  .top-bg {
+    position: absolute; inset: 0; z-index: -1;
+    background:
+      radial-gradient(50% 42% at 84% 14%, rgba(255, 118, 118, 0.07), transparent 70%),
+      radial-gradient(40% 36% at 4% 4%, rgba(255, 154, 154, 0.05), transparent 70%);
+  }
+  .top-hero { display: grid; grid-template-columns: 1.02fr 0.98fr; align-items: center; gap: clamp(36px, 5vw, 64px); }
+  .top-copy, .top-visual { min-width: 0; }
+  .top-copy { display: flex; flex-direction: column; align-items: flex-start; text-align: left; }
+  .top-copy h1 { margin: 0 0 20px; }
+  .top-copy .lede { max-width: 50ch; }
+  .top-cta { margin-top: 32px; }
+  .top-cta :global(.dl) { align-items: flex-start; }
+  .top-trust { margin-top: 12px; font-size: 0.85rem; font-weight: 500; color: var(--muted); }
+  .top-visual { display: flex; justify-content: center; }
+
+  .composer {
+    width: min(420px, 100%); background: #fff; border: 1px solid var(--line);
+    border-radius: var(--r-xxl); box-shadow: var(--shadow-md); padding: 18px;
+  }
+  .composer-head { display: flex; align-items: center; gap: 9px; margin-bottom: 16px; padding-inline: 4px; }
+  .composer-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--coral); box-shadow: 0 0 0 4px var(--coral-100); animation: dotpulse 2.4s ease-in-out infinite; }
+  .composer-title { font-size: 0.95rem; font-weight: 800; color: var(--ink); }
+
+  /* Segmented control with a single sliding indicator (replaces the 4 tab buttons) */
+  .seg { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); background: var(--line-soft); border-radius: 12px; padding: 4px; margin-bottom: 16px; }
+  .seg-ind {
+    position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc(25% - 2px);
+    background: #fff; border-radius: 9px; box-shadow: 0 1px 3px rgba(17, 24, 39, 0.12);
+    transform: translateX(calc(var(--i, 0) * 100%)); transition: transform 0.34s var(--ease);
+  }
+  .sg {
+    position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 9px 4px; color: var(--muted); cursor: pointer; transition: color var(--dur-base) var(--ease);
+  }
+  .sg :global(svg) { width: 17px; height: 17px; }
+  .sg b { font-size: 0.72rem; font-weight: 600; letter-spacing: -0.01em; }
+  .sg.is-active { color: var(--coral-600); font-weight: 700; }
+
+  /* Result carousel: a horizontal track that slides between the four method results */
+  .composer-body { position: relative; overflow: hidden; min-height: 116px; }
+  .cres-track { display: flex; transition: transform 0.4s var(--ease); will-change: transform; }
+  .cres { flex: 0 0 100%; min-width: 0; display: flex; flex-direction: column; }
+  .cres-row { display: flex; align-items: center; gap: 12px; }
+  .cres-thumb, .cres-glyph { width: 52px; height: 52px; border-radius: 13px; flex-shrink: 0; }
+  .cres :global(.cres-thumb) { object-fit: cover; }
+  .cres-glyph { display: grid; place-items: center; background: var(--line-soft); color: var(--ink); }
+  .cres-glyph :global(svg) { width: 26px; height: 26px; }
+  .cres-info { flex: 1; min-width: 0; }
+  .cres-info b { display: block; font-size: 0.95rem; font-weight: 700; color: var(--ink); line-height: 1.2; }
+  .cres-info small { font-size: 0.78rem; color: var(--muted); }
+  .cres-kcal { font-size: 1.2rem; font-weight: 800; color: var(--ink); font-variant-numeric: tabular-nums; flex-shrink: 0; }
+  .cres-kcal i { font-style: normal; font-size: 0.62rem; font-weight: 600; color: var(--muted); margin-left: 2px; }
+  .cres-macros { display: flex; align-items: center; gap: 16px; margin-top: auto; padding-top: 14px; border-top: 1px solid var(--line-soft); font-size: 0.8rem; font-weight: 600; color: var(--ink-soft); }
+  .cres-macros > span { display: inline-flex; align-items: center; gap: 6px; }
+  .cres-macros i { width: 7px; height: 7px; border-radius: 50%; }
+  .d-p { background: var(--protein); } .d-c { background: var(--carbs); } .d-f { background: var(--fat); }
+  .cres-done { margin-left: auto; color: var(--carbs); }
+
+  .cres-voicewrap { padding: 6px 2px 2px; }
+  .cres-quote { display: block; font-size: 1.05rem; font-weight: 600; font-style: italic; color: var(--ink); margin-bottom: 6px; }
+  .cres-voicewrap small { font-size: 0.78rem; color: var(--muted); }
+
+  .cres-field { display: flex; align-items: center; gap: 9px; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--r-md); color: var(--faint); }
+  .cres-field :global(svg) { width: 18px; height: 18px; }
+  .cres-q { font-size: 0.92rem; font-weight: 600; color: var(--ink-soft); }
+  .cres-hit { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: auto; padding-top: 14px; }
+
+  @keyframes dotpulse { 0%, 100% { opacity: 1 } 50% { opacity: 0.45 } }
+
+  /* Keep the headline and the logging widget side by side at every width; scale both
+     down rather than stacking, so the hero stays balanced on a narrow screen. */
+  @media (max-width: 900px) {
+    .top-hero { grid-template-columns: 1fr 1.05fr; gap: clamp(12px, 3vw, 32px); }
+    .top-cta { display: none; }            /* sticky bar handles the CTA on mobile */
+    .top-visual { width: 100%; }
+    .top-copy h1 { margin: 0 0 14px; font-size: clamp(1.5rem, 4.6vw, 3.2rem); }
+    .composer { width: 100%; padding: 14px; }
+  }
+
+  @media (max-width: 560px) {
+    .top { padding-top: 16px; }
+    /* give the headline more of the row so "made effortless." lands on one line */
+    .top-hero { grid-template-columns: 1.12fr 0.88fr; gap: 12px; align-items: center; }
+    .top-copy h1 { margin: 0; font-size: clamp(1.05rem, 5.1vw, 1.8rem); line-height: 1.12; }
+    .top-copy .lede { display: none; }     /* no room for body copy beside the widget on a phone */
+
+    /* compact the logging widget into a half-width column */
+    .composer { padding: 10px; border-radius: var(--r-lg); }
+    .composer-head { margin-bottom: 8px; gap: 6px; padding-inline: 2px; }
+    .composer-dot { width: 7px; height: 7px; box-shadow: 0 0 0 3px var(--coral-100); }
+    .composer-title { font-size: 0.76rem; }
+    .seg { margin-bottom: 10px; }          /* keep 4px padding so the indicator math holds */
+    .sg { padding: 7px 2px; gap: 0; }
+    .sg :global(svg) { width: 15px; height: 15px; }
+    .sg b { display: none; }                /* icons only beside the headline on a phone */
+    .composer-body { min-height: 96px; }
+    .cres-row { gap: 8px; }
+    .cres-thumb, .cres-glyph { width: 34px; height: 34px; border-radius: 8px; }
+    .cres-glyph :global(svg) { width: 18px; height: 18px; }
+    .cres-info b { font-size: 0.74rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cres-info small { font-size: 0.6rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cres-kcal { font-size: 0.9rem; }
+    .cres-kcal i { font-size: 0.5rem; }
+    .cres-macros { gap: 6px 8px; flex-wrap: wrap; padding-top: 8px; font-size: 0.62rem; }
+    .cres-quote { font-size: 0.78rem; }
+    .cres-voicewrap small { font-size: 0.6rem; }
+    .cres-field { padding: 9px 10px; }
+    .cres-q { font-size: 0.8rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .seg-ind, .cres-track { transition: none !important; }
+    .composer-dot { animation: none !important; }
+  }
+</style>

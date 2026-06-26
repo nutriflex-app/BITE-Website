@@ -1,0 +1,109 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE } from '../config';
+
+const faqs = [
+  {
+    q: 'How does BITE work without tracking every meal?',
+    a: 'BITE gives you a personalised calorie and protein target, then lets you plan your week from portion-ready recipes that already fit those numbers. You stay on track without logging every snack, though you can always log by photo or voice when you want to.',
+  },
+  {
+    q: 'Is BITE free?',
+    a: 'BITE is free to download and use. BITE Premium is an optional in-app subscription; pricing, renewal, and cancellation are shown in the app before you purchase.',
+  },
+  {
+    q: 'Which devices are supported?',
+    a: 'BITE is built for iPhone and Android. Download links are on the home page.',
+  },
+  {
+    q: 'How do I delete my account or data?',
+    a: 'You can delete your account from inside the app, or email us and we’ll handle it. See the Privacy Policy for details on data deletion.',
+  },
+];
+---
+
+<Base title={`Support | ${SITE.name}`} description={`Get help with ${SITE.name}. Contact our team and find answers to common questions.`}>
+  <section class="support-hero">
+    <div class="container">
+      <h1 class="display">We're here to help.</h1>
+      <p class="lede">Questions, feedback, or a bug to report? Reach the team directly. We read every message.</p>
+
+      <div class="contact-cards">
+        <a class="contact-card" href={`mailto:${SITE.supportEmail}`}>
+          <span class="cc-icon" aria-hidden="true">✉</span>
+          <span class="cc-label">General &amp; support</span>
+          <strong>{SITE.supportEmail}</strong>
+        </a>
+        <a class="contact-card" href={`mailto:${SITE.privacyEmail}`}>
+          <span class="cc-icon" aria-hidden="true">🔒</span>
+          <span class="cc-label">Privacy &amp; data requests</span>
+          <strong>{SITE.privacyEmail}</strong>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section faq-section">
+    <div class="container faq-inner">
+      <h2 class="display">Common questions</h2>
+      <div class="faqs">
+        {faqs.map((f) => (
+          <details class="faq reveal">
+            <summary>{f.q}</summary>
+            <p>{f.a}</p>
+          </details>
+        ))}
+      </div>
+
+      <div class="support-foot">
+        <a href="/privacy">Privacy Policy</a>
+        <span>·</span>
+        <a href="/terms">Terms &amp; Conditions</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .support-hero { padding-top: clamp(48px, 8vw, 96px); padding-bottom: 24px; }
+  .support-hero h1 { font-size: clamp(2.6rem, 6vw, 4rem); margin: 16px 0 14px; }
+  .contact-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; margin-top: 40px; max-width: 760px; }
+  .contact-card {
+    display: flex; flex-direction: column; gap: 6px;
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--r-lg);
+    padding: 26px; box-shadow: var(--shadow-sm);
+    transition: transform var(--dur-base) var(--ease), box-shadow var(--dur-base) var(--ease);
+  }
+  .contact-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+  .cc-icon {
+    width: 44px; height: 44px; border-radius: 13px; display: inline-flex; align-items: center; justify-content: center;
+    background: var(--coral-100); font-size: 1.2rem; margin-bottom: 8px;
+  }
+  .cc-label { font-size: 0.82rem; font-weight: 600; letter-spacing: 0.04em; color: var(--muted); text-transform: uppercase; }
+  .contact-card strong { font-size: 1.15rem; font-weight: 600; color: var(--coral-600); }
+
+  .faq-inner { max-width: 760px; }
+  .faq-section h2 { margin-bottom: 28px; }
+  .faqs { display: flex; flex-direction: column; gap: 12px; }
+  .faq {
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--r-md);
+    padding: 4px 22px; box-shadow: var(--shadow-sm);
+  }
+  .faq summary {
+    cursor: pointer; list-style: none; padding: 18px 0; font-weight: 600; font-size: 1.05rem;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: '+'; color: var(--coral); font-size: 1.5rem; font-weight: 400; transition: transform var(--dur-fast) var(--ease); }
+  .faq[open] summary::after { transform: rotate(45deg); }
+  .faq p { padding: 0 0 20px; color: var(--muted); line-height: 1.65; }
+
+  .support-foot {
+    display: flex; gap: 12px; align-items: center; margin-top: 48px; padding-top: 26px;
+    border-top: 1px solid var(--line); color: var(--muted); font-size: 0.92rem;
+  }
+  .support-foot a { color: var(--ink-soft); font-weight: 500; }
+  .support-foot a:hover { color: var(--coral-600); }
+
+  @media (max-width: 620px) { .contact-cards { grid-template-columns: 1fr; } }
+</style>

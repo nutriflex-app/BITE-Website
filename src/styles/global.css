@@ -1,0 +1,190 @@
+/* ============================================================================
+   BITE - design system (matches the app)
+   White theme, flat cards with hairline borders, system/Inter type, coral brand,
+   product macro colors (protein blue · carbs green · fat amber). Sourced from the
+   app's LIGHT_COLORS, RADIUS, and typography tokens.
+   ============================================================================ */
+
+:root {
+  /* Brand coral (app primary #FF7676; #C04848 is the contrast-safe coral for text on white) */
+  --coral: #ff7676;            /* decorative fills only: dots, washes, glows, brand mark */
+  --coral-600: #c04848;        /* text/border-safe coral on white */
+  --coral-cta: #d23b3b;        /* solid action surfaces - white text clears 4.5:1 (WCAG AA) */
+  --coral-cta-hover: #bd3636;
+  --coral-300: #ff9a9a;
+  --coral-100: #ffe5e5;
+
+  /* Macros (match the home ring/bars) */
+  --protein: #3b82f6;
+  --carbs: #10b981;
+  --fat: #fbbf24;
+
+  /* Ink & neutrals (app LIGHT_COLORS) */
+  --ink: #111827;
+  --ink-soft: #374151;
+  --muted: #6b7280;
+  --faint: #9ca3af;
+  --line: #e5e7eb;
+  --line-soft: #f3f4f6;
+
+  /* Surfaces */
+  --bg: #ffffff;
+  --card: #ffffff;             /* light card fill */
+  --ink-surface: #1c1c1e;      /* ONE canonical dark surface: footer + DownloadButtons + proof panel */
+
+  /* Depth - app DNA is flat + hairline border; shadows are subtle */
+  --shadow-sm: 0 1px 2px rgba(17, 24, 39, 0.04);
+  --shadow-md: 0 10px 28px rgba(17, 24, 39, 0.08);
+  --shadow-lg: 0 24px 60px rgba(17, 24, 39, 0.12);
+  --shadow-coral: 0 10px 26px rgba(210, 59, 59, 0.22);
+  --shadow-panel: 0 30px 70px -32px rgba(17, 24, 39, 0.34);  /* big floating panels (proof, mr bite) */
+
+  /* Geometry (app RADIUS scale) */
+  --r-sm: 12px;
+  --r-md: 14px;
+  --r-lg: 16px;
+  --r-xl: 20px;
+  --r-xxl: 24px;
+  --r-panel: clamp(22px, 3vw, 36px); /* big floating panels */
+  --container: 1140px;
+  --nav-h: 70px;                     /* matches Nav .nav-inner height */
+  --tl-node: 48px;                   /* timeline node diameter (re-declared smaller at narrow widths) */
+  --getbar-h: 50px;                  /* sticky mobile CTA bar measured footprint */
+
+  /* Spacing scale (one source of truth for section rhythm) */
+  --space-section: clamp(64px, 10vw, 120px);
+  --space-section-tight: clamp(40px, 6vw, 76px);
+  --space-head: clamp(32px, 5vw, 48px);
+
+  /* Type - app uses System; self-hosted Inter is the consistent web equivalent */
+  --font-sans: 'Inter Variable', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-display: var(--font-sans);
+
+  /* Motion - one easing + a 3-step duration scale (collapses the old 9-value sprawl) */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 0.2s;   /* taps, hovers, quick state swaps */
+  --dur-base: 0.35s;  /* default transitions */
+  --dur-slow: 0.55s;  /* reveals, large entrances */
+}
+
+/* Breakpoint scale (CSS @media can't read var(), so these literals are the canonical
+   contract every file must share):
+     900px -> hero/body collapse to single column + mobile nav + getbar  (chrome + body together)
+     620px -> dense grids (timeline, support cards) go 1-col
+     560px -> typography + spacing tighten
+     380px -> smallest float/card clamps */
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: var(--font-sans);
+  color: var(--ink);
+  background: var(--bg);
+  line-height: 1.6;
+  font-size: 17px;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+::selection { background: var(--coral); color: #fff; }
+
+/* Keyboard focus - visible for every interactive element (none existed before). */
+:focus-visible {
+  outline: 2px solid var(--coral-600);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+:focus:not(:focus-visible) { outline: none; }
+/* On coral-filled controls a coral ring is invisible - use white + an ink halo. */
+.btn-primary:focus-visible,
+.getbar:focus-visible {
+  outline-color: #fff;
+  box-shadow: 0 0 0 4px var(--ink);
+}
+
+/* ---- Layout ------------------------------------------------------------- */
+.container { width: 100%; max-width: var(--container); margin-inline: auto; padding-inline: 24px; }
+.section { padding-block: var(--space-section); }
+
+/* ---- Typography --------------------------------------------------------- */
+.display {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+}
+h1.display { font-size: clamp(2.6rem, 6.4vw, 4.6rem); letter-spacing: -0.038em; }
+h2.display { font-size: clamp(2rem, 4.4vw, 3.1rem); }
+h3.display { font-size: clamp(1.4rem, 3vw, 1.9rem); }
+/* Text-safe coral: #FF7676 on white is only 2.59:1 (fails WCAG AA). --coral-600
+   (#C04848) clears AA for headings. Use the bright brand coral for fills only. */
+.coral-text { color: var(--coral-600); }
+
+.lede {
+  font-size: clamp(1.05rem, 1.5vw, 1.25rem);
+  color: var(--muted); line-height: 1.6; max-width: 52ch;
+}
+.lede--dark { color: rgba(255, 255, 255, 0.6); }
+
+/* ---- Section header (shared by How + FAQ; dark modifier for the proof panel) ---- */
+.section-head { max-width: 640px; margin-bottom: var(--space-head); }
+.section-head h2 { margin-bottom: 14px; }
+.section-head--dark h2 { color: #fff; }
+
+/* ---- Surfaces: ONE panel recipe + ONE card recipe ----------------------- */
+.panel { position: relative; isolation: isolate; overflow: hidden; border-radius: var(--r-panel); box-shadow: var(--shadow-panel); }
+.panel--dark { background: var(--ink-surface); }
+.panel--coral { background: linear-gradient(152deg, #fffafa 0%, #fff0f0 100%); border: 1px solid var(--coral-100); }
+.card-surface { background: var(--card); border: 1px solid var(--line); border-radius: var(--r-lg); box-shadow: var(--shadow-md); }
+
+/* ---- Buttons ------------------------------------------------------------ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  height: 56px; padding-inline: 28px; border-radius: var(--r-md);
+  font-weight: 600; font-size: 1rem; border: 1px solid transparent; cursor: pointer;
+  transition: transform var(--dur-base) var(--ease), box-shadow var(--dur-base) var(--ease), background var(--dur-fast) var(--ease);
+  white-space: nowrap;
+}
+.btn-primary { background: var(--coral-cta); color: #fff; box-shadow: var(--shadow-coral); }
+.btn-primary:hover { transform: translateY(-2px); background: var(--coral-cta-hover); box-shadow: 0 16px 36px rgba(210, 59, 59, 0.3); }
+.btn-primary:active { transform: translateY(0); box-shadow: 0 4px 12px rgba(210, 59, 59, 0.24); }
+.btn-ghost { background: #fff; border-color: var(--line); color: var(--ink); }
+.btn-ghost:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); border-color: var(--coral-300); }
+.btn-ghost:active { transform: translateY(0); box-shadow: none; }
+
+/* ---- Scroll reveal ------------------------------------------------------ */
+.reveal { opacity: 0; transform: translateY(14px); transition: opacity var(--dur-slow) var(--ease), transform var(--dur-slow) var(--ease); }
+.reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+  html { scroll-behavior: auto; }
+}
+
+/* ---- Mobile-only sticky CTA pill (rendered in the page shell, outside any section) ---- */
+.getbar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 90;
+  display: none; align-items: center; justify-content: center; gap: 8px;
+  margin: 0 14px 14px; padding: 15px; border-radius: 16px;
+  padding-bottom: calc(15px + env(safe-area-inset-bottom));  /* clear the iOS home indicator */
+  background: var(--coral-cta); color: #fff; font-weight: 700; font-size: 1.02rem;
+  box-shadow: 0 8px 22px rgba(210, 59, 59, 0.34);
+}
+
+/* ---- Cross-section responsive (shared by the page shell + every section) ---- */
+@media (max-width: 900px) {
+  .getbar { display: flex; }
+  /* reserve room for the sticky bar, derived from its height + gap + safe-area */
+  main { padding-bottom: calc(var(--getbar-h) + 14px + env(safe-area-inset-bottom)); }
+}
+@media (max-width: 560px) {
+  .section { padding-block: clamp(52px, 13vw, 76px); }
+  .container { padding-inline: 20px; }
+  h1.display { font-size: clamp(2.15rem, 10vw, 2.9rem); }
+  h2.display { font-size: clamp(1.6rem, 7vw, 2.1rem); }
+  .lede { font-size: 1.02rem; }
+  .section-head { margin-bottom: 28px; }
+}

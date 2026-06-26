@@ -1,0 +1,44 @@
+---
+const faqs = [
+  { q: 'Is BITE free?', a: 'Yes. BITE is free to download on Google Play, and iPhone access is free through the TestFlight beta. If a paid plan ever arrives, it will be made clear up front.' },
+  { q: 'Do I have to weigh my food?', a: 'No. Snap a photo, scan a barcode, say what you ate, or search, and BITE estimates the macros for you. You can fine-tune portions whenever you like.' },
+  { q: 'When is the full iPhone release?', a: 'iPhone is in open beta on TestFlight today, with the full App Store release coming soon. Android is already live on Google Play.' },
+  { q: 'Is my data private?', a: 'Your data is encrypted in transit and at rest, we never sell it, and you can delete everything from the app at any time.' },
+  { q: 'Is BITE medical advice?', a: 'No. BITE is a nutrition tracker and coaching tool, not a medical or clinical service. For medical needs, please check with a qualified professional.' },
+];
+---
+
+<section id="faq" class="section faq">
+  <div class="container">
+    <div class="section-head reveal">
+      <h2 class="display">Questions, answered.</h2>
+    </div>
+    <div class="faq-list">
+      {faqs.map((f) => (
+        <details class="faq-item reveal">
+          <summary>{f.q}<span class="faq-mark" aria-hidden="true"></span></summary>
+          <p>{f.a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq-list { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+  .faq-item { background: #fff; border: 1px solid var(--line); border-radius: var(--r-lg); transition: border-color var(--dur-fast) var(--ease); }
+  .faq-item[open] { border-color: var(--coral-300); }
+  .faq-item summary { cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 20px; font-weight: 700; font-size: 1.02rem; color: var(--ink); }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-mark { position: relative; flex-shrink: 0; width: 16px; height: 16px; }
+  .faq-mark::before, .faq-mark::after { content: ''; position: absolute; background: var(--coral-600); border-radius: 2px; transition: transform var(--dur-fast) var(--ease); }
+  .faq-mark::before { top: 7px; left: 0; width: 16px; height: 2px; }
+  .faq-mark::after { top: 0; left: 7px; width: 2px; height: 16px; }
+  .faq-item[open] .faq-mark::after { transform: scaleY(0); }
+  .faq-item p { padding: 0 20px 18px; margin: 0; color: var(--muted); font-size: 0.96rem; line-height: 1.6; }
+
+  @media (max-width: 560px) {
+    .faq-item summary { font-size: 0.96rem; padding: 16px 16px; }
+    .faq-item p { padding: 0 16px 16px; }
+  }
+</style>

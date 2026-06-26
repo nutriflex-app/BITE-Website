@@ -1,0 +1,63 @@
+---
+import { SITE } from '../config';
+
+interface Props {
+  align?: 'start' | 'center';
+  theme?: 'light' | 'dark';
+}
+const { align = 'start', theme = 'light' } = Astro.props;
+
+const tfLive = SITE.testflightUrl !== '#';
+const playLive = SITE.playStoreUrl !== '#';
+const appStoreLive = SITE.appStoreUrl !== '#';
+---
+
+<div class={`dl ${align === 'center' ? 'dl-center' : ''} dl-${theme}`}>
+  <div class="dl-row">
+    {playLive && (
+      <a class="badge" href={SITE.playStoreUrl} target="_blank" rel="noopener" aria-label="Get BITE on Google Play">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+          <path fill="#34d399" d="M3.6 2.3 13 11.7l-2.6 2.6L3.1 2.9c.1-.3.3-.5.5-.6z" />
+          <path fill="#60a5fa" d="M3.1 2.9 10.4 14.3 3.6 21.7c-.3-.2-.5-.5-.5-.9V3.2c0-.1 0-.2 0-.3z" />
+          <path fill="#fbbf24" d="M17.9 9.2 14.7 11l-2.6 2.6 3 2.9 2.8-1.6c.9-.5.9-1.8 0-2.4z" />
+          <path fill="#f87171" d="M13 11.7 3.6 2.3c.2-.1.5-.1.8 0l11.1 6.3-2.5 3.1z" />
+        </svg>
+        <span class="badge-copy"><small>Get it on</small><strong>Google Play</strong></span>
+      </a>
+    )}
+
+    {tfLive && (
+      <a class="badge" href={SITE.testflightUrl} target="_blank" rel="noopener" aria-label="Join the BITE iOS beta on TestFlight">
+        <svg viewBox="0 0 24 24" width="21" height="21" fill="currentColor" aria-hidden="true">
+          <path d="M16.36 1.43c.05.74-.25 1.46-.74 1.99-.52.56-1.36.99-2.18.93-.07-.73.28-1.49.75-1.97.52-.56 1.43-.97 2.17-.95zM19.5 17.1c-.38.88-.56 1.27-1.05 2.05-.68 1.08-1.64 2.43-2.83 2.44-1.06.01-1.33-.69-2.77-.68-1.44.01-1.73.69-2.79.68-1.19-.01-2.1-1.23-2.78-2.31-1.9-3.02-2.1-6.56-.93-8.44.83-1.34 2.14-2.12 3.37-2.12 1.26 0 2.05.69 3.09.69 1.01 0 1.62-.69 3.08-.69 1.1 0 2.27.6 3.1 1.64-2.73 1.5-2.29 5.4.24 6.41z" />
+        </svg>
+        <span class="badge-copy"><small>iOS early access</small><strong>TestFlight</strong></span>
+      </a>
+    )}
+  </div>
+
+  {!appStoreLive && <p class="soon">Full iOS release coming soon</p>}
+</div>
+
+<style>
+  .dl { display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
+  .dl-center { align-items: center; text-align: center; }
+  .dl-row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .dl-center .dl-row { justify-content: center; }
+
+  .badge {
+    display: inline-flex; align-items: center; gap: 11px;
+    height: 60px; padding: 0 22px; border-radius: 15px;
+    background: var(--ink-surface); color: #fff;
+    box-shadow: var(--shadow-md);
+    transition: transform var(--dur-base) var(--ease), box-shadow var(--dur-base) var(--ease);
+  }
+  .badge:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+  .badge-copy { display: flex; flex-direction: column; line-height: 1.12; text-align: left; }
+  .badge-copy small { font-size: 0.7rem; opacity: 0.72; font-weight: 500; }
+  .badge-copy strong { font-size: 1.12rem; font-weight: 700; letter-spacing: -0.01em; }
+
+  .soon { font-size: 0.85rem; font-weight: 500; color: var(--muted); }
+  .soon:empty { display: none; }
+  .dl-dark .soon { color: rgba(255, 255, 255, 0.6); }
+</style>

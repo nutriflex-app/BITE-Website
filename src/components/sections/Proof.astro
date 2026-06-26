@@ -1,0 +1,103 @@
+---
+import { Picture } from 'astro:assets';
+import s1 from '../../assets/screens/showcase-3-track.jpg';
+import s2 from '../../assets/screens/showcase-1-coach.jpg';
+import s3 from '../../assets/screens/showcase-2-chat.jpg';
+import s4 from '../../assets/screens/showcase-4-mealprep.jpg';
+import s5 from '../../assets/screens/showcase-5-recipes.jpg';
+import s6 from '../../assets/screens/showcase-6-shopping.jpg';
+
+// The six designed App Store posters (real app marketing frames).
+const showcase = [
+  { img: s1, alt: 'Step 2 in the app: log a meal by photo, barcode, voice, or search' },
+  { img: s2, alt: 'Step 3 in the app: Mr Bite, your coach, answers in plain language' },
+  { img: s3, alt: 'Step 3 in the app: Mr Bite recommends high-protein recipes that fit your numbers' },
+  { img: s4, alt: 'Step 4 in the app: meal prep mode with portion-ready recipes and a health score' },
+  { img: s5, alt: 'Step 4 in the app: a curated library of high-protein recipes to plan from' },
+  { img: s6, alt: 'Step 5 in the app: your week becomes one shopping list, sorted by aisle' },
+];
+---
+
+<section class="proof">
+  <div class="container">
+    <div class="proof-panel">
+      <div class="proof-glow" aria-hidden="true"></div>
+      <div class="proof-head">
+        <h2 class="proof-h display">See it in the app.</h2>
+        <p class="proof-sub">Every step above, shown on real screens. Swipe through track, coach, plan, and shop.</p>
+      </div>
+      <div class="shots-wrap">
+        <div class="shots reveal" role="list" aria-label="BITE app screens">
+          {showcase.map((s) => (
+            <figure class="shot" role="listitem">
+              <Picture
+                src={s.img}
+                formats={['avif', 'webp']}
+                widths={[220, 440]}
+                sizes="(max-width: 560px) 76vw, 190px"
+                alt={s.alt}
+                loading="lazy"
+                decoding="async"
+              />
+            </figure>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .proof { background: #fff; padding-block: clamp(40px, 6vw, 76px); }
+  .proof-panel {
+    position: relative; isolation: isolate; overflow: hidden;
+    border-radius: var(--r-panel);
+    background: var(--ink-surface);
+    padding-block: clamp(34px, 4.5vw, 60px);
+    box-shadow: var(--shadow-panel);
+  }
+  .proof-glow {
+    position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(60% 80% at 92% -8%, rgba(255, 118, 118, 0.22), transparent 60%),
+      radial-gradient(46% 60% at 2% 108%, rgba(124, 92, 196, 0.14), transparent 62%);
+  }
+  .proof-head { position: relative; z-index: 1; padding-inline: clamp(26px, 4vw, 56px); margin-bottom: clamp(24px, 3vw, 38px); }
+  .proof-h { color: #fff; margin-bottom: 10px; }
+  .proof-sub { color: rgba(255, 255, 255, 0.6); font-size: clamp(1.02rem, 1.4vw, 1.18rem); max-width: 48ch; }
+  .shots-wrap { position: relative; z-index: 1; }
+  .shots-wrap::before, .shots-wrap::after { content: ''; position: absolute; top: 0; bottom: 0; width: clamp(20px, 4vw, 56px); z-index: 2; pointer-events: none; }
+  .shots-wrap::before { left: 0; background: linear-gradient(90deg, var(--ink-surface), transparent); }
+  .shots-wrap::after { right: 0; background: linear-gradient(270deg, var(--ink-surface), transparent); }
+  .shots {
+    display: flex; gap: 16px;
+    overflow-x: auto; scroll-snap-type: x mandatory;
+    padding-block: 6px 14px;
+    padding-inline: clamp(26px, 4vw, 56px);
+    -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  }
+  .shots::-webkit-scrollbar { display: none; }
+  .shot {
+    flex: 0 0 auto; width: clamp(148px, 18vw, 186px); margin: 0;
+    scroll-snap-align: start; border-radius: 20px; overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+    opacity: 0; transform: translateY(16px) scale(0.97);
+    transition: opacity var(--dur-slow) var(--ease), transform var(--dur-slow) var(--ease);
+  }
+  .shots.in .shot { opacity: 1; transform: none; }
+  .shots.in .shot:nth-child(2) { transition-delay: 0.06s; }
+  .shots.in .shot:nth-child(3) { transition-delay: 0.12s; }
+  .shots.in .shot:nth-child(4) { transition-delay: 0.18s; }
+  .shots.in .shot:nth-child(5) { transition-delay: 0.24s; }
+  .shots.in .shot:nth-child(6) { transition-delay: 0.30s; }
+  .shot :global(img) { width: 100%; height: auto; display: block; }
+
+  @media (max-width: 560px) {
+    .proof { padding-block: clamp(44px, 12vw, 64px); }
+    .shot { width: 76vw; max-width: 280px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .shot { opacity: 1; transform: none; transition: none; }
+  }
+</style>

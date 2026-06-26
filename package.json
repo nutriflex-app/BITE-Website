@@ -1,0 +1,18 @@
+{
+  "name": "bite-web",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "description": "BITE marketing + legal site (static, Astro). Separate from the Expo app.",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.2.1",
+    "@fontsource-variable/inter": "^5.2.8",
+    "astro": "^4.16.18"
+  }
+}

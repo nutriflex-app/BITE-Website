@@ -1,0 +1,107 @@
+---
+import '@fontsource-variable/inter';
+import '../styles/global.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { SITE } from '../config';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+}
+
+const {
+  title = `${SITE.name} · ${SITE.tagline}`,
+  description = SITE.description,
+  image = '/brand/app-icon.png',
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site ?? SITE.domain).href;
+const ogImage = new URL(image, Astro.site ?? SITE.domain).href;
+
+// Structured data - unambiguous entity for the app + brand. No aggregateRating
+// until real reviews exist (don't fabricate proof).
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'SoftwareApplication',
+      name: SITE.name,
+      applicationCategory: 'HealthApplication',
+      operatingSystem: 'iOS, Android',
+      description: SITE.description,
+      url: SITE.domain,
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+      ...(SITE.playStoreUrl !== '#' ? { downloadUrl: SITE.playStoreUrl } : {}),
+    },
+    {
+      '@type': 'Organization',
+      name: SITE.name,
+      url: SITE.domain,
+      logo: new URL('/brand/app-icon.png', SITE.domain).href,
+    },
+  ],
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#ffffff" />
+
+    <!-- Open Graph / social -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <!-- Structured data -->
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+    <!-- Inter is self-hosted via @fontsource-variable/inter (imported above) -
+         no render-blocking third-party font request on the critical path. -->
+    <link rel="icon" href="/brand/app-icon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/brand/app-icon.png" />
+  </head>
+  <body>
+    <Nav />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+
+    <script is:inline>
+      // Restrained scroll reveal - adds .in to .reveal elements as they enter view.
+      (() => {
+        const els = document.querySelectorAll('.reveal');
+        if (!('IntersectionObserver' in window) || !els.length) {
+          els.forEach((el) => el.classList.add('in'));
+          return;
+        }
+        const io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((e) => {
+              if (e.isIntersecting) {
+                e.target.classList.add('in');
+                io.unobserve(e.target);
+              }
+            });
+          },
+          { rootMargin: '0px 0px -10% 0px', threshold: 0.12 },
+        );
+        els.forEach((el) => io.observe(el));
+      })();
+    </script>
+  </body>
+</html>

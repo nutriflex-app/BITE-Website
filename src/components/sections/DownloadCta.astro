@@ -1,0 +1,56 @@
+---
+import DownloadButtons from '../DownloadButtons.astro';
+import { icon } from '../../lib/icons';
+
+const trust = [
+  { label: 'Encrypted in transit and at rest', icon: 'lock' },
+  { label: 'We never sell your data', icon: 'shield' },
+  { label: 'Delete your data anytime', icon: 'trash' },
+];
+---
+
+<section id="download" class="section cta-wrap">
+  <div class="container">
+    <div class="cta reveal">
+      <span class="cta-eyebrow">Now in early access</span>
+      <h2 class="display">Eat well without the stress.</h2>
+      <p class="cta-lede">Set your first target in minutes. Free on Google Play, with early access on TestFlight for iPhone.</p>
+      <DownloadButtons align="center" />
+    </div>
+
+    <ul class="trust-strip reveal" aria-label="Privacy">
+      {trust.map((t) => (
+        <li><span class="trust-icon" set:html={icon(t.icon, { size: 20, stroke: 1.7 })} />{t.label}</li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .cta-wrap { padding-bottom: clamp(56px, 9vw, 110px); }
+  .cta {
+    text-align: center; border-radius: var(--r-xxl);
+    padding: clamp(44px, 7vw, 84px) 32px;
+    background: #fff; border: 1px solid var(--coral-100); box-shadow: var(--shadow-lg);
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .cta-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px; margin-bottom: 16px;
+    font-size: 0.76rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--coral-600);
+  }
+  .cta-eyebrow::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--coral); }
+  .cta h2 { margin-bottom: 14px; }
+  .cta-lede { color: var(--ink-soft); font-size: 1.1rem; max-width: 46ch; margin: 0 auto 28px; }
+  .cta :global(.dl) { align-items: center; }
+
+  .trust-strip {
+    list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 14px 32px;
+    margin-top: 36px; padding: 0;
+  }
+  .trust-strip li { display: inline-flex; align-items: center; gap: 9px; font-size: 0.92rem; font-weight: 500; color: var(--ink-soft); }
+  .trust-icon { display: inline-flex; color: var(--coral-600); }
+
+  @media (max-width: 560px) {
+    .cta { padding: 40px 22px; border-radius: var(--r-xl); }
+  }
+</style>

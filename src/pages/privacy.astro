@@ -20,10 +20,9 @@ import Legal from '../layouts/Legal.astro';
   <h3>2.2 Automatically Collected Information</h3>
   <p>When you use the App, we automatically collect certain information, including:</p>
   <ul>
-    <li>Device information: device type, operating system, unique device identifiers</li>
-    <li>Usage data: features used, screens viewed, interaction patterns (via Amplitude product analytics). This is anonymised and contains no health data, meal content or message content, and is processed under our legitimate interest in improving the App. It is independent of the App Tracking Transparency prompt; you can opt out at any time.</li>
+    <li>Device information: device type and operating system. BITE does not collect an advertising identifier (IDFA) or a vendor device identifier (IDFV).</li>
+    <li>Usage data: features used, screens viewed, interaction patterns (via Amplitude product analytics). This is anonymised and contains no health data, meal content or message content, and is processed under our legitimate interest in improving the App. BITE does not track you across other companies' apps or websites and shows no App Tracking Transparency prompt. You can opt out of usage analytics at any time.</li>
     <li>Crash and performance data, including error stack traces (via Sentry). Diagnostic breadcrumbs are scrubbed of personal content before upload.</li>
-    <li>Masked Session Replay segments of your interaction with the App. Text, inputs and images are masked on-device before upload and only a sampled subset of sessions is captured (via Amplitude Session Replay). This is strictly opt-in, captured only after you grant the App Tracking Transparency prompt (iOS) or the in-app Session Replay opt-in (other platforms).</li>
   </ul>
 
   <h3>2.3 Health, Wearable, Camera and Voice Data</h3>
@@ -55,7 +54,6 @@ import Legal from '../layouts/Legal.astro';
     <li>Generate personalized meal plans and recipe recommendations</li>
     <li>Calculate nutritional information and track your health goals</li>
     <li>Display connected wearable and Google Health / Fitbit signals, such as steps, active energy, distance, sleep and supported heart-rate metrics, inside the Analytics screen and related user-facing progress features</li>
-    <li>Process transactions and manage subscriptions</li>
     <li>Send you technical notices, updates, and support messages</li>
     <li>Respond to your comments, questions, and requests</li>
     <li>Monitor and analyze usage patterns and trends</li>
@@ -67,19 +65,18 @@ import Legal from '../layouts/Legal.astro';
   <h2>4. How We Share Your Information</h2>
   <p>We do not sell your personal information. We may share your information in the following circumstances:</p>
   <h3>4.1 Service Providers and Sub-Processors</h3>
-  <p>We share limited data with the following sub-processors. Each is bound by a data processing agreement and may only use your data to deliver the service to BITE.</p>
+  <p>We share limited data with the following sub-processors. Each is bound by contractual terms and may only use your data to deliver the service to BITE.</p>
   <ul>
     <li>Supabase: database, authentication glue, edge functions, and cloud storage for images uploaded to the App (private buckets: recipe images, product images, and transformation/progress photos).</li>
     <li>Clerk: user authentication, session management and OAuth with Google/Apple.</li>
-    <li>OpenAI: AI recipe and nutrition generation and voice transcription. Prompts and audio are sent without your identity attached and are not used by OpenAI to train their models.</li>
-    <li>DeepSeek: powers Mr Bite chat responses. Your messages and relevant nutrition context are sent without your identity attached and are not used by DeepSeek to train their models.</li>
-    <li>Mistral: reads the text out of nutrition documents you choose to upload (for example a PDF meal plan), sent without your identity attached and not used to train their models.</li>
+    <li>OpenAI: food photo recognition and voice transcription. Meal photos and audio are sent without your identity attached and are not used by OpenAI to train their models.</li>
+    <li>DeepSeek: powers Mr Bite chat, recipe and meal-plan generation, recipe edits, macro estimation, and shopping-list consolidation. Your messages, the recipe and ingredient text you provide, and relevant context (such as targets, meals, and, if you connect a health source, your steps, energy, sleep, and resting heart rate) are sent without your identity attached. Under our provider settings, this data is not used to train DeepSeek's models.</li>
+    <li>Mistral: reads the text out of nutrition documents you choose to upload (for example a PDF meal plan), sent without your identity attached. Under our provider settings, it is not used to train Mistral's models.</li>
     <li>Spoonacular and Open Food Facts: recipe and food-product reference data. Barcode numbers are sent to these services; your identity is not.</li>
-    <li>Edamam: nutrition lookups. Ingredient strings are sent; your identity is not.</li>
     <li>Sentry: crash reporting and error monitoring. We send only your anonymised user id, app version, and error context; we do not send your email address or meal content.</li>
-    <li>Amplitude: product analytics and masked Session Replay. Anonymised product analytics run under our legitimate interest in improving the App and are independent of the App Tracking Transparency prompt; you can opt out at any time. Session Replay is strictly opt-in (granted via the iOS ATT prompt or the in-app opt-in on other platforms) and captures masked screen events only, never your typed text or on-screen images.</li>
+    <li>Amplitude: first-party product analytics only. Anonymised usage events run under our legitimate interest in improving the App. Your identity is anonymised before anything is sent, no health data, meal content or message content is included, and you can opt out at any time. We do not record your screen or your sessions.</li>
   </ul>
-  <p>Each provider is bound by a data processing agreement requiring the same or equal protection for your data as this policy. The app asks your permission in-app before the first time any data is sent to an AI provider.</p>
+  <p>Each provider is bound by contractual terms requiring the same or equal protection for your data as this policy. The app asks your permission in-app before any data is sent to an AI provider.</p>
 
   <h3>4.2 Legal Requirements</h3>
   <p>We may disclose your information if required to do so by law or in response to valid requests by public authorities.</p>

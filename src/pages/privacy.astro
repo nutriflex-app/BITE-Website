@@ -72,11 +72,14 @@ import Legal from '../layouts/Legal.astro';
     <li>Supabase: database, authentication glue, edge functions, and cloud storage for images uploaded to the App (private buckets: recipe images, product images, and transformation/progress photos).</li>
     <li>Clerk: user authentication, session management and OAuth with Google/Apple.</li>
     <li>OpenAI: AI recipe and nutrition generation and voice transcription. Prompts and audio are sent without your identity attached and are not used by OpenAI to train their models.</li>
+    <li>DeepSeek: powers Mr Bite chat responses. Your messages and relevant nutrition context are sent without your identity attached and are not used by DeepSeek to train their models.</li>
+    <li>Mistral: reads the text out of nutrition documents you choose to upload (for example a PDF meal plan), sent without your identity attached and not used to train their models.</li>
     <li>Spoonacular and Open Food Facts: recipe and food-product reference data. Barcode numbers are sent to these services; your identity is not.</li>
     <li>Edamam: nutrition lookups. Ingredient strings are sent; your identity is not.</li>
     <li>Sentry: crash reporting and error monitoring. We send only your anonymised user id, app version, and error context; we do not send your email address or meal content.</li>
     <li>Amplitude: product analytics and masked Session Replay. Anonymised product analytics run under our legitimate interest in improving the App and are independent of the App Tracking Transparency prompt; you can opt out at any time. Session Replay is strictly opt-in (granted via the iOS ATT prompt or the in-app opt-in on other platforms) and captures masked screen events only, never your typed text or on-screen images.</li>
   </ul>
+  <p>Each provider is bound by a data processing agreement requiring the same or equal protection for your data as this policy. The app asks your permission in-app before the first time any data is sent to an AI provider.</p>
 
   <h3>4.2 Legal Requirements</h3>
   <p>We may disclose your information if required to do so by law or in response to valid requests by public authorities.</p>

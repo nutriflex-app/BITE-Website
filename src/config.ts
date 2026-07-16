@@ -15,5 +15,5 @@ export const SITE = {
   supportEmail: 'support@nutriflex.app',
   privacyEmail: 'privacy@nutriflex.app',
   // Last-updated date for the legal pages (kept in sync with the app).
-  legalLastUpdated: 'June 2026',
+  legalLastUpdated: 'July 2026',
 } as const;

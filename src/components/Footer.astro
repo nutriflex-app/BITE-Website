@@ -6,7 +6,10 @@ const year = 2026;
 <footer class="footer">
   <div class="container footer-inner">
     <div class="footer-brand">
-      <img src="/brand/logo-lockup.png" alt={`${SITE.name} logo`} width="92" class="footer-logo" />
+      <a href="/" class="footer-lockup" aria-label={`${SITE.name} home`}>
+        <img src="/brand/app-icon.png" alt="" width="34" height="34" class="footer-logo" />
+        <span class="footer-word">{SITE.name}</span>
+      </a>
       <p class="footer-tag">{SITE.tagline}</p>
     </div>
 
@@ -14,7 +17,7 @@ const year = 2026;
       <div class="footer-col">
         <span class="footer-h">Product</span>
         <a href="/#how">How it works</a>
-        <a href="/#mr-bite">Mr Bite</a>
+        <a href="/#mr-bite">Mr BITE</a>
         <a href="/#faq">FAQ</a>
         <a href="/#download">Get the app</a>
       </div>
@@ -40,7 +43,9 @@ const year = 2026;
 <style>
   .footer { background: var(--ink-surface); color: rgba(255, 255, 255, 0.7); padding-top: 72px; }
   .footer-inner { display: grid; grid-template-columns: 1.4fr 2fr; gap: 48px; padding-bottom: 44px; }
-  .footer-logo { height: auto; display: block; }
+  .footer-lockup { display: inline-flex; align-items: center; gap: 10px; }
+  .footer-logo { width: 34px; height: 34px; border-radius: 8px; object-fit: cover; display: block; }
+  .footer-word { font-weight: 800; font-size: 1.35rem; letter-spacing: -0.02em; color: #fff; }
   .footer-tag { margin-top: 18px; max-width: 30ch; color: rgba(255, 255, 255, 0.55); font-size: 0.95rem; }
   .footer-cols { display: flex; gap: 56px; flex-wrap: wrap; }
   .footer-col { display: flex; flex-direction: column; gap: 12px; }

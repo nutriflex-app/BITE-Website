@@ -1,10 +1,10 @@
 // Single source of truth for site-wide values. Update these as the app ships.
 export const SITE = {
-  name: 'BITE',
+  name: 'Mr BITE',
   domain: 'https://bite.coach',
   tagline: 'Your nutrition tracker and AI coach.',
   description:
-    'BITE is your nutrition tracker and AI coach in one. Log any meal in seconds, plan your week from recipes matched to your targets, and let Mr Bite coach you to your goals.',
+    'Mr BITE is your nutrition tracker and AI coach in one. Log any meal in seconds, plan your week from recipes matched to your targets, and let Mr BITE coach you to your goals.',
   // TestFlight beta is retired now that iOS is live on the public App Store.
   // Set back to an invite link to re-enable the beta button.
   testflightUrl: '#',

@@ -16,6 +16,9 @@ interface Props {
   pageType?: string | string[];
   /** Keep this page out of search indexes (e.g. thin or duplicate pages). */
   noindex?: boolean;
+  /** Real, on-page aggregate review rating for the app node. Only pass when
+   *  genuine reviews back it — never fabricate. */
+  aggregateRating?: { ratingValue: number; reviewCount: number };
 }
 
 const {
@@ -26,6 +29,7 @@ const {
   schema = [],
   pageType = 'WebPage',
   noindex = false,
+  aggregateRating,
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site ?? SITE.domain).href;
@@ -80,6 +84,17 @@ const jsonLd = {
       dateModified: SITE.updated,
       ...(sameAs.length ? { sameAs } : {}),
       ...(downloadUrls.length ? { downloadUrl: downloadUrls } : {}),
+      ...(aggregateRating
+        ? {
+            aggregateRating: {
+              '@type': 'AggregateRating',
+              ratingValue: aggregateRating.ratingValue,
+              reviewCount: aggregateRating.reviewCount,
+              bestRating: 5,
+              worstRating: 1,
+            },
+          }
+        : {}),
     },
     {
       '@type': 'Organization',

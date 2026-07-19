@@ -9,22 +9,41 @@ interface Props {
   title?: string;
   description?: string;
   image?: string;
+  imageAlt?: string;
+  /** Extra schema.org nodes to merge into the page's @graph (e.g. FAQPage). */
+  schema?: Record<string, unknown>[];
+  /** Keep this page out of search indexes (e.g. thin or duplicate pages). */
+  noindex?: boolean;
 }
 
 const {
   title = `${SITE.name} · ${SITE.tagline}`,
   description = SITE.description,
   image = '/brand/app-icon.png',
+  imageAlt = `${SITE.name} — ${SITE.tagline}`,
+  schema = [],
+  noindex = false,
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site ?? SITE.domain).href;
 const ogImage = new URL(image, Astro.site ?? SITE.domain).href;
 
-// Structured data - unambiguous entity for the app + brand. No aggregateRating
-// until real reviews exist (don't fabricate proof).
+// Both public store links, used for the app's downloadUrl(s) below.
+const downloadUrls = [SITE.appStoreUrl, SITE.playStoreUrl].filter((u) => u !== '#');
+
+// Structured data - unambiguous entity for the app + brand + site. No
+// aggregateRating until real reviews exist (don't fabricate proof).
 const jsonLd = {
   '@context': 'https://schema.org',
   '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': `${SITE.domain}/#website`,
+      name: SITE.name,
+      url: SITE.domain,
+      description: SITE.description,
+      publisher: { '@id': `${SITE.domain}/#organization` },
+    },
     {
       '@type': 'SoftwareApplication',
       name: SITE.name,
@@ -33,14 +52,16 @@ const jsonLd = {
       description: SITE.description,
       url: SITE.domain,
       offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-      ...(SITE.playStoreUrl !== '#' ? { downloadUrl: SITE.playStoreUrl } : {}),
+      ...(downloadUrls.length ? { downloadUrl: downloadUrls } : {}),
     },
     {
       '@type': 'Organization',
+      '@id': `${SITE.domain}/#organization`,
       name: SITE.name,
       url: SITE.domain,
       logo: new URL('/brand/app-icon.png', SITE.domain).href,
     },
+    ...schema,
   ],
 };
 ---
@@ -54,17 +75,25 @@ const jsonLd = {
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     <meta name="theme-color" content="#ffffff" />
+    <meta
+      name="robots"
+      content={noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large, max-snippet:-1'}
+    />
 
     <!-- Open Graph / social -->
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:locale" content="en_US" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
+    <meta property="og:image:alt" content={imageAlt} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={imageAlt} />
 
     <!-- Structured data -->
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />

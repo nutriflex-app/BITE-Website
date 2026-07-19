@@ -20,9 +20,25 @@ const faqs = [
     a: 'You can delete your account from inside the app, or email us and we’ll handle it. See the Privacy Policy for details on data deletion.',
   },
 ];
+
+// FAQPage rich-result schema, generated from the same list rendered below.
+const faqSchema = [
+  {
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  },
+];
 ---
 
-<Base title={`Support | ${SITE.name}`} description={`Get help with ${SITE.name}. Contact our team and find answers to common questions.`}>
+<Base
+  title={`Support | ${SITE.name}`}
+  description={`Get help with ${SITE.name}. Contact our team and find answers to common questions.`}
+  schema={faqSchema}
+>
   <section class="support-hero">
     <div class="container">
       <h1 class="display">We're here to help.</h1>

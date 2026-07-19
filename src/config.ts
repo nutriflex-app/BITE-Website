@@ -5,11 +5,11 @@ export const SITE = {
   tagline: 'Your nutrition tracker and AI coach.',
   description:
     'BITE is your nutrition tracker and AI coach in one. Log any meal in seconds, plan your week from recipes matched to your targets, and let Mr Bite coach you to your goals.',
-  // Primary distribution today is TestFlight. Paste the invite link here and the
-  // hero/CTA buttons switch from "coming soon" to a live "Join the beta" button.
-  testflightUrl: 'https://testflight.apple.com/join/ZdXsPeSp',
+  // TestFlight beta is retired now that iOS is live on the public App Store.
+  // Set back to an invite link to re-enable the beta button.
+  testflightUrl: '#',
   // Public store links. Use '#' while unpublished; buttons show a "Coming soon" state.
-  appStoreUrl: '#', // iOS public App Store - not live yet (iOS is TestFlight beta for now)
+  appStoreUrl: 'https://apps.apple.com/us/app/mr-bite-ai-nutrition-coach/id6755889300',
   playStoreUrl: 'https://play.google.com/store/apps/details?id=com.nutriflex.systems.app',
   // Contact shown on the support + legal pages (mirrors the app's PrivacyScreen).
   supportEmail: 'support@nutriflex.app',

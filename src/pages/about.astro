@@ -1,0 +1,80 @@
+---
+import Base from '../layouts/Base.astro';
+import DownloadButtons from '../components/DownloadButtons.astro';
+import { SITE } from '../config';
+
+const title = `About | ${SITE.name}`;
+const description = `${SITE.name} is a free nutrition tracker and AI coach for iPhone and Android, made by ${SITE.legalName}. Learn what it does, how the AI coach works, and how your data is handled.`;
+---
+
+<Base title={title} description={description} pageType={['WebPage', 'AboutPage']}>
+  <section class="about-hero">
+    <div class="container">
+      <h1 class="display">About {SITE.name}</h1>
+      <p class="lede">
+        {SITE.name} is a free nutrition tracker and AI coach for iPhone and Android, made by {SITE.legalName}.
+        It helps you eat well without the stress of logging every gram.
+      </p>
+      <DownloadButtons />
+    </div>
+  </section>
+
+  <section class="section about-body">
+    <div class="container about-inner">
+      <h2 class="display">What Mr BITE is</h2>
+      <p>
+        {SITE.name} combines four things most people juggle across separate apps: fast meal logging,
+        personalised calorie and protein targets, an AI coach that plans meals around those targets, and an
+        automatic shopping list. You log any meal in seconds — by photo, barcode, voice, or search — and
+        {SITE.name} estimates the calories and macros for you, so you never have to weigh food or search a
+        database by hand.
+      </p>
+
+      <h2 class="display">How the AI coach works</h2>
+      <p>
+        Mr BITE, the built-in AI coach, is built around your targets rather than acting as a generic chatbot.
+        Tell it a goal, a constraint, or just a craving, and it replies in plain language with recipes, meal
+        plans, and swaps that fit your numbers. Pick a few meals you like and it plans the rest of your week,
+        then turns the whole plan into a single shopping list sorted by aisle. As you log, it tracks your
+        weight and macro trends so you can see whether your plan is working.
+      </p>
+
+      <h2 class="display">Who makes it</h2>
+      <p>
+        {SITE.name} is built by {SITE.legalName}. The app is free on the Apple App Store and Google Play, with
+        no subscriptions, in-app purchases, or ads. If a paid plan is ever introduced, it will be made clear
+        up front.
+      </p>
+
+      <h2 class="display">Privacy</h2>
+      <p>
+        Your data is encrypted in transit and at rest, and {SITE.name} never sells it. You can delete your
+        data or your entire account at any time from inside the app. Full details are in our
+        <a href="/privacy">Privacy Policy</a>. {SITE.name} is a nutrition tracker and coaching tool, not a
+        medical or clinical service; for medical needs, please consult a qualified professional.
+      </p>
+
+      <h2 class="display">Contact</h2>
+      <p>
+        Questions, feedback, or a bug to report? Email
+        <a href={`mailto:${SITE.supportEmail}`}>{SITE.supportEmail}</a>, or visit
+        <a href="/support">Support</a> for common questions and contact details.
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .about-hero { padding-top: clamp(48px, 8vw, 96px); padding-bottom: 8px; }
+  .about-hero h1 { font-size: clamp(2.6rem, 6vw, 4rem); margin: 8px 0 16px; }
+  .about-hero .lede { max-width: 56ch; margin-bottom: 28px; }
+
+  .about-inner { max-width: 760px; }
+  .about-body h2 {
+    font-size: clamp(1.5rem, 3vw, 1.9rem);
+    margin: 40px 0 12px;
+  }
+  .about-body h2:first-child { margin-top: 0; }
+  .about-body p { color: var(--ink-soft); line-height: 1.72; margin: 0 0 4px; }
+  .about-body a { color: var(--coral-600); font-weight: 500; text-decoration: underline; text-underline-offset: 2px; }
+</style>

@@ -9,7 +9,9 @@ export default defineConfig({
   output: 'static',
   integrations: [
     sitemap({
-      // Home is the priority landing page; legal/support pages rank below it.
+      // Keep the machine-readable /llms.txt endpoint out of the XML sitemap.
+      filter: (page) => !page.endsWith('/llms.txt'),
+      // Home is the priority landing page; legal pages rank below it.
       serialize(item) {
         const { pathname } = new URL(item.url);
         item.lastmod = new Date().toISOString();
@@ -19,6 +21,9 @@ export default defineConfig({
         } else if (/\/(privacy|terms)\/?$/.test(pathname)) {
           item.priority = 0.3;
           item.changefreq = 'yearly';
+        } else if (/\/about\/?$/.test(pathname)) {
+          item.priority = 0.7;
+          item.changefreq = 'monthly';
         } else {
           item.priority = 0.6;
           item.changefreq = 'monthly';

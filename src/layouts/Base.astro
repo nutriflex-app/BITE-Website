@@ -12,6 +12,8 @@ interface Props {
   imageAlt?: string;
   /** Extra schema.org nodes to merge into the page's @graph (e.g. FAQPage). */
   schema?: Record<string, unknown>[];
+  /** schema.org type(s) for this page's WebPage node, e.g. 'AboutPage'. */
+  pageType?: string | string[];
   /** Keep this page out of search indexes (e.g. thin or duplicate pages). */
   noindex?: boolean;
 }
@@ -22,17 +24,22 @@ const {
   image = '/brand/app-icon.png',
   imageAlt = `${SITE.name} — ${SITE.tagline}`,
   schema = [],
+  pageType = 'WebPage',
   noindex = false,
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site ?? SITE.domain).href;
 const ogImage = new URL(image, Astro.site ?? SITE.domain).href;
 
-// Both public store links, used for the app's downloadUrl(s) below.
+// Public store links (app download URLs) and the full set of verified brand
+// profiles used for schema.org sameAs — store listings plus any socials.
 const downloadUrls = [SITE.appStoreUrl, SITE.playStoreUrl].filter((u) => u !== '#');
+const sameAs = [SITE.appStoreUrl, SITE.playStoreUrl, ...SITE.social].filter((u) => u !== '#');
 
-// Structured data - unambiguous entity for the app + brand + site. No
-// aggregateRating until real reviews exist (don't fabricate proof).
+// Structured data - an unambiguous, cross-linked entity graph for the app,
+// brand, site, and this page. Rich enough for AI answer engines to identify
+// and describe Mr BITE. No aggregateRating or fabricated dates until real
+// reviews/data exist (don't fabricate proof).
 const jsonLd = {
   '@context': 'https://schema.org',
   '@graph': [
@@ -42,24 +49,49 @@ const jsonLd = {
       name: SITE.name,
       url: SITE.domain,
       description: SITE.description,
+      inLanguage: 'en-US',
       publisher: { '@id': `${SITE.domain}/#organization` },
     },
     {
+      '@type': pageType,
+      '@id': `${canonical}#webpage`,
+      url: canonical,
+      name: title,
+      description,
+      isPartOf: { '@id': `${SITE.domain}/#website` },
+      about: { '@id': `${SITE.domain}/#organization` },
+      primaryImageOfPage: ogImage,
+      inLanguage: 'en-US',
+      dateModified: SITE.updated,
+    },
+    {
       '@type': 'SoftwareApplication',
+      '@id': `${SITE.domain}/#app`,
       name: SITE.name,
       applicationCategory: 'HealthApplication',
+      applicationSubCategory: 'Nutrition',
       operatingSystem: 'iOS, Android',
       description: SITE.description,
       url: SITE.domain,
+      featureList: [...SITE.features],
       offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+      publisher: { '@id': `${SITE.domain}/#organization` },
+      author: { '@id': `${SITE.domain}/#organization` },
+      dateModified: SITE.updated,
+      ...(sameAs.length ? { sameAs } : {}),
       ...(downloadUrls.length ? { downloadUrl: downloadUrls } : {}),
     },
     {
       '@type': 'Organization',
       '@id': `${SITE.domain}/#organization`,
       name: SITE.name,
+      legalName: SITE.legalName,
       url: SITE.domain,
       logo: new URL('/brand/app-icon.png', SITE.domain).href,
+      description: SITE.description,
+      slogan: SITE.tagline,
+      email: SITE.supportEmail,
+      ...(sameAs.length ? { sameAs } : {}),
     },
     ...schema,
   ],

@@ -14,9 +14,11 @@
   --coral-300: #ff9a9a;
   --coral-100: #ffe5e5;
 
-  /* Macros (match the home ring/bars) */
+  /* Macros (match the home ring/bars). As with coral, the bright value is for fills
+     only - #10B981 is 2.54:1 on white. --carbs-600 is the text-safe green (5.5:1). */
   --protein: #3b82f6;
   --carbs: #10b981;
+  --carbs-600: #047857;
   --fat: #fbbf24;
 
   /* Ink & neutrals (app LIGHT_COLORS) */
@@ -48,8 +50,7 @@
   --r-panel: clamp(22px, 3vw, 36px); /* big floating panels */
   --container: 1140px;
   --nav-h: 70px;                     /* matches Nav .nav-inner height */
-  --tl-node: 48px;                   /* timeline node diameter (re-declared smaller at narrow widths) */
-  --getbar-h: 50px;                  /* sticky mobile CTA bar measured footprint */
+  --getbar-h: 56px;                  /* sticky mobile CTA bar: 15px + 1.02rem*1.6 + 15px */
 
   /* Spacing scale (one source of truth for section rhythm) */
   --space-section: clamp(64px, 10vw, 120px);
@@ -117,7 +118,11 @@ a { color: inherit; text-decoration: none; }
   line-height: 1.04;
   letter-spacing: -0.03em;
 }
-h1.display { font-size: clamp(2.6rem, 6.4vw, 4.6rem); letter-spacing: -0.038em; }
+/* 5.9vw, not 6.4: at 6.4vw the hero's "made effortless." grows faster than the grid
+   column it sits in, so it broke to a third line and split the coral phrase at every
+   width from 901px up. The ceiling alone could not fix that - it only binds once the
+   clamp saturates, which is past where the wrapping happened. */
+h1.display { font-size: clamp(2.6rem, 5.9vw, 4.2rem); letter-spacing: -0.038em; }
 h2.display { font-size: clamp(2rem, 4.4vw, 3.1rem); }
 h3.display { font-size: clamp(1.4rem, 3vw, 1.9rem); }
 /* Text-safe coral: #FF7676 on white is only 2.59:1 (fails WCAG AA). --coral-600
@@ -179,11 +184,16 @@ h3.display { font-size: clamp(1.4rem, 3vw, 1.9rem); }
   .getbar { display: flex; }
   /* reserve room for the sticky bar, derived from its height + gap + safe-area */
   main { padding-bottom: calc(var(--getbar-h) + 14px + env(safe-area-inset-bottom)); }
+  /* Keep anchor + keyboard-focus scrolling clear of the fixed bar, which would
+     otherwise sit on top of whatever just received focus (WCAG 2.4.11). */
+  html { scroll-padding-bottom: calc(var(--getbar-h) + 28px + env(safe-area-inset-bottom)); }
 }
 @media (max-width: 560px) {
   .section { padding-block: clamp(52px, 13vw, 76px); }
   .container { padding-inline: 20px; }
-  h1.display { font-size: clamp(2.15rem, 10vw, 2.9rem); }
+  /* 2.6rem ceiling = the base clamp's floor, so the h1 never grows as the viewport
+     shrinks past this breakpoint. */
+  h1.display { font-size: clamp(2.15rem, 10vw, 2.6rem); }
   h2.display { font-size: clamp(1.6rem, 7vw, 2.1rem); }
   .lede { font-size: 1.02rem; }
   .section-head { margin-bottom: 28px; }

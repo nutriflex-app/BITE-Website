@@ -1,5 +1,6 @@
 ---
 import '@fontsource-variable/inter';
+import interLatin from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
 import '../styles/global.css';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
@@ -70,7 +71,11 @@ const jsonLd = {
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
     <!-- Inter is self-hosted via @fontsource-variable/inter (imported above) -
-         no render-blocking third-party font request on the critical path. -->
+         no render-blocking third-party font request on the critical path. The
+         @font-face rules live in the bundled CSS, so without this preload the latin
+         file is only discovered after that stylesheet parses and the display
+         headline visibly re-renders on swap. -->
+    <link rel="preload" href={interLatin} as="font" type="font/woff2" crossorigin />
     <link rel="icon" href="/brand/app-icon.png" type="image/png" />
     <link rel="apple-touch-icon" href="/brand/app-icon.png" />
   </head>

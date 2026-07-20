@@ -34,7 +34,10 @@ const jsonLd = {
       description: SITE.description,
       url: SITE.domain,
       offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-      ...(SITE.playStoreUrl !== '#' ? { downloadUrl: SITE.playStoreUrl } : {}),
+      ...(() => {
+        const urls = [SITE.appStoreUrl, SITE.playStoreUrl].filter((u) => u !== '#');
+        return urls.length ? { downloadUrl: urls } : {};
+      })(),
     },
     {
       '@type': 'Organization',

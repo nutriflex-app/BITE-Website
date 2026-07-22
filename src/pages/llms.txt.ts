@@ -45,6 +45,7 @@ ${stores.join('\n')}
 
 - [Home](${SITE.domain}/): Overview, features, and how ${SITE.name} works.
 - [About](${SITE.domain}/about): What ${SITE.name} is and who makes it.
+- [Blog](${SITE.domain}/blog): The Nutrient — articles on nutrition, AI, and building ${SITE.name}.
 - [Support](${SITE.domain}/support): Help, contact, and common questions.
 - [Privacy Policy](${SITE.domain}/privacy): How data is collected and used.
 - [Terms & Conditions](${SITE.domain}/terms): Terms of use.

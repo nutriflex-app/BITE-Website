@@ -1,0 +1,217 @@
+---
+import Base from './Base.astro';
+import DownloadButtons from '../components/DownloadButtons.astro';
+import { SITE } from '../config';
+
+interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  updatedDate?: Date;
+  author?: string;
+  heroImage?: string;
+  heroImageAlt?: string;
+  tags?: string[];
+  readingTime?: number;
+}
+
+const {
+  title,
+  description,
+  pubDate,
+  updatedDate,
+  author = 'Collins',
+  heroImage,
+  heroImageAlt,
+  tags = [],
+  readingTime,
+} = Astro.props;
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+
+const canonical = new URL(Astro.url.pathname, Astro.site ?? SITE.domain).href;
+
+// BlogPosting node merged into Base's schema.org @graph.
+const blogSchema: Record<string, unknown>[] = [
+  {
+    '@type': 'BlogPosting',
+    '@id': `${canonical}#article`,
+    headline: title,
+    description,
+    ...(heroImage ? { image: heroImage } : {}),
+    datePublished: pubDate.toISOString(),
+    dateModified: (updatedDate ?? pubDate).toISOString(),
+    author: { '@type': 'Person', name: author },
+    publisher: { '@id': `${SITE.domain}/#organization` },
+    mainEntityOfPage: canonical,
+    isPartOf: { '@id': `${SITE.domain}/#website` },
+    ...(tags.length ? { keywords: tags.join(', ') } : {}),
+  },
+];
+---
+
+<Base
+  title={`${title} | ${SITE.name}`}
+  description={description}
+  image={heroImage ?? '/brand/app-icon.png'}
+  imageAlt={heroImageAlt ?? title}
+  pageType={['WebPage', 'BlogPosting']}
+  schema={blogSchema}
+>
+  <article class="post">
+    <div class="post-inner">
+      <a href="/blog" class="post-back">← All posts</a>
+
+      {tags.length > 0 && (
+        <ul class="post-tags" aria-label="Topics">
+          {tags.map((t) => <li>{t}</li>)}
+        </ul>
+      )}
+
+      <h1 class="display">{title}</h1>
+      <p class="post-lede">{description}</p>
+
+      <div class="post-meta">
+        <span class="post-author">{author}</span>
+        <span aria-hidden="true">·</span>
+        <time datetime={pubDate.toISOString()}>{fmt(pubDate)}</time>
+        {readingTime ? (
+          <>
+            <span aria-hidden="true">·</span>
+            <span>{readingTime} min read</span>
+          </>
+        ) : null}
+      </div>
+
+      {heroImage && (
+        <figure class="post-hero">
+          <img
+            src={heroImage}
+            alt={heroImageAlt ?? ''}
+            width="1376"
+            height="768"
+            loading="eager"
+            decoding="async"
+          />
+        </figure>
+      )}
+
+      <div class="post-body">
+        <slot />
+      </div>
+
+      <aside class="post-cta panel panel--coral">
+        <h2 class="display">The trust-first nutrition coach</h2>
+        <p>
+          Mr BITE is a free nutrition tracker and AI coach for iPhone and Android — built for the
+          long game, not just the demo.
+        </p>
+        <DownloadButtons />
+      </aside>
+
+      <div class="post-foot">
+        <a href="/blog">← Back to all posts</a>
+      </div>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .post { padding-block: clamp(40px, 7vw, 84px); }
+  .post-inner { width: 100%; max-width: 760px; margin-inline: auto; padding-inline: 24px; }
+
+  .post-back {
+    display: inline-block;
+    margin-bottom: 26px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--muted);
+    transition: color var(--dur-fast) var(--ease);
+  }
+  .post-back:hover { color: var(--coral-600); }
+
+  .post-tags { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 18px; padding: 0; }
+  .post-tags li {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: var(--coral-600);
+    background: var(--coral-100);
+    padding: 5px 11px;
+    border-radius: 999px;
+  }
+
+  .post h1 { font-size: clamp(2.2rem, 5.2vw, 3.4rem); margin: 4px 0 16px; }
+  .post-lede {
+    font-size: clamp(1.1rem, 1.8vw, 1.3rem);
+    line-height: 1.55;
+    color: var(--muted);
+    margin: 0 0 22px;
+  }
+  .post-meta {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+    font-size: 0.92rem; color: var(--muted); margin-bottom: 34px;
+  }
+  .post-author { font-weight: 600; color: var(--ink-soft); }
+
+  .post-hero { margin: 0 0 40px; }
+  .post-hero img {
+    width: 100%; height: auto;
+    border-radius: var(--r-xl);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-md);
+  }
+
+  /* ---- Prose ---- */
+  .post-body { color: var(--ink-soft); font-size: 1.08rem; }
+  .post-body :global(p) { margin: 0 0 22px; line-height: 1.75; }
+  .post-body :global(h2) {
+    font-family: var(--font-display);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    font-size: clamp(1.5rem, 3vw, 1.95rem);
+    color: var(--ink);
+    margin: 48px 0 8px;
+    padding-top: 30px;
+    border-top: 1px solid var(--line-soft);
+  }
+  .post-body :global(h3) {
+    font-weight: 700; font-size: 1.2rem; color: var(--ink); margin: 30px 0 8px;
+  }
+  .post-body :global(ul),
+  .post-body :global(ol) { margin: 0 0 22px; padding-left: 24px; }
+  .post-body :global(li) { margin: 10px 0; line-height: 1.7; }
+  .post-body :global(li)::marker { color: var(--coral); }
+  .post-body :global(a) {
+    color: var(--coral-600); font-weight: 500;
+    text-decoration: underline; text-underline-offset: 2px;
+  }
+  .post-body :global(a:hover) { color: var(--coral-cta); }
+  .post-body :global(strong) { color: var(--ink); font-weight: 700; }
+  .post-body :global(img) {
+    width: 100%; height: auto; margin: 8px 0 12px;
+    border-radius: var(--r-lg); border: 1px solid var(--line);
+  }
+  .post-body :global(blockquote) {
+    margin: 0 0 22px; padding: 4px 0 4px 20px;
+    border-left: 3px solid var(--coral-300); color: var(--ink); font-style: italic;
+  }
+  .post-body :global(hr) { border: 0; border-top: 1px solid var(--line); margin: 40px 0; }
+  .post-body :global(em) { color: var(--ink-soft); }
+
+  .post-cta {
+    margin-top: 56px; padding: clamp(28px, 4vw, 44px);
+    text-align: center;
+  }
+  .post-cta h2 { font-size: clamp(1.5rem, 3vw, 2rem); margin-bottom: 10px; }
+  .post-cta p { color: var(--ink-soft); max-width: 46ch; margin: 0 auto 22px; line-height: 1.6; }
+  .post-cta :global(.download-buttons),
+  .post-cta :global(.dl) { justify-content: center; }
+
+  .post-foot {
+    margin-top: 44px; padding-top: 26px; border-top: 1px solid var(--line);
+  }
+  .post-foot a { color: var(--ink-soft); font-weight: 600; transition: color var(--dur-fast) var(--ease); }
+  .post-foot a:hover { color: var(--coral-600); }
+</style>

@@ -3,6 +3,8 @@ title: "AI Food Photos Can't See the Butter"
 description: "A new NIDDK study found photo-tracking apps underestimate calories by up to 345 per meal, mostly because fat is nearly invisible in a photograph. What that means for anyone trusting a number an AI gives them."
 pubDate: 2026-08-01
 author: "Michael"
+heroImage: "https://d8j0ntlcm91z4.cloudfront.net/user_3ElLNwQpO0GqKZ9IN6sdAl7YP6i/hf_20260801_151307_f0db3008-b9ab-48d3-88a1-70714e5dc621.png"
+heroImageAlt: "A phone photographing a plated meal, with butter, oil and dressing drawn as faint outlines the camera cannot see"
 tags: ["The Nutrient", "AI & nutrition", "Food tracking accuracy"]
 ---
 
@@ -24,7 +26,19 @@ None of this makes photo logging useless. Directionally, most people learn a lot
 
 Fat is invisible in a photo. The least any of us building these tools can do is stop pretending it isn't.
 
+## BITE of the Week: A Dial for the Part the Camera Got Wrong
+
+![An app food log with a circular portions dial being turned, beside an unbroken timeline of meal entries with a repaired link](https://d8j0ntlcm91z4.cloudfront.net/user_3ElLNwQpO0GqKZ9IN6sdAl7YP6i/hf_20260801_151317_ff9bb60b-0f9c-4fca-ba4b-1bc26ea8be6d.png)
+
+Since Issue 1 we've shipped 1.3.0 and 1.3.1, and the feature most relevant to everything above is a small one: there's now a portions multiplier in the log editors. The AI gives you an estimate built for one serving. You ate one and a half. Previously that meant re-logging the meal or doing arithmetic in your head, which is exactly the kind of friction that makes people stop correcting the number and just accept whatever the model said. Now you turn a dial. Cheap to build, and it moves more accuracy than any model upgrade we could have shipped in the same week.
+
+The other half of this cycle was less fun. We fixed a set of bugs in the AI trackers where an estimate could come back empty, or a photo scan could hang instead of failing honestly, both of which are worse than a wrong number because you don't even get something to correct. We also merged a batch of fixes for a bug where food history could disappear silently, and gave every one of our backend calls a hard deadline so the app fails fast and tells you, rather than sitting on a spinner. Those last ones are on main now and go out with the next store build, not in 1.3.1, so if you're reading this the week it goes up, you don't have them yet.
+
+There's a pattern to the work I didn't plan and only noticed writing this: nearly all of it is about the app being honest with you when it doesn't know something. That's the same argument as the essay, arrived at from the bug tracker instead of a study.
+
 ## Three Quick Bites
+
+![Three news cards showing a lab kitchen scale weighing a meal, a prescription bottle, and a grocery cart](https://d8j0ntlcm91z4.cloudfront.net/user_3ElLNwQpO0GqKZ9IN6sdAl7YP6i/hf_20260801_151309_a40a0f68-80e7-41f1-b3ae-3eee917e4e9e.png)
 
 1. **AI photo food logs miss about a third of the fat.** Researchers cooked 102 meals in a metabolic kitchen and tested four popular photo-tracking apps against the true nutrition values. Every app underestimated calories, by 250 to 345 on average, largely because fat is hard to see in a photo. The findings haven't been peer-reviewed yet but were presented at NUTRITION 2026, the American Society for Nutrition's flagship meeting. [ScienceDaily](https://www.sciencedaily.com/releases/2026/07/260726015237.htm)
 
@@ -33,6 +47,8 @@ Fat is invisible in a photo. The least any of us building these tools can do is 
 3. **GLP-1 use is now reshaping what people put in the cart.** Consumer research presented at the 2026 Chicken Marketing Summit found 27% of respondents said someone in their household is on a GLP-1 medication, more than double the share from two years ago, and it's already changing how people shop for and prepare protein. Worth watching if you're thinking about food logging for a GLP-1 user: their portions and appetite can change week to week. [The National Provisioner](https://www.provisioneronline.com/articles/120975-glp-1-medications-and-ai-reshape-how-consumers-buy-prepare-and-eat-chicken)
 
 ## Tool of the Week: OpenNutriTracker
+
+![A phone scanning a barcode with an open food database flowing out of it beside an open padlock](https://d8j0ntlcm91z4.cloudfront.net/user_3ElLNwQpO0GqKZ9IN6sdAl7YP6i/hf_20260801_151314_71fa8550-bb59-44ce-a40c-b07c07c4a8c7.png)
 
 This week's pick is for anyone who read the essay above and wants a tracker that's upfront about where its numbers come from. OpenNutriTracker is a free, open-source, privacy-focused food diary for Android and iOS: barcode scanning, a food diary, custom meal plans, and a database pulled straight from Open Food Facts and USDA FoodData Central, so you can see exactly what it's drawing on. No account required, no ads, GPLv3 licensed. For builders, the source is a good read on how to wire a barcode-first, database-backed logging flow without leaning on an AI guess for foods that already have a real label. [github.com/simonoppowa/OpenNutriTracker](https://github.com/simonoppowa/OpenNutriTracker). Free and open source.
 

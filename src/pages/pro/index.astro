@@ -1,32 +1,82 @@
 ---
 /**
- * /pro: the Stripe customer portal's return_url (stripe-portal edge function
- * in the app repo) and the parent of the checkout return pages. Anyone here
- * either just finished managing their subscription in the portal or typed the
- * URL, and in both cases the answer is the same: BITE Coach lives in the app.
+ * /pro: the web checkout for BITE Coach, and the Stripe customer portal's
+ * return_url (stripe-portal edge function in the app repo).
+ *
+ * This page is the missing caller the stripe-checkout function always
+ * documented: it reads ?code= (influencer links like /pro?code=SARAH), shows
+ * both plans with live prices from the public stripe-prices function, and
+ * POSTs {plan, code} to stripe-checkout, which answers with a Stripe Checkout
+ * URL. Guests are a supported flow: Stripe collects their email and the app
+ * claims the purchase when they sign in with it (pending_entitlements).
+ *
+ * Copy honesty rules, mirrored from the app's paywall:
+ *   - trial claims come from the server (yearly.trialDays); if Stripe ever
+ *     zeroes the trial the static fallback labels carry no trial promise,
+ *   - the savings badge is the app's own live formula (yearly vs 12 months
+ *     of monthly, whole percent, hidden under 5%), never a struck-through
+ *     anchor,
+ *   - never the word "Subscribe" on a button.
+ * Prices render as an enhancement: if stripe-prices is unreachable the plan
+ * buttons still work and Stripe shows the amount at checkout.
  */
 import Base from '../../layouts/Base.astro';
 import { SITE } from '../../config';
+
+const FUNCTIONS_BASE = 'https://jknmrleqsegwbdpxjfxu.supabase.co/functions/v1';
 ---
 
 <Base
   title={`BITE Coach | ${SITE.name}`}
-  description="BITE Coach unlocks unlimited AI logging, Mr Bite coaching and weekly plans. Start from the BITE app."
+  description="BITE Coach unlocks unlimited AI logging, Mr Bite coaching and weekly plans. Start with a free trial on the yearly plan."
 >
   <section class="pro">
     <div class="container pro-inner">
       <p class="pro-kicker">BITE Coach</p>
       <h1 class="display">Everything BITE can do, with the limits off.</h1>
       <p class="lede">
-        Unlimited AI logging, Mr Bite coaching and weekly plans. Plans, prices
-        and the free trial all live in the BITE app.
+        Unlimited AI logging, Mr Bite coaching and weekly plans. Pay here,
+        then sign in to the app with the same email and it unlocks.
       </p>
-      <div class="pro-actions">
-        <a class="btn btn-primary" href={SITE.appScheme}>Open the BITE app</a>
-        <a class="btn btn-ghost" href="/">Back to bite.coach</a>
+
+      <p class="promo-chip" id="promo-chip" hidden>
+        Code <strong id="promo-code"></strong> goes with you to checkout.
+      </p>
+
+      <div class="plans">
+        <article class="plan plan-featured">
+          <header class="plan-head">
+            <h2>Yearly</h2>
+            <span class="plan-badge" id="yearly-badge" hidden></span>
+          </header>
+          <p class="plan-price"><strong id="yearly-amount"></strong><span id="yearly-per" hidden>/year</span></p>
+          <p class="plan-sub" id="yearly-sub">Renews yearly. Cancel any time.</p>
+          <button class="btn btn-primary plan-cta" id="yearly-cta" data-plan="yearly">
+            Choose yearly
+          </button>
+        </article>
+        <article class="plan">
+          <header class="plan-head">
+            <h2>Monthly</h2>
+          </header>
+          <p class="plan-price"><strong id="monthly-amount"></strong><span id="monthly-per" hidden>/month</span></p>
+          <p class="plan-sub">Renews monthly. Cancel any time.</p>
+          <button class="btn btn-ghost plan-cta" id="monthly-cta" data-plan="monthly">
+            Choose monthly
+          </button>
+        </article>
       </div>
+
+      <p class="pro-error" id="checkout-error" hidden>
+        We couldn't open checkout. Please try again in a moment, or start from
+        the BITE app instead.
+      </p>
+
+      <p class="pro-trust">Secure checkout by Stripe.</p>
+
       <p class="pro-foot">
-        Don't have the app yet? Get BITE free on the
+        Already a member, or just browsing?
+        <a href={SITE.appScheme}>Open the BITE app</a>, or get it free on the
         <a href={SITE.appStoreUrl}>App Store</a> or
         <a href={SITE.playStoreUrl}>Google Play</a>.
       </p>
@@ -34,14 +84,110 @@ import { SITE } from '../../config';
   </section>
 </Base>
 
+<script is:inline define:vars={{ functionsBase: FUNCTIONS_BASE }}>
+  (() => {
+    const $ = (id) => document.getElementById(id);
+    const code = (new URLSearchParams(location.search).get('code') || '').trim();
+    if (code) {
+      $('promo-code').textContent = code.toUpperCase();
+      $('promo-chip').hidden = false;
+    }
+
+    const money = (amount, currency) => {
+      try {
+        return new Intl.NumberFormat(undefined, {
+          style: 'currency',
+          currency,
+          minimumFractionDigits: amount % 100 === 0 ? 0 : 2,
+        }).format(amount / 100);
+      } catch (_) {
+        return null;
+      }
+    };
+
+    // Live prices are an enhancement, not a requirement: the buttons work
+    // without them and Stripe states the amount before anyone pays.
+    fetch(`${functionsBase}/stripe-prices`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((prices) => {
+        if (!prices || !prices.monthly || !prices.yearly) return;
+        const monthly = money(prices.monthly.amount, prices.monthly.currency);
+        const yearly = money(prices.yearly.amount, prices.yearly.currency);
+        if (monthly) {
+          $('monthly-amount').textContent = monthly;
+          $('monthly-per').hidden = false;
+        }
+        if (yearly) {
+          $('yearly-amount').textContent = yearly;
+          $('yearly-per').hidden = false;
+        }
+
+        // The app's own savings formula: yearly vs 12 months of monthly,
+        // whole percent, hidden under 5%, only when currencies match.
+        if (
+          prices.monthly.currency === prices.yearly.currency &&
+          prices.monthly.amount > 0 &&
+          prices.yearly.amount > 0
+        ) {
+          const percent = Math.round(
+            (1 - prices.yearly.amount / (prices.monthly.amount * 12)) * 100,
+          );
+          if (percent >= 5) {
+            $('yearly-badge').textContent = `Save ${percent}%`;
+            $('yearly-badge').hidden = false;
+          }
+        }
+
+        // Trial claims only when the server says the trial exists.
+        const trialDays = Number(prices.yearly.trialDays) || 0;
+        if (trialDays > 0) {
+          $('yearly-cta').textContent = `Start my ${trialDays}-day free trial`;
+          $('yearly-sub').textContent =
+            `${trialDays} days free, then it renews yearly. Cancel during the trial and pay nothing.`;
+        }
+      })
+      .catch(() => {});
+
+    const setBusy = (busy) => {
+      document.querySelectorAll('.plan-cta').forEach((b) => {
+        b.disabled = busy;
+      });
+    };
+
+    document.querySelectorAll('.plan-cta').forEach((button) => {
+      button.addEventListener('click', async () => {
+        $('checkout-error').hidden = true;
+        setBusy(true);
+        try {
+          const response = await fetch(`${functionsBase}/stripe-checkout`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(
+              code ? { plan: button.dataset.plan, code } : { plan: button.dataset.plan },
+            ),
+          });
+          const data = await response.json().catch(() => null);
+          if (!response.ok || !data || typeof data.url !== 'string') {
+            throw new Error('checkout_unavailable');
+          }
+          window.location.assign(data.url);
+        } catch (_) {
+          $('checkout-error').hidden = false;
+          setBusy(false);
+        }
+      });
+    });
+  })();
+</script>
+
 <style>
   /* The nav is position:sticky, so it stays in document flow and <main>
      already starts below it: pad for breathing room only, never for nav-h. */
   .pro {
-    padding: clamp(48px, 9vw, 96px) 0 var(--space-section);
+    padding: clamp(40px, 7vw, 80px) 0 var(--space-section);
   }
   .pro-inner {
-    max-width: 620px;
+    max-width: 720px;
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -55,16 +201,93 @@ import { SITE } from '../../config';
     text-transform: uppercase;
     font-size: 0.85rem;
   }
-  .pro-actions {
+  .promo-chip {
+    background: var(--coral-100);
+    color: var(--coral-600);
+    border-radius: 999px;
+    padding: 6px 16px;
+    font-size: 0.92rem;
+  }
+  .plans {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    width: 100%;
+    margin-top: 10px;
+    text-align: left;
+  }
+  @media (max-width: 620px) {
+    .plans {
+      grid-template-columns: 1fr;
+    }
+  }
+  .plan {
+    border: 1px solid var(--line);
+    border-radius: var(--r-xl);
+    background: var(--card);
+    box-shadow: var(--shadow-sm);
+    padding: 22px;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 12px;
-    margin-top: 8px;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .plan-featured {
+    border-color: var(--coral-300);
+    box-shadow: var(--shadow-md);
+  }
+  .plan-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .plan-head h2 {
+    font-size: 1.1rem;
+  }
+  .plan-badge {
+    background: var(--coral-100);
+    color: var(--coral-600);
+    border-radius: 999px;
+    padding: 3px 10px;
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+  .plan-price {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--ink);
+    min-height: 1.2em;
+  }
+  .plan-price span {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .plan-sub {
+    color: var(--muted);
+    font-size: 0.92rem;
+    flex: 1;
+  }
+  .plan-cta {
+    width: 100%;
+    cursor: pointer;
+  }
+  .plan-cta:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+  .pro-error {
+    color: var(--coral-600);
+    font-size: 0.95rem;
+  }
+  .pro-trust {
+    color: var(--faint);
+    font-size: 0.85rem;
   }
   .pro-foot {
     color: var(--muted);
     font-size: 0.92rem;
+    max-width: 52ch;
   }
   .pro-foot a {
     color: var(--coral-600);

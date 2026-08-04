@@ -33,3 +33,20 @@ import { SITE } from '../../config';
     </p>
   </CheckoutStatus>
 </Base>
+
+<script is:inline define:vars={{ scheme: SITE.appScheme }}>
+  // Best-effort automatic hand-back: on the phone that launched checkout, one
+  // scheme navigation makes iOS ask "Open in BITE?" without waiting for a tap.
+  // Browsers are free to ignore scriptable scheme jumps (Android Chrome mostly
+  // does without a gesture), so this is an attempt, never the path: the page's
+  // own button stays the reliable way back, and on desktop, where the scheme
+  // means nothing, we do not try at all.
+  (() => {
+    if (!/iPhone|iPad|iPod|Android/i.test(navigator.userAgent || '')) return;
+    setTimeout(() => {
+      try {
+        window.location.href = scheme;
+      } catch (_) {}
+    }, 450);
+  })();
+</script>

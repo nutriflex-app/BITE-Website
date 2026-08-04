@@ -1,0 +1,89 @@
+---
+import { icon } from '../../lib/icons';
+
+// Plain-text feature descriptions. These state the app's facts as real,
+// crawlable prose (not locked inside the decorative aria-hidden demos), so
+// search and AI answer engines can read and cite what Mr BITE actually does.
+const features = [
+  {
+    icon: 'camera',
+    title: 'Log any meal in seconds',
+    body: 'Log meals by photo, barcode, voice, or text search. Mr BITE estimates the calories and macros for you, so you never have to weigh food or dig through a database.',
+  },
+  {
+    icon: 'chat',
+    title: 'An AI coach, not a chatbot',
+    body: 'Mr BITE is an AI nutrition coach built around your targets. Tell it a goal, a constraint, or a craving, and it replies in plain language with recipes, meal plans, and swaps that fit your numbers.',
+  },
+  {
+    icon: 'target',
+    title: 'Personalised targets',
+    body: 'A few quick questions set your daily calorie and protein targets. Everything Mr BITE suggests is measured against those numbers, so progress does not rely on guesswork.',
+  },
+  {
+    icon: 'spark',
+    title: 'Weekly meal plans',
+    body: 'Pick a few meals you like and Mr BITE plans the rest of your week from recipes that already fit your targets. Adjust anything and the plan updates around it.',
+  },
+  {
+    icon: 'cart',
+    title: 'Shopping lists that write themselves',
+    body: 'Your weekly plan becomes a single shopping list, sorted by aisle, so one trip covers the whole week.',
+  },
+  {
+    icon: 'chart',
+    title: 'See it working',
+    body: 'Weight and macro trends update as you log, so you can see whether your plan is moving you toward your goal.',
+  },
+];
+---
+
+<section id="features" class="section features">
+  <div class="container">
+    <div class="section-head reveal">
+      <h2 class="display">What Mr BITE does</h2>
+      <p class="features-lede">
+        Mr BITE is a free nutrition tracker and AI coach for iPhone and Android. It combines fast meal
+        logging, personalised targets, AI meal planning, and automatic shopping lists in one app — with no
+        subscriptions, no in-app purchases, and no ads.
+      </p>
+    </div>
+
+    <ul class="feat-grid" role="list">
+      {features.map((f) => (
+        <li class="feat reveal">
+          <span class="feat-icon" aria-hidden="true" set:html={icon(f.icon, { size: 24, stroke: 1.8 })} />
+          <h3 class="feat-title">{f.title}</h3>
+          <p class="feat-body">{f.body}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .features { background: #fff; }
+  .section-head { max-width: 640px; margin: 0 auto 44px; text-align: center; }
+  .features-lede { margin-top: 16px; color: var(--ink-soft); font-size: 1.1rem; line-height: 1.6; }
+
+  .feat-grid {
+    list-style: none; padding: 0; margin: 0;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+  }
+  .feat {
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--r-lg);
+    padding: 26px; box-shadow: var(--shadow-sm);
+    transition: transform var(--dur-base) var(--ease), box-shadow var(--dur-base) var(--ease);
+  }
+  .feat:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+  .feat-icon {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 46px; height: 46px; border-radius: 13px;
+    background: var(--coral-100); color: var(--coral-600); margin-bottom: 16px;
+  }
+  .feat-title { font-size: 1.12rem; font-weight: 700; letter-spacing: -0.01em; color: var(--ink); margin-bottom: 8px; }
+  .feat-body { color: var(--muted); font-size: 0.96rem; line-height: 1.62; }
+
+  @media (max-width: 900px) { .feat-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .feat-grid { grid-template-columns: 1fr; } }
+</style>

@@ -2,17 +2,51 @@
 import Base from '../layouts/Base.astro';
 import Hero from '../components/sections/Hero.astro';
 import Proof from '../components/sections/Proof.astro';
+import Features from '../components/sections/Features.astro';
 import HowTimeline from '../components/sections/HowTimeline.astro';
 import MrBite from '../components/sections/MrBite.astro';
+// Reviews section is DISABLED until there are enough store reviews to show. To
+// re-enable: uncomment the import + aggregateRating block below, the <Reviews />
+// tag and aggregateRating prop in <Base>, and the `prebuild` script in
+// package.json. The fetch pipeline + data layer stay in place, ready to go.
+// import Reviews from '../components/sections/Reviews.astro';
 import Faq from '../components/sections/Faq.astro';
 import DownloadCta from '../components/sections/DownloadCta.astro';
+import { homeFaqs } from '../data/faqs';
+// import { reviewStats } from '../data/reviews';
+
+// Only expose an AggregateRating once enough genuine reviews back it — a rating
+// built on one or two reviews is noise (and risks a Google manual action).
+// const MIN_REVIEWS_FOR_SCHEMA = 5;
+// const aggregateRating =
+//   reviewStats.count >= MIN_REVIEWS_FOR_SCHEMA
+//     ? { ratingValue: reviewStats.average, reviewCount: reviewStats.count }
+//     : undefined;
+
+// FAQPage rich-result schema, generated from the same data the accordion renders.
+const faqSchema = [
+  {
+    '@type': 'FAQPage',
+    mainEntity: homeFaqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  },
+];
 ---
 
-<Base title="BITE | AI nutrition tracker & coach" description="Log any meal in seconds by photo, barcode, voice, or search. Mr Bite plans your week from recipes that hit your targets, then builds the shopping list. Free to download on the App Store and Google Play.">
+<Base
+  title="Mr BITE | AI nutrition tracker & coach"
+  description="Log any meal in seconds by photo, barcode, voice, or search. Mr BITE plans your week from recipes that hit your targets, then builds the shopping list. Free to download on the App Store and Google Play."
+  schema={faqSchema}
+>
   <Hero />
   <HowTimeline />
+  <Features />
   <Proof />
   <MrBite />
+  {/* <Reviews /> disabled until we have more store reviews */}
   <Faq />
   <DownloadCta />
 

@@ -4,25 +4,41 @@ import { SITE } from '../config';
 
 const faqs = [
   {
-    q: 'How does BITE work without tracking every meal?',
-    a: 'BITE gives you a personalised calorie and protein target, then lets you plan your week from portion-ready recipes that already fit those numbers. You stay on track without logging every snack, though you can always log by photo or voice when you want to.',
+    q: 'How does Mr BITE work without tracking every meal?',
+    a: 'Mr BITE gives you a personalised calorie and protein target, then lets you plan your week from portion-ready recipes that already fit those numbers. You stay on track without logging every snack, though you can always log by photo or voice when you want to.',
   },
   {
-    q: 'Is BITE free?',
-    a: 'BITE is free to download, and logging your food, planning your week and viewing your own data stay free with no ads. The AI features (photo and voice logging, Mr Bite chat, plan generation and recipe imports) are included up to a monthly allowance that refreshes on the 1st. BITE Pro is an optional subscription that removes those allowances and unlocks BITE Coach.',
+    q: 'Is Mr BITE free?',
+    a: 'Mr BITE is free to download, and logging your food, planning your week and viewing your own data stay free with no ads. The AI features (photo and voice logging, Mr BITE chat, plan generation and recipe imports) are included up to a monthly allowance that refreshes on the 1st. BITE Coach is an optional subscription that removes those allowances.',
   },
   {
     q: 'Which devices are supported?',
-    a: 'BITE is built for iPhone and Android. Download links are on the home page.',
+    a: 'Mr BITE is built for iPhone and Android. Download links are on the home page.',
   },
   {
     q: 'How do I delete my account or data?',
     a: 'You can delete your account from inside the app, or email us and we’ll handle it. See the Privacy Policy for details on data deletion.',
   },
 ];
+
+// FAQPage rich-result schema, generated from the same list rendered below.
+const faqSchema = [
+  {
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  },
+];
 ---
 
-<Base title={`Support | ${SITE.name}`} description={`Get help with ${SITE.name}. Contact our team and find answers to common questions.`}>
+<Base
+  title={`Support | ${SITE.name}`}
+  description={`Get help with ${SITE.name}. Contact our team and find answers to common questions.`}
+  schema={faqSchema}
+>
   <section class="support-hero">
     <div class="container">
       <h1 class="display">We're here to help.</h1>

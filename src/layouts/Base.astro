@@ -10,44 +10,106 @@ interface Props {
   title?: string;
   description?: string;
   image?: string;
-  /** Transactional pages (checkout returns) that search engines should skip. */
+  imageAlt?: string;
+  /** Extra schema.org nodes to merge into the page's @graph (e.g. FAQPage). */
+  schema?: Record<string, unknown>[];
+  /** schema.org type(s) for this page's WebPage node, e.g. 'AboutPage'. */
+  pageType?: string | string[];
+  /** Keep this page out of search indexes (e.g. thin or duplicate pages). */
   noindex?: boolean;
+  /** Real, on-page aggregate review rating for the app node. Only pass when
+   *  genuine reviews back it — never fabricate. */
+  aggregateRating?: { ratingValue: number; reviewCount: number };
 }
 
 const {
   title = `${SITE.name} · ${SITE.tagline}`,
   description = SITE.description,
   image = '/brand/app-icon.png',
+  imageAlt = `${SITE.name} — ${SITE.tagline}`,
+  schema = [],
+  pageType = 'WebPage',
   noindex = false,
+  aggregateRating,
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site ?? SITE.domain).href;
 const ogImage = new URL(image, Astro.site ?? SITE.domain).href;
 
-// Structured data - unambiguous entity for the app + brand. No aggregateRating
-// until real reviews exist (don't fabricate proof).
+// Public store links (app download URLs) and the full set of verified brand
+// profiles used for schema.org sameAs — store listings plus any socials.
+const downloadUrls = [SITE.appStoreUrl, SITE.playStoreUrl].filter((u) => u !== '#');
+const sameAs = [SITE.appStoreUrl, SITE.playStoreUrl, ...SITE.social].filter((u) => u !== '#');
+
+// Structured data - an unambiguous, cross-linked entity graph for the app,
+// brand, site, and this page. Rich enough for AI answer engines to identify
+// and describe Mr BITE. No aggregateRating or fabricated dates until real
+// reviews/data exist (don't fabricate proof).
 const jsonLd = {
   '@context': 'https://schema.org',
   '@graph': [
     {
+      '@type': 'WebSite',
+      '@id': `${SITE.domain}/#website`,
+      name: SITE.name,
+      url: SITE.domain,
+      description: SITE.description,
+      inLanguage: 'en-US',
+      publisher: { '@id': `${SITE.domain}/#organization` },
+    },
+    {
+      '@type': pageType,
+      '@id': `${canonical}#webpage`,
+      url: canonical,
+      name: title,
+      description,
+      isPartOf: { '@id': `${SITE.domain}/#website` },
+      about: { '@id': `${SITE.domain}/#organization` },
+      primaryImageOfPage: ogImage,
+      inLanguage: 'en-US',
+      dateModified: SITE.updated,
+    },
+    {
       '@type': 'SoftwareApplication',
+      '@id': `${SITE.domain}/#app`,
       name: SITE.name,
       applicationCategory: 'HealthApplication',
+      applicationSubCategory: 'Nutrition',
       operatingSystem: 'iOS, Android',
       description: SITE.description,
       url: SITE.domain,
+      featureList: [...SITE.features],
       offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-      ...(() => {
-        const urls = [SITE.appStoreUrl, SITE.playStoreUrl].filter((u) => u !== '#');
-        return urls.length ? { downloadUrl: urls } : {};
-      })(),
+      publisher: { '@id': `${SITE.domain}/#organization` },
+      author: { '@id': `${SITE.domain}/#organization` },
+      dateModified: SITE.updated,
+      ...(sameAs.length ? { sameAs } : {}),
+      ...(downloadUrls.length ? { downloadUrl: downloadUrls } : {}),
+      ...(aggregateRating
+        ? {
+            aggregateRating: {
+              '@type': 'AggregateRating',
+              ratingValue: aggregateRating.ratingValue,
+              reviewCount: aggregateRating.reviewCount,
+              bestRating: 5,
+              worstRating: 1,
+            },
+          }
+        : {}),
     },
     {
       '@type': 'Organization',
+      '@id': `${SITE.domain}/#organization`,
       name: SITE.name,
+      legalName: SITE.legalName,
       url: SITE.domain,
       logo: new URL('/brand/app-icon.png', SITE.domain).href,
+      description: SITE.description,
+      slogan: SITE.tagline,
+      email: SITE.supportEmail,
+      ...(sameAs.length ? { sameAs } : {}),
     },
+    ...schema,
   ],
 };
 ---
@@ -59,20 +121,27 @@ const jsonLd = {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    {noindex && <meta name="robots" content="noindex" />}
     <link rel="canonical" href={canonical} />
     <meta name="theme-color" content="#ffffff" />
+    <meta
+      name="robots"
+      content={noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large, max-snippet:-1'}
+    />
 
     <!-- Open Graph / social -->
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:locale" content="en_US" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
+    <meta property="og:image:alt" content={imageAlt} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={imageAlt} />
 
     <!-- Structured data -->
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />

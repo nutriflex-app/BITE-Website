@@ -1,0 +1,121 @@
+---
+import Base from '../../layouts/Base.astro';
+import { SITE } from '../../config';
+import { getCollection, type CollectionEntry } from 'astro:content';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime(),
+);
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+
+const title = `Blog | ${SITE.name}`;
+const description = `The Nutrient — notes on nutrition, AI, and building ${SITE.name} in the open. Written by the team behind the trust-first nutrition tracker and AI coach.`;
+
+// CollectionPage node listing the posts, merged into Base's schema.org @graph.
+const listSchema: Record<string, unknown>[] = [
+  {
+    '@type': 'CollectionPage',
+    '@id': `${SITE.domain}/blog/#webpage`,
+    name: 'The Nutrient',
+    description,
+    isPartOf: { '@id': `${SITE.domain}/#website` },
+    hasPart: posts.map((p: CollectionEntry<'blog'>) => ({
+      '@type': 'BlogPosting',
+      headline: p.data.title,
+      url: `${SITE.domain}/blog/${p.slug}/`,
+      datePublished: p.data.pubDate.toISOString(),
+    })),
+  },
+];
+---
+
+<Base title={title} description={description} pageType={['WebPage', 'CollectionPage']} schema={listSchema}>
+  <section class="blog-hero">
+    <div class="container">
+      <p class="blog-kicker">The Nutrient</p>
+      <h1 class="display">Nutrition, AI, and building in the open</h1>
+      <p class="lede">
+        Short, honest notes on where nutrition tech is heading — and what we're learning while we
+        build {SITE.name}. New issues land here first.
+      </p>
+    </div>
+  </section>
+
+  <section class="section blog-list-sec">
+    <div class="container">
+      {posts.length === 0 ? (
+        <p class="blog-empty">No posts yet — check back soon.</p>
+      ) : (
+        <ul class="blog-grid">
+          {posts.map((post: CollectionEntry<'blog'>) => (
+            <li class="blog-card reveal">
+              <a href={`/blog/${post.slug}/`} class="blog-card-link">
+                {post.data.heroImage && (
+                  <span class="blog-card-media">
+                    <img src={post.data.heroImage} alt={post.data.heroImageAlt ?? ''} loading="lazy" decoding="async" />
+                  </span>
+                )}
+                <span class="blog-card-body">
+                  {post.data.tags?.[0] && <span class="blog-card-tag">{post.data.tags[0]}</span>}
+                  <span class="blog-card-title">{post.data.title}</span>
+                  <span class="blog-card-desc">{post.data.description}</span>
+                  <span class="blog-card-meta">
+                    <span>{post.data.author}</span>
+                    <span aria-hidden="true">·</span>
+                    <time datetime={post.data.pubDate.toISOString()}>{fmt(post.data.pubDate)}</time>
+                  </span>
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  </section>
+</Base>
+
+<style>
+  .blog-hero { padding-top: clamp(44px, 7vw, 88px); padding-bottom: 4px; }
+  .blog-kicker {
+    font-size: 0.82rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--coral-600); margin-bottom: 12px;
+  }
+  .blog-hero h1 { font-size: clamp(2.4rem, 6vw, 3.8rem); margin: 0 0 16px; max-width: 15ch; }
+  .blog-hero .lede { max-width: 58ch; }
+
+  .blog-list-sec { padding-top: clamp(32px, 5vw, 52px); }
+  .blog-grid {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 26px;
+  }
+  .blog-card {
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--r-lg);
+    box-shadow: var(--shadow-sm); overflow: hidden;
+    transition: transform var(--dur-base) var(--ease), box-shadow var(--dur-base) var(--ease), border-color var(--dur-fast) var(--ease);
+  }
+  .blog-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--coral-300); }
+  .blog-card-link { display: flex; flex-direction: column; height: 100%; }
+  .blog-card-media { display: block; aspect-ratio: 16 / 9; background: var(--line-soft); overflow: hidden; }
+  .blog-card-media img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--dur-slow) var(--ease); }
+  .blog-card:hover .blog-card-media img { transform: scale(1.03); }
+  .blog-card-body { display: flex; flex-direction: column; gap: 10px; padding: 22px 22px 24px; flex: 1; }
+  .blog-card-tag {
+    align-self: flex-start; font-size: 0.74rem; font-weight: 700; letter-spacing: 0.02em;
+    color: var(--coral-600); background: var(--coral-100); padding: 4px 10px; border-radius: 999px;
+  }
+  .blog-card-title {
+    font-family: var(--font-display); font-weight: 800; letter-spacing: -0.02em;
+    font-size: 1.28rem; line-height: 1.25; color: var(--ink);
+  }
+  .blog-card-desc { color: var(--muted); font-size: 0.98rem; line-height: 1.55; flex: 1; }
+  .blog-card-meta { display: flex; align-items: center; gap: 8px; font-size: 0.86rem; color: var(--faint); margin-top: 4px; }
+  .blog-card-meta span:first-child { font-weight: 600; color: var(--ink-soft); }
+
+  .blog-empty { color: var(--muted); }
+
+  @media (max-width: 560px) {
+    .blog-grid { grid-template-columns: 1fr; gap: 20px; }
+  }
+</style>

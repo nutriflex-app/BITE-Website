@@ -1,0 +1,145 @@
+---
+import { homeReviews, reviewStats } from '../../data/reviews';
+import { SITE } from '../../config';
+
+// Real reviews pulled from the App Store + Google Play (see src/data/reviews.ts).
+// If there are none yet, render nothing rather than an empty shell.
+const reviews = homeReviews;
+
+const fmtDate = (iso?: string | null) => {
+  if (!iso) return '';
+  const d = new Date(iso);
+  return Number.isNaN(d.valueOf())
+    ? ''
+    : d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+};
+
+const sourceLabel = { app_store: 'App Store', play_store: 'Google Play' } as const;
+const sourceHref = { app_store: SITE.appStoreUrl, play_store: SITE.playStoreUrl } as const;
+
+// Apple + Google Play brand marks (single-path, currentColor).
+const APPLE_MARK =
+  '<path d="M16.5 12.4c0-2 1.6-3 1.7-3-1-1.4-2.4-1.6-3-1.6-1.3-.1-2.5.7-3.1.7-.6 0-1.6-.7-2.7-.7-1.4 0-2.7.8-3.4 2.1-1.4 2.5-.4 6.3 1 8.3.7 1 1.5 2.1 2.5 2 1-.1 1.4-.6 2.6-.6s1.5.6 2.6.6c1.1 0 1.7-1 2.4-2 .5-.7.8-1.4 1-1.6-.1 0-2-.8-2-3.2z"/><path d="M14.6 6.3c.5-.7.9-1.6.8-2.5-.8 0-1.7.5-2.3 1.2-.5.6-.9 1.5-.8 2.4.9 0 1.7-.4 2.3-1.1z"/>';
+const PLAY_MARK =
+  '<path d="M4.5 3.2c-.3.2-.5.5-.5 1v15.6c0 .5.2.8.5 1l8.6-8.8-8.6-8.8z"/><path d="M16.3 8.9l-2.6-1.5-2.6 2.6 2.6 2.6 2.7-1.5c.8-.5.8-1.7-.1-2.2z"/><path d="M13.1 11.9l-8.4 8.6c.3.2.7.2 1.1 0l9.9-5.7-2.6-2.9z"/><path d="M14.1 6.9L5.7 2c-.4-.2-.8-.2-1.1 0l8.4 8.6 1.1-3.7z"/>';
+---
+
+{
+  reviews.length > 0 && (
+    <section id="reviews" class="section reviews">
+      <div class="container">
+        <div class="section-head reveal">
+          <h2 class="display">What early users say.</h2>
+          <p class="lede">
+            Real reviews from the App Store and Google Play — pulled straight from the stores.
+          </p>
+        </div>
+
+        <div class="reviews-grid reveal" role="list">
+          {reviews.map((r) => (
+            <figure class="review card-surface" role="listitem">
+              <div class="review-stars" aria-label={`Rated ${r.rating} out of 5`}>
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <svg
+                    class={i < r.rating ? 'star star--on' : 'star'}
+                    viewBox="0 0 24 24"
+                    width="16"
+                    height="16"
+                    aria-hidden="true"
+                  >
+                    <path d="M12 2.5l2.9 5.9 6.6 1-4.8 4.6 1.1 6.5L12 21.4 6.2 20.5l1.1-6.5L2.5 9.4l6.6-1L12 2.5z" />
+                  </svg>
+                ))}
+              </div>
+
+              <blockquote class="review-body">
+                {r.title && <span class="review-title">{r.title} </span>}
+                {r.body}
+              </blockquote>
+
+              <figcaption class="review-foot">
+                <span class="review-author">{r.author}</span>
+                <a
+                  class="review-source"
+                  href={sourceHref[r.source]}
+                  target="_blank"
+                  rel="noopener"
+                  aria-label={`${r.author} on the ${sourceLabel[r.source]}`}
+                >
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true" set:html={r.source === 'app_store' ? APPLE_MARK : PLAY_MARK} />
+                  <span>{sourceLabel[r.source]}</span>
+                  {fmtDate(r.date) && <span class="review-date">· {fmtDate(r.date)}</span>}
+                </a>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+  }
+  .review {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 22px 22px 18px;
+    border-radius: var(--r-lg);
+  }
+  .review-stars { display: inline-flex; gap: 2px; }
+  .star { color: var(--line); }
+  .star--on { color: #f5a623; }
+  .review-body {
+    margin: 0;
+    color: var(--ink);
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+  .review-title { font-weight: 700; }
+  .review-foot {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-top: 4px;
+  }
+  .review-author { font-weight: 700; font-size: 0.92rem; color: var(--ink); }
+  .review-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.82rem;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color var(--dur-fast) var(--ease);
+  }
+  .review-source:hover { color: var(--coral-600); }
+  .review-date { color: var(--faint); }
+
+  /* Grid inherits .reveal; stagger the cards as the grid enters view. */
+  .reviews-grid.reveal .review {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity var(--dur-slow) var(--ease), transform var(--dur-slow) var(--ease);
+  }
+  .reviews-grid.reveal.in .review { opacity: 1; transform: none; }
+  .reviews-grid.reveal.in .review:nth-child(2) { transition-delay: 0.06s; }
+  .reviews-grid.reveal.in .review:nth-child(3) { transition-delay: 0.12s; }
+  .reviews-grid.reveal.in .review:nth-child(4) { transition-delay: 0.18s; }
+  .reviews-grid.reveal.in .review:nth-child(5) { transition-delay: 0.24s; }
+  .reviews-grid.reveal.in .review:nth-child(6) { transition-delay: 0.3s; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reviews-grid.reveal .review { opacity: 1; transform: none; transition: none; }
+  }
+  @media (max-width: 560px) {
+    .reviews-grid { grid-template-columns: 1fr; }
+  }
+</style>

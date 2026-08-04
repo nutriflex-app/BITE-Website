@@ -8,11 +8,15 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "check": "astro check"
+    "check": "astro check",
+    "reviews": "node scripts/fetch-reviews.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.2.1",
     "@fontsource-variable/inter": "^5.2.8",
     "astro": "^4.16.18"
+  },
+  "devDependencies": {
+    "google-play-scraper": "^10.0.0"
   }
 }

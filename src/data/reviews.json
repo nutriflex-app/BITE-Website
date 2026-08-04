@@ -1,0 +1,20 @@
+{
+  "updatedAt": "2026-07-19T19:11:13.751Z",
+  "counts": {
+    "total": 1,
+    "appStore": 0,
+    "playStore": 1
+  },
+  "reviews": [
+    {
+      "id": "play_store:9d2f5a12-fe29-42c4-9af8-55567e4ad531",
+      "source": "play_store",
+      "author": "Michael Andonia",
+      "rating": 5,
+      "title": "",
+      "body": "AI nutrition coach? about time finally... Literally does everything for me !",
+      "date": "2026-07-04T17:44:16.593Z",
+      "country": "us"
+    }
+  ]
+}

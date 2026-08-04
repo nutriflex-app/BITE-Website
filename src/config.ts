@@ -12,6 +12,9 @@ export const SITE = {
   // Public store links. Use '#' while unpublished; the badge is then not rendered.
   appStoreUrl: 'https://apps.apple.com/app/id6755889300', // live 2026-07-17, v1.1.0
   playStoreUrl: 'https://play.google.com/store/apps/details?id=com.nutriflex.systems.app',
+  // The app's custom URL scheme (app.config.js `scheme` in the app repo).
+  // The checkout return pages use it to hand the user back to the app.
+  appScheme: 'com.nutriflex.systems.app://',
   // Contact shown on the support + legal pages (mirrors the app's PrivacyScreen).
   supportEmail: 'support@nutriflex.app',
   privacyEmail: 'privacy@nutriflex.app',

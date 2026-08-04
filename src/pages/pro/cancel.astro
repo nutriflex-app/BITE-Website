@@ -1,0 +1,24 @@
+---
+/**
+ * Stripe Checkout cancel_url: where the browser lands when the user backs out
+ * of checkout without paying. The one thing this page must say, plainly, is
+ * that nothing was charged.
+ */
+import Base from '../../layouts/Base.astro';
+import CheckoutStatus from '../../components/CheckoutStatus.astro';
+import { SITE } from '../../config';
+---
+
+<Base
+  title={`Checkout cancelled | ${SITE.name}`}
+  description="Your BITE Coach checkout was cancelled and nothing was charged."
+  noindex
+>
+  <CheckoutStatus mark="cancel" title="Checkout cancelled.">
+    <p>You backed out before paying, so nothing was charged.</p>
+    <p>
+      If you change your mind, the plans are right where you left them in the
+      BITE app.
+    </p>
+  </CheckoutStatus>
+</Base>

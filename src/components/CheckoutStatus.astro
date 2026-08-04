@@ -1,0 +1,89 @@
+---
+/**
+ * Shared shell for the Stripe checkout return pages (/pro/success, /pro/cancel).
+ *
+ * These URLs are where Stripe sends the external browser after checkout, so
+ * their one job is closing the loop back to the app: a clear one-line verdict,
+ * then an "Open the BITE app" button on the app's custom scheme. Checkout is
+ * launched FROM the app into the phone's browser, so the scheme resolves on
+ * the device that matters. A desktop guest checkout lands here too, hence the
+ * sign-in-on-your-phone line instead of pretending the button works there.
+ */
+import { SITE } from '../config';
+
+interface Props {
+  mark: 'success' | 'cancel';
+  title: string;
+}
+
+const { mark, title } = Astro.props;
+---
+
+<section class="status">
+  <div class="container status-inner">
+    <span class={`status-mark ${mark === 'success' ? 'is-success' : 'is-cancel'}`} aria-hidden="true">
+      {mark === 'success' ? '✓' : '✕'}
+    </span>
+    <h1 class="display">{title}</h1>
+    <div class="status-body lede">
+      <slot />
+    </div>
+    <div class="status-actions">
+      <a class="btn btn-primary" href={SITE.appScheme}>Open the BITE app</a>
+      <a class="btn btn-ghost" href="/">Back to bite.coach</a>
+    </div>
+    <p class="status-foot">
+      Checked out on a computer? Open BITE on your phone and sign in with the
+      same email you used at checkout.
+    </p>
+  </div>
+</section>
+
+<style>
+  .status {
+    padding: calc(var(--nav-h) + clamp(48px, 9vw, 96px)) 0 var(--space-section);
+  }
+  .status-inner {
+    max-width: 560px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+  }
+  .status-mark {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 28px;
+    font-weight: 700;
+  }
+  /* Fill-grade colors are decorative only; the glyph uses the text-safe step. */
+  .status-mark.is-success {
+    background: rgba(16, 185, 129, 0.12);
+    color: var(--carbs-600);
+  }
+  .status-mark.is-cancel {
+    background: var(--line-soft);
+    color: var(--muted);
+  }
+  .status-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .status-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .status-foot {
+    color: var(--muted);
+    font-size: 0.92rem;
+    max-width: 46ch;
+  }
+</style>

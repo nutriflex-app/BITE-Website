@@ -1,0 +1,71 @@
+---
+/**
+ * /pro: the Stripe customer portal's return_url (stripe-portal edge function
+ * in the app repo) and the parent of the checkout return pages. Anyone here
+ * either just finished managing their subscription in the portal or typed the
+ * URL, and in both cases the answer is the same: BITE Coach lives in the app.
+ */
+import Base from '../../layouts/Base.astro';
+import { SITE } from '../../config';
+---
+
+<Base
+  title={`BITE Coach | ${SITE.name}`}
+  description="BITE Coach unlocks unlimited AI logging, Mr Bite coaching and weekly plans. Start from the BITE app."
+>
+  <section class="pro">
+    <div class="container pro-inner">
+      <p class="pro-kicker">BITE Coach</p>
+      <h1 class="display">Everything BITE can do, with the limits off.</h1>
+      <p class="lede">
+        Unlimited AI logging, Mr Bite coaching and weekly plans. Plans, prices
+        and the free trial all live in the BITE app.
+      </p>
+      <div class="pro-actions">
+        <a class="btn btn-primary" href={SITE.appScheme}>Open the BITE app</a>
+        <a class="btn btn-ghost" href="/">Back to bite.coach</a>
+      </div>
+      <p class="pro-foot">
+        Don't have the app yet? Get BITE free on the
+        <a href={SITE.appStoreUrl}>App Store</a> or
+        <a href={SITE.playStoreUrl}>Google Play</a>.
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .pro {
+    padding: calc(var(--nav-h) + clamp(48px, 9vw, 96px)) 0 var(--space-section);
+  }
+  .pro-inner {
+    max-width: 620px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+  }
+  .pro-kicker {
+    color: var(--coral-600);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+  }
+  .pro-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .pro-foot {
+    color: var(--muted);
+    font-size: 0.92rem;
+  }
+  .pro-foot a {
+    color: var(--coral-600);
+    font-weight: 600;
+  }
+</style>

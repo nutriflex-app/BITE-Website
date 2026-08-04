@@ -1,0 +1,35 @@
+---
+/**
+ * Stripe Checkout success_url (see supabase/functions/stripe-checkout in the
+ * app repo: `${PRO_PAGE_URL}/success?session_id=...`). Users used to land on
+ * a 404 here after paying, which read as "something went wrong" at the exact
+ * moment everything had gone right.
+ *
+ * Copy honesty: this page cannot say "payment received". The yearly plan
+ * starts a 14-day trial, so on that path nothing has been charged yet, and
+ * this static page cannot tell the two apart. "Checkout complete" is true on
+ * both. Entitlement really does land on its own: the app syncs with Stripe
+ * when it comes back to the foreground, and Refresh status on the plan screen
+ * is the manual fallback.
+ */
+import Base from '../../layouts/Base.astro';
+import CheckoutStatus from '../../components/CheckoutStatus.astro';
+import { SITE } from '../../config';
+---
+
+<Base
+  title={`Checkout complete | ${SITE.name}`}
+  description="Your BITE Coach checkout is complete. Head back to the BITE app to continue."
+  noindex
+>
+  <CheckoutStatus mark="success" title="You're all set.">
+    <p>
+      Your BITE Coach checkout is complete. Head back to the BITE app, your
+      upgrade is waiting for you there.
+    </p>
+    <p>
+      The app picks it up within a few moments of opening. If it still shows
+      your old plan, tap Refresh status on the plan screen.
+    </p>
+  </CheckoutStatus>
+</Base>

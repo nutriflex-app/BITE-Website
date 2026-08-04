@@ -10,12 +10,15 @@ interface Props {
   title?: string;
   description?: string;
   image?: string;
+  /** Transactional pages (checkout returns) that search engines should skip. */
+  noindex?: boolean;
 }
 
 const {
   title = `${SITE.name} · ${SITE.tagline}`,
   description = SITE.description,
   image = '/brand/app-icon.png',
+  noindex = false,
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site ?? SITE.domain).href;
@@ -56,6 +59,7 @@ const jsonLd = {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
     <link rel="canonical" href={canonical} />
     <meta name="theme-color" content="#ffffff" />
 

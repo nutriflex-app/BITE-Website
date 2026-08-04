@@ -1,111 +1,240 @@
 ---
 import { Picture } from 'astro:assets';
-import s1 from '../../assets/screens/showcase-3-track.jpg';
-import s2 from '../../assets/screens/showcase-1-coach.jpg';
-import s3 from '../../assets/screens/showcase-2-chat.jpg';
-import s4 from '../../assets/screens/showcase-4-mealprep.jpg';
-import s5 from '../../assets/screens/showcase-5-recipes.jpg';
-import s6 from '../../assets/screens/showcase-6-shopping.jpg';
+import s1 from '../../assets/screens/poster-3-photo-log.jpg';
+import s2 from '../../assets/screens/poster-2-coach-chat.jpg';
+import s3 from '../../assets/screens/poster-5-insights.jpg';
+import s4 from '../../assets/screens/poster-4-recipe-import.jpg';
+import s5 from '../../assets/screens/poster-1-dashboard.jpg';
 
-// The six designed App Store posters (real app marketing frames). These are images OF
-// TEXT, so the alt carries the words that are actually in the picture (WCAG 1.1.1).
-// It used to cite "Step 2", "Step 3" and so on, which coupled it to the How section's
-// numbering and described copy that is not in the image at all.
+// The five designed App Store posters (2026-08-04 Canva set v3: coach typo fixed,
+// insights poster added; display order follows the Canva page order). These are
+// images OF TEXT, so the alt carries the words that are actually in the picture
+// (WCAG 1.1.1) plus what the screen shows.
 const showcase = [
-  { img: s1, alt: 'Track Any Way: the daily dashboard with a calorie ring and macro bars, plus photo tracking, barcode scan, and quick logging' },
-  { img: s2, alt: 'Meet Mr BITE, a coach in your back pocket: the mascot greeting you beside a daily targets card' },
-  { img: s3, alt: 'Mr BITE recommending lunch recipes that fit your numbers' },
-  { img: s4, alt: 'Meal prep mode, with a portion-ready recipe and a health score' },
-  { img: s5, alt: 'The recipe library, browsable by craving' },
-  { img: s6, alt: 'A week of meals turned into one shopping list, sorted by aisle' },
+  { img: s1, alt: 'Snap a photo, stay on track: a photographed salad logged with its calories and macros' },
+  { img: s2, alt: 'Will coach you to reach your goals: a chat where Mr Bite plans next week for a 1kg loss and offers the shopping list' },
+  { img: s3, alt: 'Get personal insights: the trends screen with a two day streak, achievements, average calories versus target, and Bite’s read of your week' },
+  { img: s4, alt: 'Save any recipe link: recipes imported from Instagram and TikTok with their calories, protein and cook time' },
+  { img: s5, alt: 'Beginner friendly weight loss: the daily dashboard with a calorie ring, protein, carb and fat bars, logged meals, and a water tracker' },
 ];
 ---
 
 <section class="proof">
+  <!-- The fan sits straight on the page: the site is white-first, and a boxed
+       dark stage read as foreign next to it (founder call, 2026-08-04). A soft
+       coral wash low in the section gives the cards a surface to sit on without
+       reintroducing a wrapper. -->
+  <div class="proof-bg" aria-hidden="true"></div>
+
   <div class="container">
-    <div class="proof-panel">
-      <div class="proof-glow" aria-hidden="true"></div>
-      <div class="proof-head">
-        <h2 class="proof-h display">See it in the app.</h2>
-        <p class="proof-sub">Real screens from the app. Swipe through tracking, coaching, planning, and shopping.</p>
-      </div>
-      <div class="shots-wrap">
-        <!-- tabindex makes the scroller reachable by keyboard. It overflows, hides its
-             scrollbar, and holds no focusable children, so without this a keyboard user
-             can see the first few posters and reach the rest by no means at all. -->
-        <div class="shots reveal" role="list" aria-label="Mr BITE app screens" tabindex="0">
-          {showcase.map((s) => (
-            <figure class="shot" role="listitem">
+    <div class="deck-wrap">
+      <!-- tabindex keeps the deck keyboard-reachable. Below 900px it is a snap
+           scroller with no focusable children, so without this a keyboard user
+           could see the first posters and reach the rest by no means at all.
+           It stays on at desktop too: at 200%+ zoom the 900px query flips and
+           the fan becomes that scroller again, and a conditional tabindex
+           would need JS to track. -->
+      <div class="deck reveal" role="list" aria-label="Mr BITE App Store posters" tabindex="0">
+        {showcase.map((s) => (
+          <div class="deal" role="listitem">
+            <figure class="deck-card">
               <Picture
                 src={s.img}
                 formats={['avif', 'webp']}
-                widths={[220, 440]}
-                sizes="(max-width: 560px) 76vw, 190px"
+                widths={[188, 376, 520]}
+                sizes="(max-width: 380px) 67vw, (max-width: 900px) 258px, 188px"
                 alt={s.alt}
                 loading="lazy"
                 decoding="async"
               />
             </figure>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
     </div>
   </div>
 </section>
 
+<script is:inline>
+  // Poses the cards from their position in the DECK, not from page scroll: the
+  // deck is a horizontal scroller on phones, so swiping it reshapes the fan live
+  // under your thumb. It listens to the deck's own scroll event, so scrolling the
+  // page past the section deliberately does nothing here.
+  //
+  // Everything degrades: without this the stylesheet's static --cd values already
+  // render the finished fan, so a no-JS visitor loses the interaction and nothing
+  // else. Reduced-motion users keep that static fan too.
+  (() => {
+    const deck = document.querySelector('.deck');
+    if (!deck) return;
+    const deals = [...deck.querySelectorAll('.deal')];
+    if (!deals.length) return;
+    const mq = window.matchMedia ? matchMedia('(prefers-reduced-motion: reduce)') : null;
+
+    let ticking = false;
+    const clear = () => deals.forEach((el) => {
+      el.style.removeProperty('--cd');
+      el.style.removeProperty('--acd');
+    });
+
+    const apply = () => {
+      ticking = false;
+      if (mq && mq.matches) { clear(); return; }
+      const dr = deck.getBoundingClientRect();
+      if (!dr.width) return;
+      const mid = dr.left + dr.width / 2;
+      const half = dr.width / 2;
+      deals.forEach((el) => {
+        const r = el.getBoundingClientRect();
+        // This card's centre offset from the deck's centre, in half-widths.
+        // Clamped so a card parked far off screen cannot tip over or shrink away.
+        const d = Math.max(-1.6, Math.min(1.6, (r.left + r.width / 2 - mid) / half));
+        el.style.setProperty('--cd', d.toFixed(4));
+        el.style.setProperty('--acd', Math.abs(d).toFixed(4));
+      });
+    };
+    const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(apply); } };
+
+    deck.addEventListener('scroll', onScroll, { passive: true });
+    addEventListener('resize', onScroll);
+    if (mq && mq.addEventListener) mq.addEventListener('change', apply);
+    apply();
+  })();
+</script>
+
 <style>
-  .proof { background: #fff; padding-block: clamp(40px, 6vw, 76px); }
-  .proof-panel {
-    position: relative; isolation: isolate; overflow: hidden;
-    border-radius: var(--r-panel);
-    background: var(--ink-surface);
-    padding-block: clamp(34px, 4.5vw, 60px);
-    box-shadow: var(--shadow-panel);
-  }
-  .proof-glow {
+  /* Extra bottom padding: the outer fan cards sit 24px lower and cast shadows. */
+  /* Top padding is deliberately tiny: the screens are a continuation of the hero
+     (founder call 2026-08-04), so the two read as one section rather than as a hero
+     followed by a separate showcase. Bottom padding keeps the normal section rhythm
+     against the FAQ below. */
+  .proof { position: relative; background: #fff; padding-block: clamp(6px, 1vw, 14px) clamp(56px, 7vw, 96px); }
+  /* The "table": a wide, quiet coral wash pooled under the fan, same recipe as
+     the hero's washes. Strong enough to seat the cards without becoming a panel
+     in its own right. */
+  .proof-bg {
     position: absolute; inset: 0; z-index: 0; pointer-events: none;
     background:
-      radial-gradient(60% 80% at 92% -8%, rgba(255, 118, 118, 0.22), transparent 60%),
-      radial-gradient(46% 60% at 2% 108%, rgba(124, 92, 196, 0.14), transparent 62%);
+      radial-gradient(58% 46% at 50% 72%, rgba(253, 102, 100, 0.09), transparent 70%),
+      radial-gradient(30% 26% at 12% 30%, rgba(254, 154, 153, 0.05), transparent 70%);
   }
-  .proof-head { position: relative; z-index: 1; padding-inline: clamp(26px, 4vw, 56px); margin-bottom: clamp(24px, 3vw, 38px); }
-  .proof-h { color: #fff; margin-bottom: 10px; }
-  .proof-sub { color: rgba(255, 255, 255, 0.6); font-size: clamp(1.02rem, 1.4vw, 1.18rem); max-width: 48ch; }
-  .shots-wrap { position: relative; z-index: 1; }
-  .shots-wrap::before, .shots-wrap::after { content: ''; position: absolute; top: 0; bottom: 0; width: clamp(20px, 4vw, 56px); z-index: 2; pointer-events: none; }
-  .shots-wrap::before { left: 0; background: linear-gradient(90deg, var(--ink-surface), transparent); }
-  .shots-wrap::after { right: 0; background: linear-gradient(270deg, var(--ink-surface), transparent); }
-  .shots {
-    display: flex; gap: 16px;
-    overflow-x: auto; scroll-snap-type: x mandatory;
-    padding-block: 6px 14px;
-    padding-inline: clamp(26px, 4vw, 56px);
-    -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  .proof .container { position: relative; z-index: 1; }
+
+  .deck-wrap { position: relative; }
+  /* Edge fades only matter when the deck scrolls (<=900px); parked at 0 here. */
+  .deck-wrap::before, .deck-wrap::after {
+    content: ''; position: absolute; top: 0; bottom: 0; width: clamp(20px, 4vw, 44px);
+    z-index: 2; pointer-events: none; opacity: 0;
   }
-  .shots::-webkit-scrollbar { display: none; }
-  /* White ring: the default coral focus outline is near-invisible on the dark panel. */
-  .shots:focus-visible { outline: 2px solid #fff; outline-offset: 4px; border-radius: 8px; }
-  .shot {
-    flex: 0 0 auto; width: clamp(148px, 18vw, 186px); margin: 0;
-    scroll-snap-align: start; border-radius: 20px; overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
-    opacity: 0; transform: translateY(16px) scale(0.97);
-    transition: opacity var(--dur-slow) var(--ease), transform var(--dur-slow) var(--ease);
+  .deck-wrap::before { left: 0; background: linear-gradient(90deg, #fff, transparent); }
+  .deck-wrap::after { right: 0; background: linear-gradient(270deg, #fff, transparent); }
+
+  /* Desktop: a fanned hand of cards, dealt out of a centre pile on reveal.
+     The deck itself must NOT fade like a normal .reveal (the class is only there
+     so Base's observer flips .in on it): an invisible pre-state would also hide
+     the pile from no-JS visitors. The cards move; the deck never disappears. */
+  .deck.reveal {
+    opacity: 1; transform: none; transition: none;
+    display: flex; justify-content: center;
+    padding-block: 8px 12px;
   }
-  .shots.in .shot { opacity: 1; transform: none; }
-  .shots.in .shot:nth-child(2) { transition-delay: 0.06s; }
-  .shots.in .shot:nth-child(3) { transition-delay: 0.12s; }
-  .shots.in .shot:nth-child(4) { transition-delay: 0.18s; }
-  .shots.in .shot:nth-child(5) { transition-delay: 0.24s; }
-  .shots.in .shot:nth-child(6) { transition-delay: 0.30s; }
-  .shot :global(img) { width: 100%; height: auto; display: block; }
+
+  /* Every card's pose is a pure function of WHERE IT SITS in the deck, expressed
+     as --cd: 0 at the centre of the visible deck, -1 one half-width to the left,
+     +1 to the right (--acd is its absolute value, because CSS abs() is too new to
+     rely on). Rotation takes the signed value so the hand fans symmetrically;
+     lift and shrink take the absolute one so cards fall away in both directions.
+
+     The point of driving it off position rather than off page scroll: on a phone
+     the deck is a horizontal scroller, so swiping it changes every card's --cd
+     live and the fan reshapes under your thumb. On desktop the positions are
+     fixed, so the very same formula renders the static fan with no script needed. */
+  .deal {
+    position: relative; z-index: var(--z, 1);
+    flex: 0 0 auto; width: clamp(150px, 15.2vw, 188px); margin-inline: -16px;
+    transform-origin: 50% 88%;   /* pivot near the base, so cards splay like a held hand */
+    /* No transition: the transform tracks scroll position directly, and any
+       easing here would lag the finger and rubber-band when you reverse. */
+    transform:
+      translateY(calc(var(--acd, 0) * var(--lift, 26px)))
+      rotate(calc(var(--cd, 0) * var(--tilt, 9deg)))
+      scale(calc(1 - var(--acd, 0) * var(--shrink, 0.045)));
+    will-change: transform;
+  }
+  /* Static defaults matching each card's resting position, so the fan is fully
+     formed before the script runs and stays correct if it never does. JS writes
+     the live values as inline styles, which outrank these. */
+  .deal:nth-child(1) { --cd: -1;   --acd: 1;   --z: 1; }
+  .deal:nth-child(2) { --cd: -0.5; --acd: 0.5; --z: 2; }
+  .deal:nth-child(3) { --cd: 0;    --acd: 0;   --z: 3; }
+  .deal:nth-child(4) { --cd: 0.5;  --acd: 0.5; --z: 4; }
+  .deal:nth-child(5) { --cd: 1;    --acd: 1;   --z: 5; }
+
+  .deck-card {
+    margin: 0; border-radius: 22px; overflow: hidden;
+    border: clamp(4px, 0.5vw, 6px) solid #fff;   /* the trading-card frame */
+    background: #fff;
+    /* Light-stage shadows: ink-tinted and soft, in the register of --shadow-lg,
+       plus a hairline ring so the white frame still reads white-on-white. */
+    box-shadow:
+      0 0 0 1px rgba(17, 24, 39, 0.06),
+      0 22px 44px rgba(17, 24, 39, 0.16),
+      0 5px 14px rgba(17, 24, 39, 0.08);
+    transition: transform var(--dur-base) var(--ease);
+  }
+  .deck-card :global(img) { width: 100%; height: auto; display: block; }
+
+  /* Decorative hover only (nothing is gated behind it): the hovered card slides
+     out of the hand along its own tilted axis, because the translate runs inside
+     the parent's rotated coordinate space. Pointer-hover devices only, and never
+     for reduced-motion users. */
+  @media (hover: hover) and (min-width: 901px) and (prefers-reduced-motion: no-preference) {
+    .deal:hover { z-index: 9; }
+    .deal:hover .deck-card { transform: translateY(-16px) scale(1.03); }
+  }
+
+  @media (max-width: 900px) {
+    /* Not a shrunken fan: the deck becomes a snap scroller, like thumbing through
+       a hand of cards one at a time. The loose alternating tilt keeps the
+       tossed-on-the-table feel without costing any width. */
+    .deck-wrap::before, .deck-wrap::after { opacity: 1; }
+    /* Free scroll, deliberately no scroll-snap: snapping fought the finger,
+       yanking the deck to the nearest card and refusing to rest between two.
+       The deck now goes exactly where it is thrown, at any offset, in either
+       direction. overscroll-behavior only stops the swipe from chaining into
+       a browser back-navigation; it never restrains the deck itself. */
+    .deck.reveal {
+      justify-content: flex-start;
+      overflow-x: auto;
+      gap: 14px;
+      padding-inline: clamp(20px, 5vw, 40px);
+      /* Vertical room INSIDE the scroll box: overflow-x makes the y axis scroll
+         too, so a tilted card or its drift would otherwise be cropped. */
+      padding-block: 26px 34px;
+      -webkit-overflow-scrolling: touch; scrollbar-width: none;
+      overscroll-behavior-x: contain;
+    }
+    .deck::-webkit-scrollbar { display: none; }
+    /* Bigger cards, so the same angles would read as a wonky stack: soften. */
+    .deal { width: 67vw; max-width: 258px; margin-inline: 0; --lift: 15px; --tilt: 5deg; --shrink: 0.03; }
+    /* The pile makes no sense in a row you swipe: cards instead rise into their
+       tilt one after another, reusing the same custom-property pipeline. */
+    .deal:nth-child(1) { --r: -1.5deg; --y: 0px; --gx: 0px; --gy: 18px; --gr: 0deg; }
+    .deal:nth-child(2) { --r: 1.3deg;  --y: 0px; --gx: 0px; --gy: 18px; --gr: 0deg; }
+    .deal:nth-child(3) { --r: -1.3deg; --y: 0px; --gx: 0px; --gy: 18px; --gr: 0deg; }
+    .deal:nth-child(4) { --r: 1.6deg;  --y: 0px; --gx: 0px; --gy: 18px; --gr: 0deg; }
+    .deal:nth-child(5) { --r: -1.4deg; --y: 0px; --gx: 0px; --gy: 18px; --gr: 0deg; }
+  }
 
   @media (max-width: 560px) {
-    .proof { padding-block: clamp(44px, 12vw, 64px); }
-    .shot { width: 76vw; max-width: 280px; }
+    .proof { padding-block: 4px clamp(44px, 12vw, 64px); }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .shot { opacity: 1; transform: none; transition: none; }
+    /* Land in the final fan/tilt immediately. The static tilt is composition,
+       not motion, so it stays; every transition, the deal stagger and both
+       scroll-linked animations die here. */
+    .deal { transition: none; }
+    .deck-card { translate: none; transition: none; }
   }
 </style>

@@ -1,0 +1,325 @@
+---
+import { Image } from 'astro:assets';
+import { icon } from '../../lib/icons';
+// Square crop of food-a.jpg. The thumb is a square box with object-fit: cover, so a
+// 636x393 source would paint only its middle 393x393 and every generated pixel either
+// side of that is downloaded and thrown away.
+import foodA from '../../assets/food-a-square.jpg';
+---
+
+<!-- The "Add a meal" demo. Lived in the hero until 2026-08-04, moved here (last
+     content before the download CTA) on the founder's call: the hero now carries
+     the headline alone, and the demo lands where the visitor has already read the
+     mission and seen the screens, one beat before being asked to download. -->
+<section class="logdemo">
+  <div class="container logdemo-inner">
+    <div class="logdemo-copy reveal">
+      <h2 class="display">Four seconds, any meal.</h2>
+      <p class="lede">Photo, barcode, voice, or search. Mr BITE does the macro maths, whichever way you log.</p>
+    </div>
+
+    <div class="logdemo-visual reveal">
+      <!-- Decorative demo: one widget that plays through each logging method once.
+           Fully non-interactive by design (see the script) - the four method names
+           stay readable as static labels, so nothing is gated behind the animation. -->
+      <div class="composer" aria-hidden="true">
+        <div class="composer-head">
+          <span class="composer-dot"></span>
+          <span class="composer-title">Add a meal</span>
+        </div>
+
+        <div class="seg" style="--i:0">
+          <span class="seg-ind" aria-hidden="true"></span>
+          <span class="sg is-active"><span set:html={icon('camera')} /><b>Photo</b></span>
+          <span class="sg"><span set:html={icon('barcode')} /><b>Scan</b></span>
+          <span class="sg"><span set:html={icon('mic')} /><b>Voice</b></span>
+          <span class="sg"><span set:html={icon('search')} /><b>Search</b></span>
+        </div>
+
+        <div class="composer-body">
+          <div class="cres-track">
+            <div class="cres" data-m="photo">
+              <div class="cres-row">
+                <Image class="cres-thumb" src={foodA} alt="" width={156} widths={[56, 104, 156]} sizes="54px" loading="lazy" />
+                <div class="cres-info"><b>Chicken &amp; avocado bowl</b><small>Recognised from your photo</small></div>
+                <span class="cres-kcal">400<i>kcal</i></span>
+              </div>
+              <div class="cres-macros">
+                <span><i class="d-p"></i>P 32g</span><span><i class="d-c"></i>C 28g</span><span><i class="d-f"></i>F 18g</span>
+                <span class="cres-done">Logged ✓</span>
+              </div>
+            </div>
+
+            <div class="cres" data-m="barcode">
+              <div class="cres-row">
+                <span class="cres-glyph" set:html={icon('barcode')} aria-hidden="true" />
+                <div class="cres-info"><b>Greek yogurt, 0%</b><small>Scanned · 170g serving</small></div>
+                <span class="cres-kcal">90<i>kcal</i></span>
+              </div>
+              <div class="cres-macros">
+                <span><i class="d-p"></i>P 16g</span><span><i class="d-c"></i>C 6g</span><span><i class="d-f"></i>F 0g</span>
+                <span class="cres-done">Logged ✓</span>
+              </div>
+            </div>
+
+            <div class="cres" data-m="voice">
+              <div class="cres-voicewrap">
+                <span class="cres-quote">“Two eggs and a slice of toast”</span>
+                <small>Heard · 2 items · 240 kcal</small>
+              </div>
+              <div class="cres-macros">
+                <span><i class="d-p"></i>P 19g</span><span><i class="d-c"></i>C 16g</span><span><i class="d-f"></i>F 11g</span>
+                <span class="cres-done">Logged ✓</span>
+              </div>
+            </div>
+
+            <div class="cres" data-m="search">
+              <div class="cres-field"><span set:html={icon('search')} aria-hidden="true" /><span class="cres-q">banana</span></div>
+              <div class="cres-hit">
+                <div class="cres-info"><b>Banana, medium</b><small>1 medium · 118g</small></div>
+                <span class="cres-kcal">105<i>kcal</i></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  // "Add a meal" demo: plays through the four logging methods once and comes to rest
+  // back on Photo, which is both the strongest slide and the one the page ships with.
+  //
+  // Deliberately non-interactive: no click or hover handlers. Pointer-only controls
+  // inside an aria-hidden widget would be unusable by keyboard (WCAG 2.1.1), and a
+  // hover pause traps touch devices, which fire mouseenter on tap but no mouseleave.
+  //
+  // It plays ONCE, never loops: 4 steps x 1.15s plus the closing 0.4s slide is 5.0s,
+  // so the slide sequence is not "more than five seconds" of auto-motion under WCAG
+  // 2.2.2. (That figure covers the sequence, not the decorative dot pulse above it,
+  // which is treated as non-informational.) The segment labels name all four methods
+  // as static text, so nothing here depends on the animation being seen at all.
+  (() => {
+    const c = document.querySelector('.composer');
+    if (!c) return;
+    const seg = c.querySelector('.seg');
+    const ind = c.querySelector('.seg-ind');
+    const segs = [...c.querySelectorAll('.sg')];
+    const track = c.querySelector('.cres-track');
+    if (!seg || !segs.length || !track) return;
+    const n = segs.length;
+    const mq = window.matchMedia ? matchMedia('(prefers-reduced-motion: reduce)') : null;
+
+    // A copy of the Photo slide rides at the end so the final step slides FORWARD onto
+    // it, instead of sweeping backwards across all four panels to get home. Guard on a
+    // tag rather than a child count, which would silently stop matching if the number
+    // of panels and the number of labels ever diverged.
+    if (!track.querySelector('[data-clone]')) {
+      const copy = track.children[0].cloneNode(true);
+      copy.setAttribute('data-clone', '');
+      track.appendChild(copy);
+    }
+    const lastIndex = track.children.length - 1;
+
+    let pos = 0, timer = null, settle = null, settled = false, visible = false, played = false;
+    const stop = () => { clearInterval(timer); timer = null; };
+    const show = (k, snapIndicator) => {
+      pos = k;
+      track.style.transform = 'translateX(' + -k * 100 + '%)';
+      // On the wrap the pill would otherwise animate right to left across all four
+      // segments while the panels move left to right. Jump it instead.
+      if (snapIndicator && ind) {
+        ind.style.transition = 'none';
+        seg.style.setProperty('--i', k % n);
+        void ind.offsetWidth;
+        ind.style.transition = '';
+      } else {
+        seg.style.setProperty('--i', k % n);
+      }
+      segs.forEach((s, j) => s.classList.toggle('is-active', j === k % n));
+    };
+    // Cosmetic only: move the transform off the clone and onto the real first slide.
+    // If this never runs the visitor still sees Photo, because the clone IS Photo.
+    const settleHome = () => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(settle);
+      track.removeEventListener('transitionend', onSlideEnd);
+      track.style.transition = 'none';
+      show(0);
+      void track.offsetWidth;
+      track.style.transition = '';
+    };
+    // transitionend is the only real signal that the slide has finished. The timer is
+    // a fallback for the case where the transition never starts, and whichever fires
+    // first disarms the other: a bare timer races the transition on a different clock,
+    // and losing that race would cancel a running slide and snap it mid-flight.
+    function onSlideEnd(e) {
+      if (e.propertyName && e.propertyName !== 'transform') return;
+      settleHome();
+    }
+    const advance = () => {
+      const next = pos + 1;
+      show(next, next === lastIndex);
+      if (next < lastIndex) return;
+      stop();
+      played = true;
+      track.addEventListener('transitionend', onSlideEnd);
+      settle = setTimeout(settleHome, 900);
+    };
+    // The pass runs exactly once, so it must not be spent while nobody is looking:
+    // `visible` covers the section being scrolled away, `document.hidden` covers a
+    // page that loads straight into a background tab, where visibilitychange never
+    // fires. This matters more now the demo sits near the foot of the page, where it
+    // is off screen at load and could otherwise burn its single pass unseen.
+    const start = () => {
+      if (timer || played || !visible || document.hidden || (mq && mq.matches)) return;
+      timer = setInterval(advance, 1150);
+    };
+
+    document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); else start(); });
+    if (mq && mq.addEventListener) mq.addEventListener('change', () => { if (mq.matches) stop(); else start(); });
+
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          visible = e.isIntersecting;
+          if (played) { io.unobserve(e.target); return; }
+          if (visible) start(); else stop();
+        });
+      }, { threshold: 0.4 });
+      io.observe(c);
+    } else {
+      // No IntersectionObserver: viewport position is unknowable, so assume in view.
+      // Do NOT seed this from document.hidden - it is written once, so a page that
+      // loaded hidden would latch false and the pass would never run at all. The
+      // hidden case is already covered by the document.hidden check in start(),
+      // which is re-evaluated on every visibilitychange.
+      visible = true;
+      start();
+    }
+  })();
+</script>
+
+<style>
+  .logdemo { position: relative; background: #fff; padding-block: var(--space-section-tight); }
+  /* Two columns at desktop, copy left and widget right: the same balance the hero
+     used to strike, now serving as the page's closing demonstration. */
+  .logdemo-inner { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: clamp(36px, 5vw, 64px); }
+  .logdemo-copy, .logdemo-visual { min-width: 0; }
+  .logdemo-copy h2 { margin-bottom: 14px; }
+  .logdemo-visual { display: flex; justify-content: center; }
+
+  .composer {
+    width: min(420px, 100%); background: #fff; border: 1px solid var(--line);
+    border-radius: var(--r-xxl); box-shadow: var(--shadow-md); padding: 18px;
+  }
+  .composer-head { display: flex; align-items: center; gap: 9px; margin-bottom: 16px; padding-inline: 4px; }
+  .composer-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--coral); box-shadow: 0 0 0 4px var(--coral-100); animation: dotpulse 2.4s ease-in-out infinite; }
+  .composer-title { font-size: 0.95rem; font-weight: 800; color: var(--ink); }
+
+  /* Segmented control with a single sliding indicator. Labels are static text, not
+     controls - nothing here is clickable (see the script comment).
+     The track is --line rather than --line-soft, and the pill carries a real shadow,
+     because the labels have to be dark enough to clear AA (see .sg). That makes the
+     inactive labels darker than the coral active one, so the selection has to be
+     carried by the raised pill rather than by text weight. */
+  .seg { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); background: var(--line); border-radius: 12px; padding: 4px; margin-bottom: 16px; }
+  .seg-ind {
+    position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc(25% - 2px);
+    background: #fff; border-radius: 9px; box-shadow: 0 1px 4px rgba(17, 24, 39, 0.18);
+    transform: translateX(calc(var(--i, 0) * 100%)); transition: transform 0.34s var(--ease);
+  }
+  .sg {
+    /* --ink-soft, not --muted: these labels sit on the grey track, where #6B7280 lands
+       at 4.39:1 and misses AA. They are real visible text now that phones show them. */
+    position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 9px 4px; color: var(--ink-soft); transition: color var(--dur-base) var(--ease);
+  }
+  .sg :global(svg) { width: 17px; height: 17px; }
+  .sg b { font-size: 0.72rem; font-weight: 600; letter-spacing: -0.01em; }
+  .sg.is-active { color: var(--coral-600); }
+  /* On the <b>, not the .sg: the label declares its own font-weight, so a weight set
+     on the parent is inherited-and-overridden and never reaches the text. */
+  .sg.is-active b { font-weight: 700; }
+
+  /* Result carousel: a horizontal track that slides between the four method results */
+  .composer-body { position: relative; overflow: hidden; min-height: 116px; }
+  .cres-track { display: flex; transition: transform 0.4s var(--ease); will-change: transform; }
+  .cres { flex: 0 0 100%; min-width: 0; display: flex; flex-direction: column; }
+  .cres-row { display: flex; align-items: center; gap: 12px; }
+  .cres-thumb, .cres-glyph { width: 52px; height: 52px; border-radius: 13px; flex-shrink: 0; }
+  .cres :global(.cres-thumb) { object-fit: cover; }
+  .cres-glyph { display: grid; place-items: center; background: var(--line-soft); color: var(--ink); }
+  .cres-glyph :global(svg) { width: 26px; height: 26px; }
+  .cres-info { flex: 1; min-width: 0; }
+  .cres-info b { display: block; font-size: 0.95rem; font-weight: 700; color: var(--ink); line-height: 1.2; }
+  .cres-info small { font-size: 0.78rem; color: var(--muted); }
+  .cres-kcal { font-size: 1.2rem; font-weight: 800; color: var(--ink); font-variant-numeric: tabular-nums; flex-shrink: 0; }
+  .cres-kcal i { font-style: normal; font-size: 0.62rem; font-weight: 600; color: var(--muted); margin-left: 2px; }
+  .cres-macros { display: flex; align-items: center; gap: 16px; margin-top: auto; padding-top: 14px; border-top: 1px solid var(--line-soft); font-size: 0.8rem; font-weight: 600; color: var(--ink-soft); }
+  .cres-macros > span { display: inline-flex; align-items: center; gap: 6px; }
+  .cres-macros i { width: 7px; height: 7px; border-radius: 50%; }
+  .d-p { background: var(--protein); } .d-c { background: var(--carbs); } .d-f { background: var(--fat); }
+  .cres-done { margin-left: auto; color: var(--carbs-600); }
+
+  .cres-voicewrap { padding: 6px 2px 2px; }
+  .cres-quote { display: block; font-size: 1.05rem; font-weight: 600; font-style: italic; color: var(--ink); margin-bottom: 6px; }
+  .cres-voicewrap small { font-size: 0.78rem; color: var(--muted); }
+
+  .cres-field { display: flex; align-items: center; gap: 9px; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--r-md); color: var(--faint); }
+  .cres-field :global(svg) { width: 18px; height: 18px; }
+  .cres-q { font-size: 0.92rem; font-weight: 600; color: var(--ink-soft); }
+  .cres-hit { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: auto; padding-top: 14px; }
+
+  @keyframes dotpulse { 0%, 100% { opacity: 1 } 50% { opacity: 0.45 } }
+
+  @media (max-width: 900px) {
+    /* One centred column: on a tablet the card would otherwise sit in a 460px block
+       with 250px of dead space beside it. Inert on a phone, where the container is
+       already narrower than this cap. */
+    .logdemo-inner { grid-template-columns: 1fr; gap: clamp(26px, 5vw, 40px); max-width: 500px; margin-inline: auto; }
+    .logdemo-visual { justify-content: flex-start; width: 100%; }
+    .composer { width: 100%; }
+  }
+
+  @media (max-width: 560px) {
+    .composer { padding: 14px; border-radius: var(--r-xl); }
+    .composer-head { margin-bottom: 12px; }
+    .composer-title { font-size: 0.9rem; }
+    .seg { margin-bottom: 12px; }   /* keep the 4px padding so the indicator math holds */
+    .sg { padding: 8px 3px; }
+    .sg :global(svg) { width: 16px; height: 16px; }
+    .sg b { font-size: 0.68rem; }   /* labels stay: they name all four methods without motion */
+    .composer-body { min-height: 100px; }  /* the search slide, which is the tallest */
+    .cres-thumb, .cres-glyph { width: 46px; height: 46px; border-radius: 11px; }
+    .cres-glyph :global(svg) { width: 22px; height: 22px; }
+    .cres-info b { font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cres-info small { font-size: 0.74rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cres-kcal { font-size: 1.1rem; }
+    .cres-kcal i { font-size: 0.58rem; }
+    .cres-macros { gap: 12px; padding-top: 12px; font-size: 0.75rem; }
+    .cres-quote { font-size: 0.95rem; }
+    .cres-voicewrap small { font-size: 0.74rem; }
+    .cres-q { font-size: 0.88rem; }
+  }
+
+  /* Smallest phones. The result row is mostly chrome at these widths, so the row gap
+     and the kcal figure give way before the food name does - otherwise "Chicken &
+     avocado bowl" is the thing that gets ellipsized, which is the whole demo. */
+  @media (max-width: 380px) {
+    .sg { gap: 4px; padding: 8px 2px; }
+    .sg b { font-size: 0.64rem; }
+    .cres-row { gap: 8px; }
+    .cres-thumb, .cres-glyph { width: 42px; height: 42px; }
+    .cres-kcal { font-size: 1rem; }
+    .cres-kcal i { font-size: 0.55rem; }
+    .cres-macros { gap: 9px; font-size: 0.72rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .seg-ind, .cres-track { transition: none !important; }
+    .composer-dot { animation: none !important; }
+  }
+</style>

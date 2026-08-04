@@ -1,367 +1,100 @@
 ---
-import { Image } from 'astro:assets';
 import DownloadButtons from '../DownloadButtons.astro';
-import { icon } from '../../lib/icons';
-// Square crop of food-a.jpg. The thumb is a square box with object-fit: cover, so a
-// 636x393 source would paint only its middle 393x393 and every generated pixel either
-// side of that is downloaded and thrown away.
-import foodA from '../../assets/food-a-square.jpg';
 ---
 
 <section class="top">
   <div class="top-bg" aria-hidden="true"></div>
 
   <div class="container">
-    <div class="top-hero">
-      <!-- Hero ships with `reveal in` pre-applied so the LCP headline + composer
-           paint immediately and never fade in on load. Keep this if .reveal changes. -->
-      <div class="top-copy reveal in">
-        <h1 class="display">Nutrition,<br /><span class="coral-text">made effortless.</span></h1>
-        <p class="lede">Log any meal in seconds, then let Mr BITE plan your week.</p>
-        <div class="top-cta">
-          <DownloadButtons />
-        </div>
-        <!-- Trust line sits OUTSIDE .top-cta so it survives on phones, where the
-             badges give way to the sticky getbar but the free promise still has
-             to be said. "Free to start" rather than a flat "Free": logging and
-             planning stay free, the AI features carry a monthly allowance, and
-             the FAQ spells that out rather than letting the hero overpromise. -->
-        <p class="top-trust">Free to start. Private. Delete anytime.</p>
+    <!-- Hero ships with `reveal in` pre-applied so the LCP headline paints
+         immediately and never fades in on load. Keep this if .reveal changes. -->
+    <div class="top-copy reveal in">
+      <h1 class="display">Nutrition,<br /><span class="coral-text">made effortless.</span></h1>
+      <!-- The mission, promoted out of the showcase section into the hero: it is
+           the promise the whole page argues for, so it reads as the headline's
+           subtext rather than as a caption above the screens. -->
+      <p class="top-mission">
+        Our mission is to make losing weight, and keeping it off, as convenient and
+        accessible as it can be. <span class="tm-aside">Away from fat loss fads,
+        unsustainable diets, tedious tracking and fasting.</span> We want to be the
+        sustainable one, the one that fits around your life.
+      </p>
+      <div class="top-cta">
+        <DownloadButtons />
       </div>
-
-      <div class="top-visual reveal in">
-        <!-- Decorative demo: one widget that plays through each logging method once.
-             Fully non-interactive by design (see the script) - the four method names
-             stay readable as static labels, so nothing is gated behind the animation. -->
-        <div class="composer" aria-hidden="true">
-          <div class="composer-head">
-            <span class="composer-dot"></span>
-            <span class="composer-title">Add a meal</span>
-          </div>
-
-          <div class="seg" style="--i:0">
-            <span class="seg-ind" aria-hidden="true"></span>
-            <span class="sg is-active"><span set:html={icon('camera')} /><b>Photo</b></span>
-            <span class="sg"><span set:html={icon('barcode')} /><b>Scan</b></span>
-            <span class="sg"><span set:html={icon('mic')} /><b>Voice</b></span>
-            <span class="sg"><span set:html={icon('search')} /><b>Search</b></span>
-          </div>
-
-          <div class="composer-body">
-            <div class="cres-track">
-              <div class="cres" data-m="photo">
-                <div class="cres-row">
-                  <Image class="cres-thumb" src={foodA} alt="" width={156} widths={[56, 104, 156]} sizes="54px" loading="eager" />
-                  <div class="cres-info"><b>Chicken &amp; avocado bowl</b><small>Recognised from your photo</small></div>
-                  <span class="cres-kcal">400<i>kcal</i></span>
-                </div>
-                <div class="cres-macros">
-                  <span><i class="d-p"></i>P 32g</span><span><i class="d-c"></i>C 28g</span><span><i class="d-f"></i>F 18g</span>
-                  <span class="cres-done">Logged ✓</span>
-                </div>
-              </div>
-
-              <div class="cres" data-m="barcode">
-                <div class="cres-row">
-                  <span class="cres-glyph" set:html={icon('barcode')} aria-hidden="true" />
-                  <div class="cres-info"><b>Greek yogurt, 0%</b><small>Scanned · 170g serving</small></div>
-                  <span class="cres-kcal">90<i>kcal</i></span>
-                </div>
-                <div class="cres-macros">
-                  <span><i class="d-p"></i>P 16g</span><span><i class="d-c"></i>C 6g</span><span><i class="d-f"></i>F 0g</span>
-                  <span class="cres-done">Logged ✓</span>
-                </div>
-              </div>
-
-              <div class="cres" data-m="voice">
-                <div class="cres-voicewrap">
-                  <span class="cres-quote">“Two eggs and a slice of toast”</span>
-                  <small>Heard · 2 items · 240 kcal</small>
-                </div>
-                <div class="cres-macros">
-                  <span><i class="d-p"></i>P 19g</span><span><i class="d-c"></i>C 16g</span><span><i class="d-f"></i>F 11g</span>
-                  <span class="cres-done">Logged ✓</span>
-                </div>
-              </div>
-
-              <div class="cres" data-m="search">
-                <div class="cres-field"><span set:html={icon('search')} aria-hidden="true" /><span class="cres-q">banana</span></div>
-                <div class="cres-hit">
-                  <div class="cres-info"><b>Banana, medium</b><small>1 medium · 118g</small></div>
-                  <span class="cres-kcal">105<i>kcal</i></span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <!-- Trust line sits OUTSIDE .top-cta so it survives on phones, where the
+           badges give way to the sticky getbar but the free promise still has
+           to be said. "Free to start" rather than a flat "Free": logging and
+           planning stay free, the AI features carry a monthly allowance, and
+           the FAQ spells that out rather than letting the hero overpromise. -->
+      <p class="top-trust">Free to start. Private. Delete anytime.</p>
     </div>
   </div>
 </section>
 
-<script is:inline>
-  // "Add a meal" demo: plays through the four logging methods once and comes to rest
-  // back on Photo, which is both the strongest slide and the one the page ships with.
-  //
-  // Deliberately non-interactive: no click or hover handlers. Pointer-only controls
-  // inside an aria-hidden widget would be unusable by keyboard (WCAG 2.1.1), and a
-  // hover pause traps touch devices, which fire mouseenter on tap but no mouseleave.
-  //
-  // It plays ONCE, never loops: 4 steps x 1.15s plus the closing 0.4s slide is 5.0s,
-  // so the slide sequence is not "more than five seconds" of auto-motion under WCAG
-  // 2.2.2. (That figure covers the sequence, not the decorative dot pulse above it,
-  // which is treated as non-informational.) The segment labels name all four methods
-  // as static text, so nothing here depends on the animation being seen at all.
-  (() => {
-    const c = document.querySelector('.composer');
-    if (!c) return;
-    const seg = c.querySelector('.seg');
-    const ind = c.querySelector('.seg-ind');
-    const segs = [...c.querySelectorAll('.sg')];
-    const track = c.querySelector('.cres-track');
-    if (!seg || !segs.length || !track) return;
-    const n = segs.length;
-    const mq = window.matchMedia ? matchMedia('(prefers-reduced-motion: reduce)') : null;
-
-    // A copy of the Photo slide rides at the end so the final step slides FORWARD onto
-    // it, instead of sweeping backwards across all four panels to get home. Guard on a
-    // tag rather than a child count, which would silently stop matching if the number
-    // of panels and the number of labels ever diverged.
-    if (!track.querySelector('[data-clone]')) {
-      const copy = track.children[0].cloneNode(true);
-      copy.setAttribute('data-clone', '');
-      track.appendChild(copy);
-    }
-    const lastIndex = track.children.length - 1;
-
-    let pos = 0, timer = null, settle = null, settled = false, visible = false, played = false;
-    const stop = () => { clearInterval(timer); timer = null; };
-    const show = (k, snapIndicator) => {
-      pos = k;
-      track.style.transform = 'translateX(' + -k * 100 + '%)';
-      // On the wrap the pill would otherwise animate right to left across all four
-      // segments while the panels move left to right. Jump it instead.
-      if (snapIndicator && ind) {
-        ind.style.transition = 'none';
-        seg.style.setProperty('--i', k % n);
-        void ind.offsetWidth;
-        ind.style.transition = '';
-      } else {
-        seg.style.setProperty('--i', k % n);
-      }
-      segs.forEach((s, j) => s.classList.toggle('is-active', j === k % n));
-    };
-    // Cosmetic only: move the transform off the clone and onto the real first slide.
-    // If this never runs the visitor still sees Photo, because the clone IS Photo.
-    const settleHome = () => {
-      if (settled) return;
-      settled = true;
-      clearTimeout(settle);
-      track.removeEventListener('transitionend', onSlideEnd);
-      track.style.transition = 'none';
-      show(0);
-      void track.offsetWidth;
-      track.style.transition = '';
-    };
-    // transitionend is the only real signal that the slide has finished. The timer is
-    // a fallback for the case where the transition never starts, and whichever fires
-    // first disarms the other: a bare timer races the transition on a different clock,
-    // and losing that race would cancel a running slide and snap it mid-flight.
-    function onSlideEnd(e) {
-      if (e.propertyName && e.propertyName !== 'transform') return;
-      settleHome();
-    }
-    const advance = () => {
-      const next = pos + 1;
-      show(next, next === lastIndex);
-      if (next < lastIndex) return;
-      stop();
-      played = true;
-      track.addEventListener('transitionend', onSlideEnd);
-      settle = setTimeout(settleHome, 900);
-    };
-    // The pass runs exactly once, so it must not be spent while nobody is looking:
-    // `visible` covers the hero being scrolled away, `document.hidden` covers a page
-    // that loads straight into a background tab, where visibilitychange never fires.
-    const start = () => {
-      if (timer || played || !visible || document.hidden || (mq && mq.matches)) return;
-      timer = setInterval(advance, 1150);
-    };
-
-    document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); else start(); });
-    if (mq && mq.addEventListener) mq.addEventListener('change', () => { if (mq.matches) stop(); else start(); });
-
-    if ('IntersectionObserver' in window) {
-      const io = new IntersectionObserver((entries) => {
-        entries.forEach((e) => {
-          visible = e.isIntersecting;
-          if (played) { io.unobserve(e.target); return; }
-          if (visible) start(); else stop();
-        });
-      }, { threshold: 0.4 });
-      io.observe(c);
-    } else {
-      // No IntersectionObserver: viewport position is unknowable, so assume in view.
-      // Do NOT seed this from document.hidden - it is written once, so a page that
-      // loaded hidden would latch false and the pass would never run at all. The
-      // hidden case is already covered by the document.hidden check in start(),
-      // which is re-evaluated on every visibilitychange.
-      visible = true;
-      start();
-    }
-  })();
-</script>
-
 <style>
-  .top { position: relative; overflow: hidden; padding-top: clamp(28px, 5vw, 52px); padding-bottom: clamp(40px, 6vw, 72px); }
+  .top { position: relative; overflow: hidden; padding-top: clamp(36px, 6vw, 76px); padding-bottom: clamp(14px, 2vw, 26px); }
   .top-bg {
     position: absolute; inset: 0; z-index: -1;
     background:
-      radial-gradient(50% 42% at 84% 14%, rgba(255, 118, 118, 0.12), transparent 70%),
-      radial-gradient(40% 36% at 4% 4%, rgba(255, 154, 154, 0.05), transparent 70%);
+      radial-gradient(50% 42% at 84% 14%, rgba(253, 102, 100, 0.12), transparent 70%),
+      radial-gradient(40% 36% at 4% 4%, rgba(254, 154, 153, 0.05), transparent 70%);
   }
-  .top-hero { display: grid; grid-template-columns: 1.02fr 0.98fr; align-items: center; gap: clamp(36px, 5vw, 64px); }
-  .top-copy, .top-visual { min-width: 0; }
-  .top-copy { display: flex; flex-direction: column; align-items: flex-start; text-align: left; }
-  .top-copy h1 { margin: 0 0 20px; }
-  .top-copy .lede { max-width: 50ch; }
+  /* Single column since the demo widget moved to its own section at the foot of
+     the page (2026-08-04). Headline and mission carry their own measures rather
+     than sharing one: the two-line lockup wants ~15ch, the mission wants ~54ch,
+     and a single cap would either wrap the headline or run the prose too wide. */
+  .top-copy {
+    display: flex; flex-direction: column; align-items: flex-start; text-align: left;
+    min-width: 0;
+  }
+  .top-mission {
+    max-width: 54ch;
+    margin-top: clamp(18px, 2.4vw, 26px);
+    font-size: clamp(1.05rem, 1.55vw, 1.3rem);
+    font-weight: 500;
+    line-height: 1.55;
+    color: var(--ink);
+    text-wrap: pretty;   /* no orphan on the last line where supported */
+  }
+  /* The rejected-alternatives clause drops back to muted: it is the "not this"
+     half of the sentence, so it reads as an aside inside the statement while the
+     promise either side of it stays full ink. */
+  .tm-aside { color: var(--muted); }
+  /* Hero-scoped, so the global h1.display stays put for /pro and the checkout
+     status pages (every other page sets its own h1 size). The cap is the column
+     over 7.7em, which is what "made effortless." actually measures when rendered
+     (measured off the painted pixels: a DOM range/clone under-reports it by ~8%
+     and will talk you into an overflow). */
+  .top-copy h1 { font-size: clamp(2.6rem, 7vw, 5rem); margin: 0; max-width: 15ch; }
   .top-cta { margin-top: 32px; }
   .top-cta :global(.dl) { align-items: flex-start; }
   .top-trust { margin-top: 12px; font-size: 0.85rem; font-weight: 500; color: var(--muted); }
-  .top-visual { display: flex; justify-content: center; }
 
-  .composer {
-    width: min(420px, 100%); background: #fff; border: 1px solid var(--line);
-    border-radius: var(--r-xxl); box-shadow: var(--shadow-md); padding: 18px;
-  }
-  .composer-head { display: flex; align-items: center; gap: 9px; margin-bottom: 16px; padding-inline: 4px; }
-  .composer-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--coral); box-shadow: 0 0 0 4px var(--coral-100); animation: dotpulse 2.4s ease-in-out infinite; }
-  .composer-title { font-size: 0.95rem; font-weight: 800; color: var(--ink); }
-
-  /* Segmented control with a single sliding indicator. Labels are static text, not
-     controls - nothing here is clickable (see the script comment).
-     The track is --line rather than --line-soft, and the pill carries a real shadow,
-     because the labels have to be dark enough to clear AA (see .sg). That makes the
-     inactive labels darker than the coral active one, so the selection has to be
-     carried by the raised pill rather than by text weight. */
-  .seg { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); background: var(--line); border-radius: 12px; padding: 4px; margin-bottom: 16px; }
-  .seg-ind {
-    position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc(25% - 2px);
-    background: #fff; border-radius: 9px; box-shadow: 0 1px 4px rgba(17, 24, 39, 0.18);
-    transform: translateX(calc(var(--i, 0) * 100%)); transition: transform 0.34s var(--ease);
-  }
-  .sg {
-    /* --ink-soft, not --muted: these labels sit on the grey track, where #6B7280 lands
-       at 4.39:1 and misses AA. They are real visible text now that phones show them. */
-    position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
-    padding: 9px 4px; color: var(--ink-soft); transition: color var(--dur-base) var(--ease);
-  }
-  .sg :global(svg) { width: 17px; height: 17px; }
-  .sg b { font-size: 0.72rem; font-weight: 600; letter-spacing: -0.01em; }
-  .sg.is-active { color: var(--coral-600); }
-  /* On the <b>, not the .sg: the label declares its own font-weight, so a weight set
-     on the parent is inherited-and-overridden and never reaches the text. */
-  .sg.is-active b { font-weight: 700; }
-
-  /* Result carousel: a horizontal track that slides between the four method results */
-  .composer-body { position: relative; overflow: hidden; min-height: 116px; }
-  .cres-track { display: flex; transition: transform 0.4s var(--ease); will-change: transform; }
-  .cres { flex: 0 0 100%; min-width: 0; display: flex; flex-direction: column; }
-  .cres-row { display: flex; align-items: center; gap: 12px; }
-  .cres-thumb, .cres-glyph { width: 52px; height: 52px; border-radius: 13px; flex-shrink: 0; }
-  .cres :global(.cres-thumb) { object-fit: cover; }
-  .cres-glyph { display: grid; place-items: center; background: var(--line-soft); color: var(--ink); }
-  .cres-glyph :global(svg) { width: 26px; height: 26px; }
-  .cres-info { flex: 1; min-width: 0; }
-  .cres-info b { display: block; font-size: 0.95rem; font-weight: 700; color: var(--ink); line-height: 1.2; }
-  .cres-info small { font-size: 0.78rem; color: var(--muted); }
-  .cres-kcal { font-size: 1.2rem; font-weight: 800; color: var(--ink); font-variant-numeric: tabular-nums; flex-shrink: 0; }
-  .cres-kcal i { font-style: normal; font-size: 0.62rem; font-weight: 600; color: var(--muted); margin-left: 2px; }
-  .cres-macros { display: flex; align-items: center; gap: 16px; margin-top: auto; padding-top: 14px; border-top: 1px solid var(--line-soft); font-size: 0.8rem; font-weight: 600; color: var(--ink-soft); }
-  .cres-macros > span { display: inline-flex; align-items: center; gap: 6px; }
-  .cres-macros i { width: 7px; height: 7px; border-radius: 50%; }
-  .d-p { background: var(--protein); } .d-c { background: var(--carbs); } .d-f { background: var(--fat); }
-  .cres-done { margin-left: auto; color: var(--carbs-600); }
-
-  .cres-voicewrap { padding: 6px 2px 2px; }
-  .cres-quote { display: block; font-size: 1.05rem; font-weight: 600; font-style: italic; color: var(--ink); margin-bottom: 6px; }
-  .cres-voicewrap small { font-size: 0.78rem; color: var(--muted); }
-
-  .cres-field { display: flex; align-items: center; gap: 9px; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--r-md); color: var(--faint); }
-  .cres-field :global(svg) { width: 18px; height: 18px; }
-  .cres-q { font-size: 0.92rem; font-weight: 600; color: var(--ink-soft); }
-  .cres-hit { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: auto; padding-top: 14px; }
-
-  @keyframes dotpulse { 0%, 100% { opacity: 1 } 50% { opacity: 0.45 } }
-
-  /* Below 900px the hero stacks. Squeezing the headline and the widget into one row
-     on a phone starved both: the h1 fell under the size of every downpage h2 and the
-     widget lost its labels and truncated its own text. Stacked, each gets full width. */
   @media (max-width: 900px) {
     /* Stacking slides the copy under the right-hand wash, which at 0.12 alpha tinted
-       the page enough to drag the muted subhead under 4.5:1. Softened here rather than
+       the page enough to drag muted text under 4.5:1. Softened here rather than
        strengthened in a min-width twin, so the two halves cannot leave a fractional
        width matching neither. */
     .top-bg {
       background:
-        radial-gradient(50% 42% at 84% 14%, rgba(255, 118, 118, 0.07), transparent 70%),
-        radial-gradient(40% 36% at 4% 4%, rgba(255, 154, 154, 0.05), transparent 70%);
+        radial-gradient(50% 42% at 84% 14%, rgba(253, 102, 100, 0.07), transparent 70%),
+        radial-gradient(40% 36% at 4% 4%, rgba(254, 154, 153, 0.05), transparent 70%);
     }
-    /* One centred column rather than a left-hugging stack: on a tablet the card would
-       otherwise sit in a 460px block with 250px of dead space beside it. Inert on a
-       phone, where the container is already narrower than this cap. */
-    .top-hero { grid-template-columns: 1fr; gap: clamp(26px, 5vw, 40px); align-items: start; max-width: 500px; margin-inline: auto; }
-    .top-copy h1 { margin: 0 0 16px; }
-    .top-copy .lede { max-width: 46ch; }
+    .top-copy { max-width: 500px; }
+    /* "made effortless." is allowed to break here: three big lines read as a poster
+       lockup, where forcing two would cap the type ~30% smaller. The binding
+       constraint is therefore the longest WORD, "effortless." at 4.8em, which at
+       the 4.6rem ceiling is 353px inside the 500px cap. */
+    .top-copy h1 { font-size: clamp(2.6rem, 13vw, 4.6rem); }
     .top-cta { margin-top: 26px; }
-    .top-visual { justify-content: flex-start; width: 100%; }
-    .composer { width: 100%; }
   }
 
   @media (max-width: 560px) {
-    /* Tight top padding: the nav already supplies separation, and on a short phone in
-       Safari (visible viewport around 553px) the saved height is what keeps the card's
-       macro row clear of the sticky getbar. */
-    .top { padding-top: 16px; padding-bottom: 32px; }
-    .top-hero { gap: 24px; }
+    .top { padding-top: 20px; padding-bottom: clamp(12px, 3vw, 20px); }
     .top-cta { display: none; }     /* sticky getbar carries the CTA at phone widths */
-    .top-trust { margin-top: 14px; }
-
-    .composer { padding: 14px; border-radius: var(--r-xl); }
-    .composer-head { margin-bottom: 12px; }
-    .composer-title { font-size: 0.9rem; }
-    .seg { margin-bottom: 12px; }   /* keep the 4px padding so the indicator math holds */
-    .sg { padding: 8px 3px; }
-    .sg :global(svg) { width: 16px; height: 16px; }
-    .sg b { font-size: 0.68rem; }   /* labels stay: they name all four methods without motion */
-    .composer-body { min-height: 100px; }  /* the search slide, which is the tallest */
-    .cres-thumb, .cres-glyph { width: 46px; height: 46px; border-radius: 11px; }
-    .cres-glyph :global(svg) { width: 22px; height: 22px; }
-    .cres-info b { font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .cres-info small { font-size: 0.74rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .cres-kcal { font-size: 1.1rem; }
-    .cres-kcal i { font-size: 0.58rem; }
-    .cres-macros { gap: 12px; padding-top: 12px; font-size: 0.75rem; }
-    .cres-quote { font-size: 0.95rem; }
-    .cres-voicewrap small { font-size: 0.74rem; }
-    .cres-q { font-size: 0.88rem; }
-  }
-
-  /* Smallest phones. The result row is mostly chrome at these widths, so the row gap
-     and the kcal figure give way before the food name does - otherwise "Chicken &
-     avocado bowl" is the thing that gets ellipsized, which is the whole demo. */
-  @media (max-width: 380px) {
-    .sg { gap: 4px; padding: 8px 2px; }
-    .sg b { font-size: 0.64rem; }
-    .cres-row { gap: 8px; }
-    .cres-thumb, .cres-glyph { width: 42px; height: 42px; }
-    .cres-kcal { font-size: 1rem; }
-    .cres-kcal i { font-size: 0.55rem; }
-    .cres-macros { gap: 9px; font-size: 0.72rem; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .seg-ind, .cres-track { transition: none !important; }
-    .composer-dot { animation: none !important; }
+    /* With the CTA hidden this line sits directly under a much larger headline,
+       so it needs its own breathing room rather than the CTA's. */
+    .top-trust { margin-top: 20px; }
   }
 </style>

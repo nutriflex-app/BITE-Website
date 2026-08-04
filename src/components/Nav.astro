@@ -1,8 +1,6 @@
 ---
 import { SITE } from '../config';
 const links = [
-  { href: '/#how', label: 'How it works' },
-  { href: '/#mr-bite', label: 'Mr BITE' },
   { href: '/about', label: 'About' },
   { href: '/blog', label: 'Blog' },
   { href: '/#faq', label: 'FAQ' },
@@ -20,7 +18,7 @@ const links = [
       {links.map((l) => <a href={l.href}>{l.label}</a>)}
     </nav>
 
-    <a href="/#download" class="btn btn-primary nav-cta">Get the app</a>
+    <a href="/#download" class="btn btn-primary nav-cta">Download</a>
 
     <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
       <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
@@ -29,7 +27,7 @@ const links = [
 
   <nav id="mobile-menu" class="mobile-menu" aria-label="Mobile" hidden>
     {links.map((l) => <a href={l.href} class="mobile-link">{l.label}</a>)}
-    <a href="/#download" class="btn btn-primary mobile-cta">Get the app</a>
+    <a href="/#download" class="btn btn-primary mobile-cta">Download now</a>
   </nav>
 </header>
 
@@ -78,8 +76,18 @@ const links = [
 
   @media (max-width: 900px) {
     .nav-links { display: none; }
-    .nav-cta { display: none; }
+    /* The CTA stays on phones (2026-08-04): downloading is the one thing anyone is
+       here to do, and burying it behind the burger cost a tap. margin-left:auto
+       does the pushing because .nav-links, which normally carries it, is hidden. */
+    .nav-cta { display: inline-flex; margin-left: auto; height: 38px; padding-inline: 15px; font-size: 0.85rem; }
     .nav-toggle { display: flex; }
+  }
+
+  /* Tight phones: the brand word plus a 38px button plus the burger is a lot of
+     chrome in 320px, so the button gives up padding before anything is dropped. */
+  @media (max-width: 380px) {
+    .nav-cta { height: 36px; padding-inline: 11px; font-size: 0.8rem; }
+    .nav-inner { gap: 8px; }
   }
 </style>
 

@@ -6,13 +6,16 @@
    ============================================================================ */
 
 :root {
-  /* Brand coral (app primary #FF7676; #C04848 is the contrast-safe coral for text on white) */
-  --coral: #ff7676;            /* decorative fills only: dots, washes, glows, brand mark */
-  --coral-600: #c04848;        /* text/border-safe coral on white */
-  --coral-cta: #d23b3b;        /* solid action surfaces - white text clears 4.5:1 (WCAG AA) */
-  --coral-cta-hover: #bd3636;
-  --coral-300: #ff9a9a;
-  --coral-100: #ffe5e5;
+  /* Brand coral. Base is #FD6664; the 600/cta steps are darkened from it because
+     the base itself is only 2.9:1 on white and cannot legally carry text.
+     Contrast measured, not guessed: 600 = 5.09:1 on white, cta = 4.80:1 behind
+     white text, cta-hover = 5.68:1. All clear WCAG AA. */
+  --coral: #fd6664;            /* decorative fills only: dots, washes, glows, brand mark */
+  --coral-600: #bf4443;        /* text/border-safe coral on white */
+  --coral-cta: #d13a38;        /* solid action surfaces - white text clears 4.5:1 (WCAG AA) */
+  --coral-cta-hover: #bc3533;
+  --coral-300: #fe9a99;
+  --coral-100: #ffe4e3;
 
   /* Macros (match the home ring/bars). As with coral, the bright value is for fills
      only - #10B981 is 2.54:1 on white. --carbs-600 is the text-safe green (5.5:1). */
@@ -38,7 +41,7 @@
   --shadow-sm: 0 1px 2px rgba(17, 24, 39, 0.04);
   --shadow-md: 0 10px 28px rgba(17, 24, 39, 0.08);
   --shadow-lg: 0 24px 60px rgba(17, 24, 39, 0.12);
-  --shadow-coral: 0 10px 26px rgba(210, 59, 59, 0.22);
+  --shadow-coral: 0 10px 26px rgba(209, 58, 56, 0.22);
   --shadow-panel: 0 30px 70px -32px rgba(17, 24, 39, 0.34);  /* big floating panels (proof, mr bite) */
 
   /* Geometry (app RADIUS scale) */
@@ -51,7 +54,6 @@
   --container: 1140px;
   --nav-h: 70px;                     /* matches Nav .nav-inner height */
   --getbar-h: 56px;                  /* sticky mobile CTA bar: 15px + 1.02rem*1.6 + 15px */
-  --tl-node: 48px;                   /* timeline node diameter (re-declared smaller at narrow widths) */
 
   /* Spacing scale (one source of truth for section rhythm) */
   --space-section: clamp(64px, 10vw, 120px);
@@ -126,8 +128,8 @@ a { color: inherit; text-decoration: none; }
 h1.display { font-size: clamp(2.6rem, 5.9vw, 4.2rem); letter-spacing: -0.038em; }
 h2.display { font-size: clamp(2rem, 4.4vw, 3.1rem); }
 h3.display { font-size: clamp(1.4rem, 3vw, 1.9rem); }
-/* Text-safe coral: #FF7676 on white is only 2.59:1 (fails WCAG AA). --coral-600
-   (#C04848) clears AA for headings. Use the bright brand coral for fills only. */
+/* Text-safe coral: #FD6664 on white is only 2.89:1 (fails WCAG AA). --coral-600
+   (#BF4443) clears AA for headings. Use the bright brand coral for fills only. */
 .coral-text { color: var(--coral-600); }
 
 .lede {
@@ -156,8 +158,8 @@ h3.display { font-size: clamp(1.4rem, 3vw, 1.9rem); }
   white-space: nowrap;
 }
 .btn-primary { background: var(--coral-cta); color: #fff; box-shadow: var(--shadow-coral); }
-.btn-primary:hover { transform: translateY(-2px); background: var(--coral-cta-hover); box-shadow: 0 16px 36px rgba(210, 59, 59, 0.3); }
-.btn-primary:active { transform: translateY(0); box-shadow: 0 4px 12px rgba(210, 59, 59, 0.24); }
+.btn-primary:hover { transform: translateY(-2px); background: var(--coral-cta-hover); box-shadow: 0 16px 36px rgba(209, 58, 56, 0.3); }
+.btn-primary:active { transform: translateY(0); box-shadow: 0 4px 12px rgba(209, 58, 56, 0.24); }
 .btn-ghost { background: #fff; border-color: var(--line); color: var(--ink); }
 .btn-ghost:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); border-color: var(--coral-300); }
 .btn-ghost:active { transform: translateY(0); box-shadow: none; }
@@ -177,8 +179,18 @@ h3.display { font-size: clamp(1.4rem, 3vw, 1.9rem); }
   margin: 0 14px 14px; padding: 15px; border-radius: 16px;
   padding-bottom: calc(15px + env(safe-area-inset-bottom));  /* clear the iOS home indicator */
   background: var(--coral-cta); color: #fff; font-weight: 700; font-size: 1.02rem;
-  box-shadow: 0 8px 22px rgba(210, 59, 59, 0.34);
+  box-shadow: 0 8px 22px rgba(209, 58, 56, 0.34);
+  /* Parked off screen until the reader reaches the app screens, then it slides up
+     (see the observer in index.astro). Sits over the hero otherwise, where the
+     download badges are already on show, so it is pure clutter up there.
+     The extra 24px clears the shadow, which would otherwise peek above the edge. */
+  transform: translateY(calc(100% + 24px));
+  transition: transform var(--dur-base) var(--ease);
 }
+.getbar.is-in { transform: none; }
+/* No JS means no observer to reveal it, so leave it up permanently rather than
+   hiding the primary mobile CTA outright. */
+@media (prefers-reduced-motion: reduce) { .getbar { transition: none; } }
 
 /* ---- Cross-section responsive (shared by the page shell + every section) ---- */
 @media (max-width: 900px) {

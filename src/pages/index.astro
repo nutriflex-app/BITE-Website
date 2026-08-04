@@ -2,14 +2,12 @@
 import Base from '../layouts/Base.astro';
 import Hero from '../components/sections/Hero.astro';
 import Proof from '../components/sections/Proof.astro';
-import Features from '../components/sections/Features.astro';
-import HowTimeline from '../components/sections/HowTimeline.astro';
-import MrBite from '../components/sections/MrBite.astro';
 // Reviews section is DISABLED until there are enough store reviews to show. To
 // re-enable: uncomment the import + aggregateRating block below, the <Reviews />
 // tag and aggregateRating prop in <Base>, and the `prebuild` script in
 // package.json. The fetch pipeline + data layer stay in place, ready to go.
 // import Reviews from '../components/sections/Reviews.astro';
+import LogDemo from '../components/sections/LogDemo.astro';
 import Faq from '../components/sections/Faq.astro';
 import DownloadCta from '../components/sections/DownloadCta.astro';
 import { homeFaqs } from '../data/faqs';
@@ -42,14 +40,50 @@ const faqSchema = [
   schema={faqSchema}
 >
   <Hero />
-  <HowTimeline />
-  <Features />
   <Proof />
-  <MrBite />
   {/* <Reviews /> disabled until we have more store reviews */}
-  <Faq />
   <DownloadCta />
+  <LogDemo />
+  <Faq />
 
-  <!-- Mobile-only sticky CTA (lives outside the sections; spans the whole page) -->
-  <a href="#download" class="getbar">Get BITE free <span aria-hidden="true">→</span></a>
+  <!-- Mobile-only sticky CTA (lives outside the sections; spans the whole page).
+       Hidden until the reader reaches the app screens: see the observer below. -->
+  <a href="#download" class="getbar">Download now</a>
+<noscript>
+  <!-- No observer to reveal it, so pin it up: a permanently visible CTA beats a
+       primary action that never appears. -->
+  <style is:inline>.getbar { transform: none !important; }</style>
+</noscript>
+
+<script is:inline>
+  // Slide the sticky CTA up once the app screens come into view, and keep it up
+  // from then on. Above that point the hero's own download badges are on screen,
+  // so the bar would just be covering the page for no gain.
+  (() => {
+    const bar = document.querySelector('.getbar');
+    const trigger = document.querySelector('.proof');
+    if (!bar) return;
+    // No trigger to measure against: show it rather than risk hiding the CTA.
+    if (!trigger) { bar.classList.add('is-in'); return; }
+
+    // A scroll listener rather than an IntersectionObserver: the reveal point is
+    // "the screens have climbed into the upper part of the screen", which is one
+    // comparison here but needs a percentage rootMargin as an observer, and that
+    // form is markedly harder to reason about. Cost is the same either way, since
+    // the work is a single getBoundingClientRect behind a rAF gate.
+    let ticking = false;
+    const update = () => {
+      ticking = false;
+      // Reveal once the screens reach 45% up the viewport, and stay up from then
+      // on. Above that point the hero's own download badges are still on screen,
+      // so the bar would only be covering the page.
+      bar.classList.toggle('is-in', trigger.getBoundingClientRect().top < innerHeight * 0.45);
+    };
+    const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
+
+    addEventListener('scroll', onScroll, { passive: true });
+    addEventListener('resize', onScroll);
+    update();
+  })();
+</script>
 </Base>

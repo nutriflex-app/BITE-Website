@@ -35,8 +35,10 @@ import { SITE } from '../../config';
 </Base>
 
 <style>
+  /* The nav is position:sticky, so it stays in document flow and <main>
+     already starts below it: pad for breathing room only, never for nav-h. */
   .pro {
-    padding: calc(var(--nav-h) + clamp(48px, 9vw, 96px)) 0 var(--space-section);
+    padding: clamp(48px, 9vw, 96px) 0 var(--space-section);
   }
   .pro-inner {
     max-width: 620px;

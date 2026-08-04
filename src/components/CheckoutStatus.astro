@@ -32,16 +32,22 @@ const { mark, title } = Astro.props;
       <a class="btn btn-primary" href={SITE.appScheme}>Open the BITE app</a>
       <a class="btn btn-ghost" href="/">Back to bite.coach</a>
     </div>
-    <p class="status-foot">
-      Checked out on a computer? Open BITE on your phone and sign in with the
-      same email you used at checkout.
-    </p>
+    {mark === 'success' && (
+      <p class="status-foot">
+        Checked out on a computer, or no app on this phone? Get BITE free on
+        the <a href={SITE.appStoreUrl}>App Store</a> or
+        <a href={SITE.playStoreUrl}>Google Play</a>, then sign in with the
+        email you used at checkout.
+      </p>
+    )}
   </div>
 </section>
 
 <style>
+  /* The nav is position:sticky, so it stays in document flow and <main>
+     already starts below it: pad for breathing room only, never for nav-h. */
   .status {
-    padding: calc(var(--nav-h) + clamp(48px, 9vw, 96px)) 0 var(--space-section);
+    padding: clamp(48px, 9vw, 96px) 0 var(--space-section);
   }
   .status-inner {
     max-width: 560px;
@@ -85,5 +91,9 @@ const { mark, title } = Astro.props;
     color: var(--muted);
     font-size: 0.92rem;
     max-width: 46ch;
+  }
+  .status-foot a {
+    color: var(--coral-600);
+    font-weight: 600;
   }
 </style>

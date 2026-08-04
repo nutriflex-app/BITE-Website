@@ -7,7 +7,13 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: 'https://bite.coach',
   output: 'static',
-  integrations: [sitemap()],
+  integrations: [
+    // The checkout return pages are noindex (Base.astro), so listing them in
+    // the sitemap would send crawlers contradictory signals.
+    sitemap({
+      filter: (page) => !page.includes('/pro/success') && !page.includes('/pro/cancel'),
+    }),
+  ],
   build: {
     inlineStylesheets: 'auto',
   },

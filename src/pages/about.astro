@@ -4,7 +4,7 @@ import DownloadButtons from '../components/DownloadButtons.astro';
 import { SITE } from '../config';
 
 const title = `About | ${SITE.name}`;
-const description = `${SITE.name} is a free nutrition tracker and AI coach for iPhone and Android, made by ${SITE.legalName}. Learn what it does, how the AI coach works, and how your data is handled.`;
+const description = `${SITE.name} is a nutrition tracker and AI coach for iPhone and Android, free to download, made by ${SITE.legalName}. Learn what it does, how the AI coach works, and how your data is handled.`;
 ---
 
 <Base title={title} description={description} pageType={['WebPage', 'AboutPage']}>
@@ -12,7 +12,7 @@ const description = `${SITE.name} is a free nutrition tracker and AI coach for i
     <div class="container">
       <h1 class="display">About {SITE.name}</h1>
       <p class="lede">
-        {SITE.name} is a free nutrition tracker and AI coach for iPhone and Android, made by {SITE.legalName}.
+        {SITE.name} is a nutrition tracker and AI coach for iPhone and Android, free to download, made by {SITE.legalName}.
         It helps you eat well without the stress of logging every gram.
       </p>
       <DownloadButtons />

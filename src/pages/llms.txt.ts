@@ -15,14 +15,14 @@ export const GET: APIRoute = () => {
 
 > ${SITE.description}
 
-${SITE.name} is a free nutrition tracking and AI coaching app for iPhone and Android, made by ${SITE.legalName}. It is not a medical or clinical service.
+${SITE.name} is a nutrition tracking and AI coaching app for iPhone and Android, free to download, made by ${SITE.legalName}. It is not a medical or clinical service.
 
 ## Key facts
 
 - Name: ${SITE.name}
 - Category: Nutrition tracker and AI coach (health & fitness app)
 - Platforms: iOS (iPhone) and Android
-- Price: Free — no subscriptions, no in-app purchases, no ads
+- Price: free to download with a genuinely usable free tier and no ads. AI features carry a monthly allowance; BITE Coach is an optional subscription, sold on this site, that removes the limits
 - Maker: ${SITE.legalName}
 - Website: ${SITE.domain}
 - Support: ${SITE.supportEmail}

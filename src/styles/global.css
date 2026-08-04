@@ -51,6 +51,7 @@
   --container: 1140px;
   --nav-h: 70px;                     /* matches Nav .nav-inner height */
   --getbar-h: 56px;                  /* sticky mobile CTA bar: 15px + 1.02rem*1.6 + 15px */
+  --tl-node: 48px;                   /* timeline node diameter (re-declared smaller at narrow widths) */
 
   /* Spacing scale (one source of truth for section rhythm) */
   --space-section: clamp(64px, 10vw, 120px);

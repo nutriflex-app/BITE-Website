@@ -9,7 +9,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "reviews": "node scripts/fetch-reviews.mjs"
+    "reviews": "node scripts/fetch-reviews.mjs",
+    "deploy": "node scripts/deploy.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.2.1",

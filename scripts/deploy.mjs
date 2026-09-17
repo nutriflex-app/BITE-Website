@@ -2,8 +2,16 @@
 /**
  * Deploy bite.coach.
  *
- * There is no CI on this site: it only changes when someone runs a deploy, so
- * whatever folder was last deployed from IS the live site. On 2026-08-08 that
+ * UPDATE 2026-09-17: Netlify now builds production from GitHub main on every
+ * push (deploy log shows main commits building within minutes), so pushing
+ * to main IS the deploy and this script is the manual fallback. Note that
+ * `netlify deploy --site` answers Not Found for the CLI account on this
+ * machine (the project lives in another team), so the fallback needs a login
+ * that can see project bite-site.
+ *
+ * Original rationale: there was no CI on this site, it only changed when
+ * someone ran a deploy, so whatever folder was last deployed from WAS the
+ * live site. On 2026-08-08 that
  * meant a checkout eighteen commits behind kept republishing an old homepage
  * over a newer one, and took the /pro checkout pages down with it, so Stripe
  * payers landed on a 404 after entering their card.
@@ -30,7 +38,8 @@ const MUST_BE_LIVE = ['/', '/pro/', '/pro/success/', '/pro/cancel/', '/blog/'];
 const SITE_URL = 'https://bite.coach';
 
 const force = process.argv.includes('--force');
-const run = (cmd, opts = {}) => execSync(cmd, { encoding: 'utf8', stdio: 'pipe', ...opts }).trim();
+// execSync returns null when stdio is inherited (Node 22), so guard before trim.
+const run = (cmd, opts = {}) => (execSync(cmd, { encoding: 'utf8', stdio: 'pipe', ...opts }) ?? '').trim();
 const say = (msg) => process.stdout.write(`${msg}\n`);
 const die = (msg) => {
   process.stderr.write(`\n  ${msg}\n\n`);

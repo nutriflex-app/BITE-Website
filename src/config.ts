@@ -14,6 +14,16 @@ export const SITE = {
   // The app's custom URL scheme (app.config.js `scheme` in the app repo).
   // The checkout return pages use it to hand the user back to the app.
   appScheme: 'com.nutriflex.systems.app://',
+  // PostHog, for the website only (the app uses Amplitude). The project key is
+  // a PUBLIC key: it ships in the page source by design and is not a secret.
+  //
+  // REGION: must match the PostHog cloud the project lives on, and the key
+  // does not encode it. Confirmed US on 2026-10-25 from the project URL
+  // (us.posthog.com/project/687294). This is a SEPARATE PostHog account from
+  // Keelhouse/aptcoach, which is on EU: do not copy a host between them.
+  // Wrong host means events are sent nowhere, with no error on the page.
+  posthogKey: 'phc_tUVYA9tETRkUpxwxFcFaADJUqthe736pcgehMMWg5o69',
+  posthogHost: 'https://us.i.posthog.com',
   // Contact shown on the support + legal pages (mirrors the app's PrivacyScreen).
   supportEmail: 'support@nutriflex.app',
   privacyEmail: 'privacy@nutriflex.app',

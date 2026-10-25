@@ -1,0 +1,302 @@
+---
+/**
+ * Fit Asylum partner page: 15% off Mr BITE for their members.
+ *
+ * The URL is short on purpose (bite.coach/fit-asylum): this gets read off a
+ * poster, a WhatsApp group and a coach's phone screen, so it has to be
+ * sayable. ?code= on /pro would work too, but a bare discount link tells a
+ * member nothing about who it is from or what they are joining.
+ *
+ * WHY THE SUBSCRIPTION IS BOUGHT HERE AND NOT IN THE APP
+ * The brief was "buy in the app, enter the code". That cannot honestly say
+ * 15% on Android: Google Play subscription promo codes only grant a free
+ * trial of 3 to 90 days, never a percentage, and Play custom codes carry a
+ * 2,000 redemption minimum and are limited to users who never subscribed.
+ * Apple's custom offer codes CAN do a reusable shareable code, but they set a
+ * price point for a duration rather than a true percentage, and this app ships
+ * no StoreKit redemption sheet, so there is nowhere in the app to type one.
+ *
+ * Stripe web checkout is the only route that charges exactly 15% less, on both
+ * platforms, today, with no store configuration. It also keeps the store's
+ * 15 to 30% cut. So: subscribe here, then sign in to the app, which is the
+ * same account either way.
+ *
+ * noindex because a partner rate is not a public offer and should not rank
+ * against the main paywall.
+ */
+import Base from '../layouts/Base.astro';
+import { SITE } from '../config';
+
+const PARTNER = 'Fit Asylum';
+const CODE = 'FITASYLUM15';
+const PERCENT = 15;
+const checkoutUrl = `/pro?code=${CODE}`;
+---
+
+<Base
+  title={`${PERCENT}% off Mr BITE for ${PARTNER} members`}
+  description={`${PARTNER} members get ${PERCENT}% off Mr BITE, the nutrition tracker and AI coach. Use code ${CODE}.`}
+  noindex
+>
+  <section class="hero">
+    <p class="kicker">{PARTNER} members</p>
+    <h1>Get {PERCENT}% off Mr BITE</h1>
+    <p class="sub">{SITE.tagline} Log any meal in seconds, plan your week, and let Mr BITE coach you to your goals.</p>
+
+    <!-- The code is the thing people came for, so it leads. Tap to copy
+         because most of this traffic is a thumb on a phone. -->
+    <div class="codecard">
+      <p class="codelabel">Your discount code</p>
+      <button class="code" id="code" type="button" data-code={CODE} aria-label={`Copy discount code ${CODE}`}>
+        <span>{CODE}</span>
+        <small id="codehint">Tap to copy</small>
+      </button>
+      <p class="codenote">{PERCENT}% off, for as long as you stay subscribed.</p>
+    </div>
+
+    <ol class="steps">
+      <li>
+        <span class="num">1</span>
+        <div>
+          <h2>Claim your {PERCENT}% off</h2>
+          <p>The code is already applied. Pick monthly or yearly and you will see the discounted price before you pay.</p>
+          <a class="cta" href={checkoutUrl} data-testid="claim-cta">Claim {PERCENT}% off</a>
+        </div>
+      </li>
+      <li>
+        <span class="num">2</span>
+        <div>
+          <h2>Download the app</h2>
+          <p>Sign in with the same email you used at checkout and your {PERCENT}% membership is already on your account.</p>
+          <div class="badges">
+            <a class="badge" href={SITE.appStoreUrl} target="_blank" rel="noopener" aria-label="Download Mr BITE on the App Store">
+              <svg viewBox="0 0 24 24" width="21" height="21" fill="currentColor" aria-hidden="true">
+                <path d="M16.36 1.43c.05.74-.25 1.46-.74 1.99-.52.56-1.36.99-2.18.93-.07-.73.28-1.49.75-1.97.52-.56 1.43-.97 2.17-.95zM19.5 17.1c-.38.88-.56 1.27-1.05 2.05-.68 1.08-1.64 2.43-2.83 2.44-1.06.01-1.33-.69-2.77-.68-1.44.01-1.73.69-2.79.68-1.19-.01-2.1-1.23-2.78-2.31-1.9-3.02-2.1-6.56-.93-8.44.83-1.34 2.14-2.12 3.37-2.12 1.26 0 2.05.69 3.09.69 1.01 0 1.62-.69 3.08-.69 1.1 0 2.27.6 3.1 1.64-2.73 1.5-2.29 5.4.24 6.41z" />
+              </svg>
+              <span class="badge-copy"><small>Download on the</small><strong>App Store</strong></span>
+            </a>
+            <a class="badge" href={SITE.playStoreUrl} target="_blank" rel="noopener" aria-label="Get Mr BITE on Google Play">
+              <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+                <path fill="#34d399" d="M3.6 2.3 13 11.7l-2.6 2.6L3.1 2.9c.1-.3.3-.5.5-.6z" />
+                <path fill="#60a5fa" d="M3.1 2.9 10.4 14.3 3.6 21.7c-.3-.2-.5-.5-.5-.9V3.2c0-.1 0-.2 0-.3z" />
+                <path fill="#fbbf24" d="M17.9 9.2 14.7 11l-2.6 2.6 3 2.9 2.8-1.6c.9-.5.9-1.8 0-2.4z" />
+                <path fill="#f87171" d="M13 11.7 3.6 2.3c.2-.1.5-.1.8 0l11.1 6.3-2.5 3.1z" />
+              </svg>
+              <span class="badge-copy"><small>Get it on</small><strong>Google Play</strong></span>
+            </a>
+          </div>
+        </div>
+      </li>
+    </ol>
+
+    <!-- Load-bearing, not fine print: a member who subscribes from inside the
+         app pays full store price and the code does nothing, with no error to
+         tell them so. Saying it here is cheaper than refunding it later. -->
+    <p class="note">
+      Subscribe on this page, not inside the app. App Store and Google Play
+      cannot take a discount code, so tapping Subscribe in the app charges the
+      full price.
+    </p>
+
+    <p class="help">
+      Any trouble? Email <a href={`mailto:${SITE.supportEmail}`}>{SITE.supportEmail}</a> and mention {PARTNER}.
+    </p>
+  </section>
+</Base>
+
+<script>
+  const btn = document.getElementById('code');
+  const hint = document.getElementById('codehint');
+  btn?.addEventListener('click', async () => {
+    const code = btn.dataset.code || '';
+    try {
+      await navigator.clipboard.writeText(code);
+      if (hint) hint.textContent = 'Copied';
+    } catch {
+      // Clipboard is blocked in some in-app browsers (and on any insecure
+      // origin). Selecting the text is the honest fallback: never claim a copy
+      // that did not happen, or the member pastes an empty code at checkout.
+      const range = document.createRange();
+      const target = btn.querySelector('span');
+      if (target) {
+        range.selectNodeContents(target);
+        const sel = window.getSelection();
+        sel?.removeAllRanges();
+        sel?.addRange(range);
+      }
+      if (hint) hint.textContent = 'Press and hold to copy';
+    }
+    window.setTimeout(() => {
+      if (hint) hint.textContent = 'Tap to copy';
+    }, 2400);
+  });
+</script>
+
+<style>
+  .hero {
+    max-width: 44rem;
+    margin: 0 auto;
+    padding: var(--space-section) 1rem;
+  }
+  .kicker {
+    margin: 0 0 0.4rem;
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--coral);
+  }
+  h1 {
+    margin: 0 0 0.6rem;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 7vw, 2.9rem);
+    line-height: 1.08;
+  }
+  .sub {
+    margin: 0 0 1.75rem;
+    color: var(--muted);
+    font-size: 1.05rem;
+    line-height: 1.55;
+  }
+
+  .codecard {
+    border: 1px solid var(--line);
+    border-radius: var(--r-xl);
+    background: var(--card);
+    box-shadow: var(--shadow-md);
+    padding: 1.25rem;
+    text-align: center;
+  }
+  .codelabel {
+    margin: 0 0 0.6rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .code {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border: 2px dashed var(--coral);
+    border-radius: var(--r-lg);
+    background: var(--faint);
+    color: var(--ink);
+    font: inherit;
+    cursor: pointer;
+  }
+  .code span {
+    font-family: var(--font-display);
+    /* Wide tracking so O and 0 cannot be confused when read off a screen. */
+    font-size: clamp(1.4rem, 6vw, 1.9rem);
+    font-weight: 800;
+    letter-spacing: 0.1em;
+  }
+  .code small {
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+  .codenote {
+    margin: 0.75rem 0 0;
+    font-size: 0.92rem;
+    color: var(--muted);
+  }
+
+  .steps {
+    list-style: none;
+    margin: 1.75rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 1.25rem;
+  }
+  .steps li {
+    display: flex;
+    gap: 0.9rem;
+    align-items: flex-start;
+  }
+  .num {
+    flex: none;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 999px;
+    background: var(--coral);
+    color: #fff;
+    font-weight: 800;
+    font-size: 0.95rem;
+    display: grid;
+    place-items: center;
+  }
+  .steps h2 {
+    margin: 0.1rem 0 0.3rem;
+    font-size: 1.1rem;
+    line-height: 1.3;
+  }
+  .steps p {
+    margin: 0 0 0.75rem;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  .cta {
+    display: inline-block;
+    padding: 0.8rem 1.4rem;
+    border-radius: 999px;
+    background: var(--coral-cta);
+    color: #fff;
+    font-weight: 800;
+    text-decoration: none;
+    box-shadow: var(--shadow-coral);
+  }
+  .cta:hover {
+    background: var(--coral-cta-hover);
+  }
+
+  .badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.6rem 0.95rem;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: var(--ink-surface);
+    color: #fff;
+    text-decoration: none;
+  }
+  .badge-copy {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+  }
+  .badge-copy small {
+    font-size: 0.65rem;
+    opacity: 0.8;
+  }
+  .badge-copy strong {
+    font-size: 0.95rem;
+  }
+
+  .note {
+    margin: 1.75rem 0 0;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--coral);
+    border-radius: var(--r-sm);
+    background: var(--faint);
+    font-size: 0.93rem;
+    line-height: 1.55;
+  }
+  .help {
+    margin: 1rem 0 0;
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+</style>

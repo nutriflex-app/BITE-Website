@@ -1,0 +1,197 @@
+---
+/**
+ * The bio-link landing page, one per social channel.
+ *
+ * WHY A PAGE PER CHANNEL AND NOT ONE PAGE WITH A ?source= PARAM
+ * The URL is the attribution. If bite.coach/tiktok exists nowhere except the
+ * TikTok bio, every visit to it came from TikTok, with no pixel, no SDK and no
+ * attribution modelling. A query string gets stripped by apps that rewrite
+ * links, typed wrong by hand, and lost the moment someone shares the link on,
+ * which is exactly when you most want to know where it went.
+ *
+ * WHAT IT MEASURES
+ * Two events, both tagged with the channel: `landing_view` when the page opens
+ * and `store_click` when someone taps through. The ratio between them is the
+ * only honest answer to "how many people transfer", and it is the number that
+ * is missing from the dashboard's funnel today.
+ *
+ * It cannot follow them into the store. Apple and Google report installs by
+ * source type, not by referring URL, so the chain ends at the tap. Say that
+ * plainly rather than implying the page knows more than it does.
+ *
+ * noindex: these are three thin pages with near-identical copy. Letting them
+ * into the index competes with the homepage for the brand term and risks a
+ * duplicate-content penalty, for traffic that was never going to arrive by
+ * search.
+ */
+import Base from '../layouts/Base.astro';
+import { SITE } from '../config';
+
+interface Props {
+  /** Short, stable id. It is the event tag AND the URL, so never rename it casually. */
+  channel: string;
+  /** How the channel is written for humans. */
+  channelName: string;
+  /** The one line under the headline, in that channel's voice. */
+  lead: string;
+}
+const { channel, channelName, lead } = Astro.props;
+---
+
+<Base
+  title={`Mr BITE for ${channelName}`}
+  description={SITE.description}
+  noindex
+>
+  <section class="cl">
+    <p class="cl-kicker">{channelName}</p>
+    <h1>Track what you eat, without the faff</h1>
+    <p class="cl-lead">{lead}</p>
+
+    <div class="cl-badges">
+      <a
+        class="cl-badge"
+        href={SITE.appStoreUrl}
+        data-store="ios"
+        rel="noopener"
+        aria-label="Download Mr BITE on the App Store"
+      >
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true">
+          <path d="M16.36 1.43c.05.74-.25 1.46-.74 1.99-.52.56-1.36.99-2.18.93-.07-.73.28-1.49.75-1.97.52-.56 1.43-.97 2.17-.95zM19.5 17.1c-.38.88-.56 1.27-1.05 2.05-.68 1.08-1.64 2.43-2.83 2.44-1.06.01-1.33-.69-2.77-.68-1.44.01-1.73.69-2.79.68-1.19-.01-2.1-1.23-2.78-2.31-1.9-3.02-2.1-6.56-.93-8.44.83-1.34 2.14-2.12 3.37-2.12 1.26 0 2.05.69 3.09.69 1.01 0 1.62-.69 3.08-.69 1.1 0 2.27.6 3.1 1.64-2.73 1.5-2.29 5.4.24 6.41z" />
+        </svg>
+        <span class="cl-badge-copy"><small>Download on the</small><strong>App Store</strong></span>
+      </a>
+      <a
+        class="cl-badge"
+        href={SITE.playStoreUrl}
+        data-store="android"
+        rel="noopener"
+        aria-label="Get Mr BITE on Google Play"
+      >
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+          <path fill="#34d399" d="M3.6 2.3 13 11.7l-2.6 2.6L3.1 2.9c.1-.3.3-.5.5-.6z" />
+          <path fill="#60a5fa" d="M3.1 2.9 10.4 14.3 3.6 21.7c-.3-.2-.5-.5-.5-.9V3.2c0-.1 0-.2 0-.3z" />
+          <path fill="#fbbf24" d="M17.9 9.2 14.7 11l-2.6 2.6 3 2.9 2.8-1.6c.9-.5.9-1.8 0-2.4z" />
+          <path fill="#f87171" d="M13 11.7 3.6 2.3c.2-.1.5-.1.8 0l11.1 6.3-2.5 3.1z" />
+        </svg>
+        <span class="cl-badge-copy"><small>Get it on</small><strong>Google Play</strong></span>
+      </a>
+    </div>
+
+    <ul class="cl-points">
+      <li>Snap a photo, scan a barcode or just say what you ate.</li>
+      <li>Mr BITE reads your week and tells you what is actually working.</li>
+      <li>Free to download.</li>
+    </ul>
+  </section>
+</Base>
+
+<script is:inline define:vars={{ channel }}>
+  (() => {
+    const send = (name, props) => {
+      try {
+        if (window.posthog) window.posthog.capture(name, props);
+      } catch (e) {
+        // Analytics must never break the only thing this page does, which is
+        // get someone to a store. Swallow and carry on.
+      }
+    };
+
+    send('landing_view', { channel });
+
+    document.querySelectorAll('[data-store]').forEach((a) => {
+      a.addEventListener('click', () => {
+        // No preventDefault and no delay: the navigation starts immediately and
+        // PostHog's own beacon survives the page going away. Holding the tap
+        // open to "make sure" the event lands would cost real store visits to
+        // protect a number, which is the wrong way round.
+        send('store_click', { channel, store: a.dataset.store });
+      });
+    });
+  })();
+</script>
+
+<style>
+  .cl {
+    max-width: 34rem;
+    margin: 0 auto;
+    padding: var(--space-section) 1rem;
+    text-align: center;
+  }
+  .cl-kicker {
+    margin: 0 0 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--coral);
+  }
+  .cl h1 {
+    margin: 0 0 0.75rem;
+    font-family: var(--font-display);
+    font-size: clamp(1.9rem, 8vw, 2.7rem);
+    line-height: 1.1;
+  }
+  .cl-lead {
+    margin: 0 auto 2rem;
+    max-width: 28rem;
+    color: var(--muted);
+    font-size: 1.05rem;
+    line-height: 1.55;
+  }
+  .cl-badges {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    align-items: stretch;
+  }
+  /* Side by side only once there is room for both to stay tappable. Bio-link
+     traffic is almost entirely phones, so the stacked full-width case is the
+     one that matters and it comes first. */
+  @media (min-width: 30rem) {
+    .cl-badges {
+      flex-direction: row;
+      justify-content: center;
+    }
+  }
+  .cl-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 0.95rem 1.3rem;
+    border-radius: var(--r-lg);
+    background: var(--ink-surface);
+    color: #fff;
+    text-decoration: none;
+    /* Comfortably over the 44pt minimum tap target, because this is the only
+       control on the page and it is being hit with a thumb. */
+    min-height: 3.25rem;
+  }
+  .cl-badge:hover {
+    opacity: 0.92;
+  }
+  .cl-badge-copy {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+    text-align: left;
+  }
+  .cl-badge-copy small {
+    font-size: 0.7rem;
+    opacity: 0.8;
+  }
+  .cl-badge-copy strong {
+    font-size: 1rem;
+  }
+  .cl-points {
+    list-style: none;
+    margin: 2rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.6rem;
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+</style>

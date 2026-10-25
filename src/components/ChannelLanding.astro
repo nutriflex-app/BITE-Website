@@ -1,88 +1,142 @@
 ---
 /**
- * The bio-link landing page, one per social channel.
+ * The bio-link landing page, one per social channel (/ig, /tiktok, /yt).
  *
- * WHY A PAGE PER CHANNEL AND NOT ONE PAGE WITH A ?source= PARAM
+ * BUILT FROM THE SITE'S OWN PARTS, NOT A LOOKALIKE (2026-10-25). The first cut
+ * hand-rolled its badges, eyebrow and spacing and drifted from the homepage in
+ * three ways a visitor would feel: coral TEXT in the 2.89:1 brand tint the
+ * design system reserves for fills, its own badge markup instead of
+ * DownloadButtons, and none of the hero's wash. This version composes the
+ * homepage's pieces: the hero background, the CTA section's dotted eyebrow,
+ * h1.display with .coral-text, DownloadButtons, the App Store posters, the
+ * icon set and the trust strip. Someone arriving from a reel should feel they
+ * have landed on the same site as the homepage, because they have.
+ *
+ * WHY A PAGE PER CHANNEL AND NOT ONE PAGE WITH ?source=
  * The URL is the attribution. If bite.coach/tiktok exists nowhere except the
- * TikTok bio, every visit to it came from TikTok, with no pixel, no SDK and no
- * attribution modelling. A query string gets stripped by apps that rewrite
- * links, typed wrong by hand, and lost the moment someone shares the link on,
- * which is exactly when you most want to know where it went.
+ * TikTok bio, every visit to it came from TikTok, with no pixel and no
+ * modelling. A query string is stripped by apps that rewrite links and lost the
+ * moment someone shares the link on, which is exactly when it matters.
  *
  * WHAT IT MEASURES
- * Two events, both tagged with the channel: `landing_view` when the page opens
- * and `store_click` when someone taps through. The ratio between them is the
- * only honest answer to "how many people transfer", and it is the number that
- * is missing from the dashboard's funnel today.
+ * `landing_view` on open and `store_click` on tap, both tagged with the
+ * channel. The ratio is the transfer rate per channel. The chain ends at the
+ * tap: Apple and Google report installs by source type, never by referring URL.
  *
- * It cannot follow them into the store. Apple and Google report installs by
- * source type, not by referring URL, so the chain ends at the tap. Say that
- * plainly rather than implying the page knows more than it does.
- *
- * noindex: these are three thin pages with near-identical copy. Letting them
- * into the index competes with the homepage for the brand term and risks a
- * duplicate-content penalty, for traffic that was never going to arrive by
- * search.
+ * noindex: three near-identical thin pages competing with the homepage for the
+ * brand term is a duplicate-content problem, for traffic that was never going
+ * to arrive by search.
  */
+import { Picture } from 'astro:assets';
 import Base from '../layouts/Base.astro';
+import DownloadButtons from './DownloadButtons.astro';
+import { icon } from '../lib/icons';
 import { SITE } from '../config';
+import photoLog from '../assets/screens/poster-3-photo-log.jpg';
+import insights from '../assets/screens/poster-5-insights.jpg';
+import dashboard from '../assets/screens/poster-1-dashboard.jpg';
 
 interface Props {
-  /** Short, stable id. It is the event tag AND the URL, so never rename it casually. */
+  /** Short, stable id. It is the event tag, so never rename it casually. */
   channel: string;
   /** How the channel is written for humans. */
   channelName: string;
-  /** The one line under the headline, in that channel's voice. */
+  /** The line under the headline, in that channel's voice. */
   lead: string;
 }
 const { channel, channelName, lead } = Astro.props;
+
+// Three of the five homepage posters, in the order a newcomer meets the app:
+// log a meal, see the day, get the read on the week. The alt text carries the
+// words printed in each image (WCAG 1.1.1), copied from Proof.astro.
+const posters = [
+  { img: photoLog, alt: 'Snap a photo, stay on track: a photographed salad logged with its calories and macros' },
+  { img: dashboard, alt: 'Beginner friendly weight loss: the daily dashboard with a calorie ring, protein, carb and fat bars, logged meals, and a water tracker' },
+  { img: insights, alt: 'Get personal insights: the trends screen with a two day streak, achievements, average calories versus target, and Bite’s read of your week' },
+];
+
+// The four ways in, matching the homepage's own promise ("by photo, barcode,
+// voice, or search") with Mr BITE's coaching standing in for search, since the
+// reels are about the coaching.
+const ways = [
+  { icon: 'camera', title: 'Snap it', body: 'Take a photo and the meal is logged with its calories and macros.' },
+  { icon: 'barcode', title: 'Scan it', body: 'Point at a barcode and the label is read for you.' },
+  { icon: 'mic', title: 'Say it', body: 'Tell it what you ate, in your own words.' },
+  { icon: 'chat', title: 'Ask Mr BITE', body: 'Your coach reads your week and tells you what is working.' },
+];
+
+// Same three promises, same icons, as the homepage's download section.
+const trust = [
+  { label: 'Encrypted in transit and at rest', icon: 'lock' },
+  { label: 'We never sell your data', icon: 'shield' },
+  { label: 'Delete your data anytime', icon: 'trash' },
+];
 ---
 
-<Base
-  title={`Mr BITE for ${channelName}`}
-  description={SITE.description}
-  noindex
->
-  <section class="cl">
-    <p class="cl-kicker">{channelName}</p>
-    <h1>Track what you eat, without the faff</h1>
-    <p class="cl-lead">{lead}</p>
-
-    <div class="cl-badges">
-      <a
-        class="cl-badge"
-        href={SITE.appStoreUrl}
-        data-store="ios"
-        rel="noopener"
-        aria-label="Download Mr BITE on the App Store"
-      >
-        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true">
-          <path d="M16.36 1.43c.05.74-.25 1.46-.74 1.99-.52.56-1.36.99-2.18.93-.07-.73.28-1.49.75-1.97.52-.56 1.43-.97 2.17-.95zM19.5 17.1c-.38.88-.56 1.27-1.05 2.05-.68 1.08-1.64 2.43-2.83 2.44-1.06.01-1.33-.69-2.77-.68-1.44.01-1.73.69-2.79.68-1.19-.01-2.1-1.23-2.78-2.31-1.9-3.02-2.1-6.56-.93-8.44.83-1.34 2.14-2.12 3.37-2.12 1.26 0 2.05.69 3.09.69 1.01 0 1.62-.69 3.08-.69 1.1 0 2.27.6 3.1 1.64-2.73 1.5-2.29 5.4.24 6.41z" />
-        </svg>
-        <span class="cl-badge-copy"><small>Download on the</small><strong>App Store</strong></span>
-      </a>
-      <a
-        class="cl-badge"
-        href={SITE.playStoreUrl}
-        data-store="android"
-        rel="noopener"
-        aria-label="Get Mr BITE on Google Play"
-      >
-        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
-          <path fill="#34d399" d="M3.6 2.3 13 11.7l-2.6 2.6L3.1 2.9c.1-.3.3-.5.5-.6z" />
-          <path fill="#60a5fa" d="M3.1 2.9 10.4 14.3 3.6 21.7c-.3-.2-.5-.5-.5-.9V3.2c0-.1 0-.2 0-.3z" />
-          <path fill="#fbbf24" d="M17.9 9.2 14.7 11l-2.6 2.6 3 2.9 2.8-1.6c.9-.5.9-1.8 0-2.4z" />
-          <path fill="#f87171" d="M13 11.7 3.6 2.3c.2-.1.5-.1.8 0l11.1 6.3-2.5 3.1z" />
-        </svg>
-        <span class="cl-badge-copy"><small>Get it on</small><strong>Google Play</strong></span>
-      </a>
+<Base title={`Mr BITE for ${channelName}`} description={SITE.description} noindex>
+  <section class="cl-top">
+    <div class="cl-bg" aria-hidden="true"></div>
+    <div class="container cl-inner">
+      <!-- `reveal in` pre-applied, as on the homepage hero: this block is the
+           LCP and the only thing a thumb needs, so it must never fade in. -->
+      <div class="cl-copy reveal in">
+        <span class="cl-eyebrow">From {channelName}</span>
+        <h1 class="display">Nutrition,<br /><span class="coral-text">made effortless.</span></h1>
+        <p class="cl-lead">{lead}</p>
+        <div class="cl-cta">
+          <DownloadButtons align="center" />
+        </div>
+        <p class="cl-trust">Free to start. Private. Delete anytime.</p>
+      </div>
     </div>
+  </section>
 
-    <ul class="cl-points">
-      <li>Snap a photo, scan a barcode or just say what you ate.</li>
-      <li>Mr BITE reads your week and tells you what is actually working.</li>
-      <li>Free to download.</li>
-    </ul>
+  <section class="cl-screens" aria-label="Inside the app">
+    <div class="container">
+      <div class="cl-deck reveal" role="list" tabindex="0" aria-label="Screens from the Mr BITE app">
+        {posters.map((p) => (
+          <figure class="cl-poster" role="listitem">
+            <Picture
+              src={p.img}
+              formats={['avif', 'webp']}
+              widths={[220, 440, 600]}
+              sizes="(max-width: 560px) 62vw, 220px"
+              alt={p.alt}
+              loading="lazy"
+              decoding="async"
+            />
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section cl-ways">
+    <div class="container">
+      <div class="section-head cl-head reveal">
+        <h2 class="display">Log any meal in seconds.</h2>
+        <p class="lede">Four ways in, so it fits however you eat.</p>
+      </div>
+      <ul class="cl-grid">
+        {ways.map((w) => (
+          <li class="cl-card reveal">
+            <span class="cl-icon" set:html={icon(w.icon, { size: 22, stroke: 1.8 })} />
+            <h3>{w.title}</h3>
+            <p>{w.body}</p>
+          </li>
+        ))}
+      </ul>
+
+      <div class="cl-close reveal">
+        <DownloadButtons align="center" />
+      </div>
+
+      <ul class="cl-trust-strip reveal" aria-label="Privacy">
+        {trust.map((t) => (
+          <li><span class="cl-trust-icon" set:html={icon(t.icon, { size: 20, stroke: 1.7 })} />{t.label}</li>
+        ))}
+      </ul>
+    </div>
   </section>
 </Base>
 
@@ -92,106 +146,169 @@ const { channel, channelName, lead } = Astro.props;
       try {
         if (window.posthog) window.posthog.capture(name, props);
       } catch (e) {
-        // Analytics must never break the only thing this page does, which is
-        // get someone to a store. Swallow and carry on.
+        // Analytics must never break the one thing this page does, which is
+        // get someone to a store.
       }
     };
 
     send('landing_view', { channel });
 
-    document.querySelectorAll('[data-store]').forEach((a) => {
+    // The badges come from DownloadButtons, which every page shares, so the
+    // store is read from the link rather than from markup this page owns. Both
+    // button rows are covered: someone who scrolls to the bottom before tapping
+    // is the same conversion as someone who taps at the top.
+    const storeOf = (href) => {
+      if (href.includes('apps.apple.com')) return 'ios';
+      if (href.includes('play.google.com')) return 'android';
+      return 'other';
+    };
+    document.querySelectorAll('.cl-cta a, .cl-close a').forEach((a) => {
       a.addEventListener('click', () => {
-        // No preventDefault and no delay: the navigation starts immediately and
-        // PostHog's own beacon survives the page going away. Holding the tap
-        // open to "make sure" the event lands would cost real store visits to
-        // protect a number, which is the wrong way round.
-        send('store_click', { channel, store: a.dataset.store });
+        // No preventDefault, no delay. The badges open the store in a new tab,
+        // so this page never unloads and the event lands regardless; and holding
+        // a tap open to protect a number would cost real store visits.
+        send('store_click', { channel, store: storeOf(a.href), position: a.closest('.cl-close') ? 'bottom' : 'top' });
       });
     });
   })();
 </script>
 
 <style>
-  .cl {
-    max-width: 34rem;
-    margin: 0 auto;
-    padding: var(--space-section) 1rem;
-    text-align: center;
+  /* ---- Top: the homepage hero's wash and type, centred ------------------ */
+  .cl-top {
+    position: relative; overflow: hidden;
+    padding-top: clamp(36px, 6vw, 76px);
+    padding-bottom: clamp(20px, 3vw, 36px);
   }
-  .cl-kicker {
-    margin: 0 0 0.5rem;
-    font-size: 0.8rem;
-    font-weight: 800;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--coral);
+  /* Same two radial washes as Hero.astro, mirrored so the glow sits behind a
+     centred headline rather than off to the right of a left-aligned one. */
+  .cl-bg {
+    position: absolute; inset: 0; z-index: -1;
+    background:
+      radial-gradient(48% 46% at 50% 8%, rgba(253, 102, 100, 0.11), transparent 70%),
+      radial-gradient(36% 34% at 6% 10%, rgba(254, 154, 153, 0.05), transparent 70%);
   }
-  .cl h1 {
-    margin: 0 0 0.75rem;
-    font-family: var(--font-display);
-    font-size: clamp(1.9rem, 8vw, 2.7rem);
-    line-height: 1.1;
+  .cl-inner { display: flex; justify-content: center; }
+  .cl-copy {
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+    max-width: 640px; min-width: 0;
   }
+  /* The download section's eyebrow, dot and all, so a page that is nothing but
+     a call to action opens with the site's call-to-action voice. */
+  .cl-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px; margin-bottom: 18px;
+    font-size: 0.76rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--coral-600);
+  }
+  .cl-eyebrow::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--coral); }
+  /* The homepage's two-line lockup at the homepage's scale, capped at the
+     measure that keeps "made effortless." on one line where there is room. */
+  .cl-copy h1 { font-size: clamp(2.6rem, 7vw, 4.6rem); margin: 0; max-width: 15ch; }
   .cl-lead {
-    margin: 0 auto 2rem;
-    max-width: 28rem;
-    color: var(--muted);
-    font-size: 1.05rem;
-    line-height: 1.55;
+    max-width: 44ch;
+    margin-top: clamp(16px, 2.2vw, 22px);
+    font-size: clamp(1.05rem, 1.5vw, 1.22rem);
+    font-weight: 500; line-height: 1.55;
+    color: var(--ink-soft);
+    text-wrap: pretty;
   }
-  .cl-badges {
-    display: flex;
-    flex-direction: column;
-    gap: 0.7rem;
-    align-items: stretch;
+  .cl-cta { margin-top: 30px; }
+  .cl-cta :global(.dl), .cl-close :global(.dl) { align-items: center; }
+  .cl-trust { margin-top: 14px; font-size: 0.85rem; font-weight: 500; color: var(--muted); }
+
+  /* ---- Screens: three posters, the middle one raised -------------------- */
+  .cl-screens { position: relative; padding-bottom: clamp(8px, 2vw, 20px); }
+  .cl-deck {
+    display: flex; justify-content: center; align-items: flex-end;
+    gap: clamp(14px, 2.4vw, 26px);
+    padding: 28px 4px 36px;
   }
-  /* Side by side only once there is room for both to stay tappable. Bio-link
-     traffic is almost entirely phones, so the stacked full-width case is the
-     one that matters and it comes first. */
-  @media (min-width: 30rem) {
-    .cl-badges {
-      flex-direction: row;
-      justify-content: center;
+  .cl-poster {
+    flex: 0 0 auto; width: 220px; margin: 0;
+    border-radius: var(--r-xl); overflow: hidden;
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-lg);
+    background: var(--line-soft);
+  }
+  .cl-poster :global(img) { width: 100%; height: auto; display: block; }
+  .cl-poster:nth-child(1) { transform: rotate(-4deg) translateY(10px); }
+  .cl-poster:nth-child(2) { transform: translateY(-14px); z-index: 1; }
+  .cl-poster:nth-child(3) { transform: rotate(4deg) translateY(10px); }
+
+  /* ---- Ways in: the homepage card recipe -------------------------------- */
+  .cl-ways { padding-top: var(--space-section-tight); }
+  .cl-head { margin-inline: auto; text-align: center; }
+  .cl-head .lede { margin-inline: auto; }
+  .cl-grid {
+    list-style: none; padding: 0;
+    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px;
+  }
+  .cl-card {
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--r-xl);
+    box-shadow: var(--shadow-sm);
+    padding: 22px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .cl-icon {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 44px; height: 44px; border-radius: var(--r-md);
+    background: var(--coral-100); color: var(--coral-600);
+    margin-bottom: 6px;
+  }
+  .cl-card h3 { font-size: 1.05rem; font-weight: 700; letter-spacing: -0.01em; }
+  .cl-card p { font-size: 0.95rem; line-height: 1.5; color: var(--muted); }
+
+  .cl-close { display: flex; justify-content: center; margin-top: clamp(36px, 5vw, 52px); }
+
+  /* The download section's trust strip, verbatim. */
+  .cl-trust-strip {
+    list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 14px 32px;
+    margin-top: 32px; padding: 0;
+  }
+  .cl-trust-strip li { display: inline-flex; align-items: center; gap: 9px; font-size: 0.92rem; font-weight: 500; color: var(--ink-soft); }
+  .cl-trust-icon { display: inline-flex; color: var(--coral-600); }
+
+  /* ---- Breakpoints: the site's own scale (900 / 620 / 560) --------------- */
+  @media (max-width: 900px) {
+    .cl-bg {
+      /* Softened when stacked, as Hero.astro does, so muted text over the wash
+         stays above 4.5:1. */
+      background:
+        radial-gradient(60% 40% at 50% 6%, rgba(253, 102, 100, 0.07), transparent 70%),
+        radial-gradient(40% 36% at 4% 4%, rgba(254, 154, 153, 0.05), transparent 70%);
     }
+    .cl-copy h1 { font-size: clamp(2.6rem, 12vw, 4.2rem); }
+    .cl-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
-  .cl-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.6rem;
-    padding: 0.95rem 1.3rem;
-    border-radius: var(--r-lg);
-    background: var(--ink-surface);
-    color: #fff;
-    text-decoration: none;
-    /* Comfortably over the 44pt minimum tap target, because this is the only
-       control on the page and it is being hit with a thumb. */
-    min-height: 3.25rem;
+
+  @media (max-width: 560px) {
+    .cl-top { padding-top: 22px; }
+    .cl-cta { margin-top: 24px; }
+    /* Unlike the homepage, the badges STAY at phone width. This page has no
+       sticky getbar and no other action: hiding them would leave a bio-link
+       visitor, who is almost certainly on a phone, with nothing to tap. */
+
+    /* Posters become a swipeable row: three tilted phones side by side cannot
+       fit 360px, and shrinking them that far makes the printed text unreadable. */
+    .cl-deck {
+      justify-content: flex-start; align-items: stretch;
+      overflow-x: auto; scroll-snap-type: x mandatory;
+      padding: 12px 22px 28px; margin-inline: -24px;
+      scrollbar-width: none;
+    }
+    .cl-deck::-webkit-scrollbar { display: none; }
+    .cl-poster { width: 62vw; max-width: 260px; scroll-snap-align: center; }
+    .cl-poster:nth-child(n) { transform: none; }
+
+    .cl-grid { gap: 12px; }
+    .cl-card { padding: 18px; }
   }
-  .cl-badge:hover {
-    opacity: 0.92;
+
+  @media (max-width: 380px) {
+    .cl-grid { grid-template-columns: 1fr; }
   }
-  .cl-badge-copy {
-    display: flex;
-    flex-direction: column;
-    line-height: 1.15;
-    text-align: left;
-  }
-  .cl-badge-copy small {
-    font-size: 0.7rem;
-    opacity: 0.8;
-  }
-  .cl-badge-copy strong {
-    font-size: 1rem;
-  }
-  .cl-points {
-    list-style: none;
-    margin: 2rem 0 0;
-    padding: 0;
-    display: grid;
-    gap: 0.6rem;
-    color: var(--muted);
-    font-size: 0.95rem;
-    line-height: 1.5;
+
+  @media (prefers-reduced-motion: reduce) {
+    .cl-deck { scroll-behavior: auto; }
   }
 </style>

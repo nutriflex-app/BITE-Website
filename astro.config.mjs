@@ -1,8 +1,8 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
-// Static marketing + legal site for BITE. Pure HTML/CSS — no SSR, no app code.
-// `site` drives canonical URLs, the sitemap, and Open Graph absolute URLs — keep
+// Static marketing + legal site for BITE. Pure HTML/CSS: no SSR, no app code.
+// `site` drives canonical URLs, the sitemap, and Open Graph absolute URLs; keep
 // it in lockstep with SITE.domain in src/config.ts.
 export default defineConfig({
   site: 'https://bite.coach',
@@ -12,7 +12,9 @@ export default defineConfig({
       // Two exclusions: the checkout return pages are noindex (Base.astro), so
       // listing them would send crawlers contradictory signals, and the
       // machine-readable /llms.txt endpoint has no place in an XML sitemap.
+      // The creator pages are hidden on purpose: handed to creators directly.
       filter: (page) =>
+        !page.includes('/creators') &&
         !page.includes('/pro/success') &&
         !page.includes('/pro/cancel') &&
         !page.endsWith('/llms.txt'),

@@ -1,0 +1,18 @@
+---
+// After a creator sends a video's numbers (Netlify Forms sends people here).
+import Base from '../../layouts/Base.astro';
+import { SITE } from '../../config';
+import '../../styles/creators.css';
+---
+
+<Base title={`Numbers sent | ${SITE.name} creators`} noindex>
+  <section class="cr-top cr-end">
+    <div class="cr-bg" aria-hidden="true"></div>
+    <div class="container cr-head">
+      <span class="cr-eyebrow">{SITE.name} creators</span>
+      <h1 class="display">Got <span class="coral-text">them.</span></h1>
+      <p class="cr-lead">We'll check your numbers and pay you on the 15th of next month. If we need anything else, we'll email you.</p>
+      <div class="cr-ctas"><a class="btn btn-ghost" href="/creators/submit">Send another video</a></div>
+    </div>
+  </section>
+</Base>

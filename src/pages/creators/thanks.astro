@@ -1,0 +1,18 @@
+---
+// After applying to the creator programme (Netlify Forms sends people here).
+import Base from '../../layouts/Base.astro';
+import { SITE } from '../../config';
+import '../../styles/creators.css';
+---
+
+<Base title={`Thanks for applying | ${SITE.name} creators`} noindex>
+  <section class="cr-top cr-end">
+    <div class="cr-bg" aria-hidden="true"></div>
+    <div class="container cr-head">
+      <span class="cr-eyebrow">{SITE.name} creators</span>
+      <h1 class="display">Thanks for <span class="coral-text">applying.</span></h1>
+      <p class="cr-lead">We'll look at your account and email you. If it's a yes, the email has your code and everything you need to start.</p>
+      <div class="cr-ctas"><a class="btn btn-ghost" href="/creators#terms">Read the terms again</a></div>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,102 @@
+---
+/**
+ * Where an approved creator sends a video's numbers after its 30 days: the post
+ * link, the views, and screenshots of the insights. A Netlify Form with file
+ * uploads, so every video lands in one list instead of DMs and email. Hidden
+ * like /creators: given out in the approval email, noindex, not in the sitemap.
+ * The checks behind it are in /creators' terms (sections 5 to 7).
+ */
+import Base from '../../layouts/Base.astro';
+import { SITE } from '../../config';
+import '../../styles/creators.css';
+---
+
+<Base title={`Send your numbers | ${SITE.name} creators`} description={`Send a video's numbers to the ${SITE.name} creator programme.`} noindex>
+  <section class="cr-top">
+    <div class="cr-bg" aria-hidden="true"></div>
+    <div class="container cr-head">
+      <span class="cr-eyebrow">{SITE.name} creators</span>
+      <h1 class="display">Send your <span class="coral-text">numbers.</span></h1>
+      <p class="cr-lead">
+        Once your video has been up for 30 days, send us the link and your insights. We check them
+        and pay you on the 15th of the next month.
+      </p>
+    </div>
+  </section>
+
+  <section class="cr-section">
+    <div class="container cr-narrow">
+      <h2>What to screenshot</h2>
+      <ul class="cr-steps">
+        <li class="cr-step"><span class="cr-num">1</span><div><h3>Views and watch time</h3><p>On TikTok, the video's analytics. On Instagram, the reel's insights. On YouTube, the Short's analytics.</p></div></li>
+        <li class="cr-step"><span class="cr-num">2</span><div><h3>Audience countries</h3><p>The same screen, scrolled to where your viewers are. A screen recording works too.</p></div></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="cr-section cr-end">
+    <div class="container cr-narrow">
+      <form class="cr-form" name="creator-video" method="POST" action="/creators/sent" enctype="multipart/form-data" data-netlify="true" netlify-honeypot="company">
+        <input type="hidden" name="form-name" value="creator-video" />
+        <p class="cr-hidden"><label>Leave this empty <input name="company" tabindex="-1" autocomplete="off" /></label></p>
+
+        <div class="cr-row">
+          <div class="cr-field">
+            <label for="sv-email">Your email</label>
+            <input id="sv-email" type="email" name="email" autocomplete="email" required />
+            <span class="cr-hint">The one you applied with.</span>
+          </div>
+          <div class="cr-field">
+            <label for="sv-code">Your code</label>
+            <input id="sv-code" type="text" name="code" autocapitalize="characters" required />
+          </div>
+        </div>
+
+        <div class="cr-row">
+          <div class="cr-field">
+            <label for="sv-platform">Where you posted it</label>
+            <select id="sv-platform" name="platform" required>
+              <option value="">Choose one</option>
+              <option>TikTok</option>
+              <option>Instagram</option>
+              <option>YouTube Shorts</option>
+            </select>
+          </div>
+          <div class="cr-field">
+            <label for="sv-date">The day you posted it</label>
+            <input id="sv-date" type="date" name="posted_on" required />
+          </div>
+        </div>
+
+        <div class="cr-row">
+          <div class="cr-field">
+            <label for="sv-link">Link to the post</label>
+            <input id="sv-link" type="url" name="post_link" placeholder="https://" required />
+          </div>
+          <div class="cr-field">
+            <label for="sv-views">Views after 30 days</label>
+            <input id="sv-views" type="number" name="views" min="0" inputmode="numeric" required />
+          </div>
+        </div>
+
+        <div class="cr-field">
+          <label for="sv-shot1">Screenshot: views and watch time</label>
+          <input id="sv-shot1" type="file" name="insights" accept="image/*,video/*" required />
+        </div>
+        <div class="cr-field">
+          <label for="sv-shot2">Screenshot: audience countries</label>
+          <input id="sv-shot2" type="file" name="countries" accept="image/*,video/*" required />
+        </div>
+        <div class="cr-field">
+          <label for="sv-note">Anything we should know <span class="cr-opt">(optional)</span></label>
+          <textarea id="sv-note" name="note"></textarea>
+        </div>
+
+        <label class="cr-check"><input type="checkbox" name="real_views" value="yes" required />These views are real, and the video follows the <a href="/creators#terms">creator terms</a>.</label>
+
+        <button class="btn btn-primary cr-submit" type="submit">Send</button>
+        <p class="cr-privacy">Keep each file under 4 MB. A screen recording that's too big? Email it to <a href={`mailto:${SITE.supportEmail}`}>{SITE.supportEmail}</a> instead.</p>
+      </form>
+    </div>
+  </section>
+</Base>

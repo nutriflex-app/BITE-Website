@@ -1,0 +1,108 @@
+/* The creator pages (/creators, /creators/submit and their thank-you pages):
+ * one look for the forms, the offer cards and the terms. Imported by each page.
+ * Coral as text is --coral-600 only; --coral is for fills (see global.css). */
+
+.cr-top {
+  position: relative; overflow: hidden;
+  padding-top: clamp(36px, 6vw, 76px);
+  padding-bottom: clamp(8px, 2vw, 16px);
+}
+.cr-bg {
+  position: absolute; inset: 0; z-index: -1;
+  background:
+    radial-gradient(48% 46% at 50% 8%, rgba(253, 102, 100, 0.11), transparent 70%),
+    radial-gradient(36% 34% at 94% 30%, rgba(254, 154, 153, 0.06), transparent 70%);
+}
+.cr-head { max-width: 640px; margin-inline: auto; text-align: center; }
+.cr-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px; margin-bottom: 18px;
+  font-size: 0.76rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--coral-600);
+}
+.cr-eyebrow::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--coral); }
+.cr-head h1 { margin: 0; text-wrap: balance; }
+.cr-lead {
+  max-width: 46ch; margin: clamp(16px, 2.2vw, 22px) auto 0;
+  font-size: clamp(1.05rem, 1.5vw, 1.2rem); font-weight: 500; line-height: 1.55;
+  color: var(--ink-soft); text-wrap: pretty;
+}
+.cr-ctas { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 28px; }
+
+.cr-narrow { max-width: 760px; }
+.cr-section { padding-top: var(--space-section-tight); }
+.cr-section h2 { font-size: clamp(1.5rem, 3vw, 2rem); letter-spacing: -0.02em; margin-bottom: 18px; }
+
+/* The offer: three cards, the first lifted like the yearly plan on /pro. */
+.cr-offer { list-style: none; padding: 0; display: grid; gap: 14px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.cr-card {
+  padding: 22px; background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--r-xl); box-shadow: var(--shadow-sm);
+}
+.cr-card-lead { border-color: var(--coral-300); box-shadow: var(--shadow-md); }
+.cr-card p { margin-top: 8px; color: var(--muted); font-size: 0.95rem; line-height: 1.5; }
+.cr-card .cr-big { margin-top: 0; font-size: 1.45rem; font-weight: 800; letter-spacing: -0.02em; color: var(--ink); line-height: 1.15; }
+.cr-note { margin-top: 14px; color: var(--muted); font-size: 0.95rem; text-align: center; }
+
+/* How it works: a real sequence, so numbered. */
+.cr-steps { list-style: none; padding: 0; display: grid; gap: 12px; }
+.cr-step { display: flex; gap: 16px; align-items: flex-start; }
+.cr-num {
+  flex: none; width: 32px; height: 32px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--coral-cta); color: #fff; font-weight: 800; font-size: 0.95rem;
+}
+.cr-step h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 2px; }
+.cr-step p { color: var(--muted); line-height: 1.5; }
+
+/* Forms */
+.cr-form {
+  display: grid; gap: 18px;
+  padding: clamp(20px, 3vw, 28px);
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--r-xl);
+  box-shadow: var(--shadow-md);
+}
+.cr-row { display: grid; gap: 18px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.cr-field { display: grid; gap: 7px; min-width: 0; }
+.cr-field label, .cr-legend { font-weight: 600; font-size: 0.95rem; color: var(--ink); }
+.cr-opt { font-weight: 500; color: var(--muted); }
+.cr-hint { font-size: 0.85rem; color: var(--muted); line-height: 1.45; }
+.cr-field input[type=text], .cr-field input[type=email], .cr-field input[type=url],
+.cr-field input[type=number], .cr-field input[type=date], .cr-field select, .cr-field textarea {
+  width: 100%; min-width: 0; font: inherit; font-size: 1rem; color: var(--ink);
+  padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--r-md); background: #fff;
+}
+.cr-field textarea { min-height: 96px; resize: vertical; }
+.cr-field input[type=file] { font: inherit; font-size: 0.92rem; color: var(--ink-soft); }
+.cr-field input:focus-visible, .cr-field select:focus-visible, .cr-field textarea:focus-visible {
+  outline: 2px solid var(--coral-600); outline-offset: 1px; border-color: var(--coral-600);
+}
+.cr-check { display: flex; gap: 10px; align-items: flex-start; font-size: 0.95rem; color: var(--ink); line-height: 1.45; }
+.cr-check input { margin-top: 3px; width: 18px; height: 18px; flex: none; accent-color: var(--coral-cta); }
+.cr-check a { color: var(--coral-600); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+.cr-submit { justify-self: start; }
+.cr-privacy { font-size: 0.85rem; color: var(--muted); }
+.cr-privacy a { color: var(--coral-600); text-decoration: underline; text-underline-offset: 2px; }
+.cr-hidden { position: absolute; left: -9999px; }
+
+/* The terms read like the site's legal pages. */
+.cr-terms { color: var(--ink-soft); }
+.cr-terms .cr-updated { color: var(--muted); font-size: 0.92rem; margin-bottom: 8px; }
+.cr-terms h3 {
+  font-weight: 700; font-size: 1.05rem; color: var(--ink);
+  margin: 26px 0 6px; padding-top: 18px; border-top: 1px solid var(--line-soft);
+}
+.cr-terms p { margin: 8px 0; line-height: 1.7; }
+.cr-terms ul { margin: 8px 0 8px 2px; padding-left: 22px; }
+.cr-terms li { margin: 6px 0; line-height: 1.6; }
+.cr-terms li::marker { color: var(--coral); }
+.cr-terms a { color: var(--coral-600); font-weight: 500; text-decoration: underline; text-underline-offset: 2px; }
+
+.cr-end { padding-bottom: var(--space-section); }
+.cr-help { margin-top: 26px; text-align: center; color: var(--muted); font-size: 0.95rem; }
+.cr-help a { color: var(--coral-600); font-weight: 600; }
+
+@media (max-width: 760px) {
+  .cr-offer { grid-template-columns: 1fr; }
+  .cr-row { grid-template-columns: 1fr; }
+  .cr-submit { justify-self: stretch; }
+}

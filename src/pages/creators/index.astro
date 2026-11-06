@@ -1,0 +1,275 @@
+---
+/**
+ * The creator programme: what creators get, how it works, the application and
+ * the terms, on one page (2026-11-06, the user: "a hidden link where they apply
+ * to fill their information and contact email", "on the same creators page,
+ * should include terms and condition").
+ *
+ * Hidden: linked from nowhere on the site, noindex, and left out of the sitemap
+ * (astro.config.mjs). The link is handed to creators directly.
+ *
+ * The form is a Netlify Form: Netlify reads it from the built HTML at deploy
+ * (form detection must be on for the bite-site project) and keeps each
+ * application, with an email to the team. No backend of ours. Payment details
+ * are a PayPal or Wise email only, never bank details on a web form.
+ *
+ * The offer (kept in the Mr Bite ads plan): £1.50 per 1,000 views, paid from
+ * 1,500 views up to £150 a video, views counted for 30 days; their own code,
+ * first month free for followers, 30% of what those followers pay for 12
+ * months (15% on yearly); free Pro for life after the first approved video;
+ * paid monthly on the 15th. Change the numbers here and in TERMS together.
+ */
+import Base from '../../layouts/Base.astro';
+import { SITE } from '../../config';
+import '../../styles/creators.css';
+
+const UPDATED = '6 November 2026';
+---
+
+<Base
+  title={`Create for ${SITE.name}`}
+  description={`Get paid for videos about ${SITE.name}: £1.50 per 1,000 views, 30% of what your followers pay, and Pro free for life.`}
+  noindex
+>
+  <section class="cr-top">
+    <div class="cr-bg" aria-hidden="true"></div>
+    <div class="container cr-head">
+      <span class="cr-eyebrow">{SITE.name} creators</span>
+      <h1 class="display">Get paid for <span class="coral-text">your views.</span></h1>
+      <p class="cr-lead">
+        Make short videos showing how you really use {SITE.name}. We pay for the views, and you
+        earn from every follower who subscribes.
+      </p>
+      <div class="cr-ctas">
+        <a class="btn btn-primary" href="#apply">Apply</a>
+        <a class="btn btn-ghost" href="#terms">Read the terms</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="cr-section">
+    <div class="container cr-narrow">
+      <h2>What you get</h2>
+      <ul class="cr-offer">
+        <li class="cr-card cr-card-lead">
+          <p class="cr-big">£1.50 per 1,000 views</p>
+          <p>For each approved video that reaches 1,500 views, up to £150 a video. Views count for 30 days.</p>
+        </li>
+        <li class="cr-card">
+          <p class="cr-big">30% of what they pay</p>
+          <p>Your own code gives your followers their first month free, and you get 30% of what they pay for 12 months.</p>
+        </li>
+        <li class="cr-card">
+          <p class="cr-big">Pro, free for life</p>
+          <p>{SITE.name} Pro on your own account, once your first video is approved.</p>
+        </li>
+      </ul>
+      <p class="cr-note">Paid monthly, by PayPal or Wise.</p>
+    </div>
+  </section>
+
+  <section class="cr-section">
+    <div class="container cr-narrow">
+      <h2>How it works</h2>
+      <ol class="cr-steps">
+        <li class="cr-step"><span class="cr-num">1</span><div><h3>Apply</h3><p>Tell us about your account below. It takes two minutes.</p></div></li>
+        <li class="cr-step"><span class="cr-num">2</span><div><h3>Get your code</h3><p>We look at your account and email you your code, a short brief and where to send your numbers.</p></div></li>
+        <li class="cr-step"><span class="cr-num">3</span><div><h3>Post</h3><p>A 15 to 60 second video of you using the real app, labelled as an ad.</p></div></li>
+        <li class="cr-step"><span class="cr-num">4</span><div><h3>Send your numbers</h3><p>After 30 days, send us the link and your insights. We pay on the 15th of each month.</p></div></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="cr-section" id="apply">
+    <div class="container cr-narrow">
+      <h2>Apply</h2>
+      <form class="cr-form" name="creator-apply" method="POST" action="/creators/thanks" data-netlify="true" netlify-honeypot="company">
+        <input type="hidden" name="form-name" value="creator-apply" />
+        <p class="cr-hidden"><label>Leave this empty <input name="company" tabindex="-1" autocomplete="off" /></label></p>
+
+        <div class="cr-row">
+          <div class="cr-field">
+            <label for="ap-name">Your name</label>
+            <input id="ap-name" type="text" name="name" autocomplete="name" required />
+          </div>
+          <div class="cr-field">
+            <label for="ap-email">Email</label>
+            <input id="ap-email" type="email" name="email" autocomplete="email" required />
+          </div>
+        </div>
+
+        <div class="cr-row">
+          <div class="cr-field">
+            <label for="ap-tiktok">TikTok <span class="cr-opt">(optional)</span></label>
+            <input id="ap-tiktok" type="text" name="tiktok" placeholder="@yourname" />
+          </div>
+          <div class="cr-field">
+            <label for="ap-instagram">Instagram <span class="cr-opt">(optional)</span></label>
+            <input id="ap-instagram" type="text" name="instagram" placeholder="@yourname" />
+          </div>
+        </div>
+
+        <div class="cr-row">
+          <div class="cr-field">
+            <label for="ap-youtube">YouTube <span class="cr-opt">(optional)</span></label>
+            <input id="ap-youtube" type="text" name="youtube" placeholder="@yourname" />
+          </div>
+          <div class="cr-field">
+            <label for="ap-followers">Your biggest following</label>
+            <input id="ap-followers" type="number" name="followers" min="0" inputmode="numeric" required />
+            <span class="cr-hint">On whichever account above has the most.</span>
+          </div>
+        </div>
+
+        <div class="cr-row">
+          <div class="cr-field">
+            <label for="ap-audience">Where most of your audience lives</label>
+            <select id="ap-audience" name="audience" required>
+              <option value="">Choose one</option>
+              <option>United Kingdom</option>
+              <option>United States</option>
+              <option>Somewhere else</option>
+            </select>
+          </div>
+          <div class="cr-field">
+            <label for="ap-topic">What you mostly post about</label>
+            <select id="ap-topic" name="topic" required>
+              <option value="">Choose one</option>
+              <option>Food and recipes</option>
+              <option>Fitness and the gym</option>
+              <option>Healthy living</option>
+              <option>Lifestyle</option>
+              <option>Something else</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="cr-field">
+          <label for="ap-best">A video you're proud of <span class="cr-opt">(optional)</span></label>
+          <input id="ap-best" type="url" name="best_video" placeholder="https://" />
+        </div>
+
+        <div class="cr-field">
+          <label for="ap-pay">PayPal or Wise email for payments <span class="cr-opt">(optional, you can send it later)</span></label>
+          <input id="ap-pay" type="email" name="payment_email" />
+          <span class="cr-hint">Never send bank details here.</span>
+        </div>
+
+        <label class="cr-check"><input type="checkbox" name="over_18" value="yes" required />I'm 18 or over.</label>
+        <label class="cr-check"><input type="checkbox" name="agree_terms" value="yes" required />I've read and agree to the <a href="#terms">creator terms</a>.</label>
+
+        <button class="btn btn-primary cr-submit" type="submit">Apply</button>
+        <p class="cr-privacy">We use your details only to run the creator programme and pay you. See our <a href="/privacy">privacy policy</a>.</p>
+      </form>
+    </div>
+  </section>
+
+  <section class="cr-section cr-end" id="terms">
+    <div class="container cr-narrow cr-terms">
+      <h2>Creator terms</h2>
+      <p class="cr-updated">Last updated: {UPDATED}</p>
+      <p>{SITE.name} is run by {SITE.legalName} ("we"). These terms are between us and you, the creator. By applying, you agree to them.</p>
+
+      <h3>1. Joining</h3>
+      <ul>
+        <li>You must be 18 or over, with a public account and at least half your audience in the UK or the US.</li>
+        <li>We look at every application and may say no without giving a reason.</li>
+        <li>Once you're approved, we email you your code, a short brief and the page where you send your numbers.</li>
+      </ul>
+
+      <h3>2. Your videos</h3>
+      <ul>
+        <li>15 to 60 seconds, on TikTok, Instagram Reels or YouTube Shorts.</li>
+        <li>Show yourself using the real {SITE.name} app. No mock-ups or edited screens.</li>
+        <li>The video must be your own original content.</li>
+        <li>Keep it up for at least 30 days after you post it.</li>
+        <li>We pay for up to 2 videos a month from each creator, unless we agree more with you in writing.</li>
+      </ul>
+
+      <h3>3. Saying it's an ad</h3>
+      <ul>
+        <li>Put "Ad" at the start of the caption and show it on screen in the first seconds. "Sponsored" or "Gifted" on their own are not enough.</li>
+        <li>Keep the label for as long as the post is up, including after these terms end.</li>
+      </ul>
+
+      <h3>4. What you must not say or show</h3>
+      <ul>
+        <li>Anything about weight-loss jabs, injections, pens or GLP-1 medicines, by any name.</li>
+        <li>That someone will lose a set amount of weight in a set time, or more than 2 lb (about 1 kg) a week.</li>
+        <li>Before-and-after pictures, or anything about the viewer's body or weight.</li>
+        <li>That {SITE.name} is a dietitian, a doctor or medical advice, or that its calories are exact. They are estimates.</li>
+        <li>Anything aimed at under-18s.</li>
+        <li>Claims you can't back up, or comments about other apps by name.</li>
+      </ul>
+
+      <h3>5. Pay per view</h3>
+      <ul>
+        <li>£1.50 for every 1,000 views a video gets in the first 30 days after you post it.</li>
+        <li>A video is paid once it reaches 1,500 views, up to £150 a video.</li>
+        <li>Views are counted from the platform's own numbers for that post.</li>
+      </ul>
+
+      <h3>6. Showing us your views</h3>
+      <ul>
+        <li>After the 30 days, send us the link to the post and screenshots (or a screen recording) of its insights, showing views, average watch time and audience countries.</li>
+        <li>Send them through the page we give you, within 30 days after the 30 days end.</li>
+        <li>We may ask for more to check the numbers.</li>
+      </ul>
+
+      <h3>7. Real views only</h3>
+      <p>
+        Views that are bought, made by bots, looped, swapped in engagement groups or bought through
+        ads you ran yourself are not paid. If we find them, we may refuse to pay for that video, ask
+        for back what we paid for it, and end these terms.
+      </p>
+
+      <h3>8. Your code and commission</h3>
+      <ul>
+        <li>Your code gives your followers their first month of {SITE.name} Pro free.</li>
+        <li>You earn 30% of what your followers pay for their first 12 months, or 15% on a yearly plan.</li>
+        <li>Only payments made at bite.coach with your code count. Subscriptions bought in the App Store or Google Play can't carry a code.</li>
+        <li>Commission is worked out on what we actually receive, after VAT, discounts and refunds.</li>
+      </ul>
+
+      <h3>9. Pro, free for life</h3>
+      <p>Once your first video is approved, your own account gets {SITE.name} Pro free for life. It ends if you break these terms.</p>
+
+      <h3>10. Getting paid</h3>
+      <ul>
+        <li>We pay on the 15th of each month, for videos we approved and commission we received in the month before.</li>
+        <li>We pay by PayPal or Wise to the email you give us, in pounds. If your account is in another currency, PayPal or Wise converts it.</li>
+        <li>Make sure the email is right. We can't pay twice for a payment sent to the wrong one.</li>
+      </ul>
+
+      <h3>11. Using your video</h3>
+      <p>
+        You keep ownership of your video. You let us share it on our own channels and run it as a paid
+        ad from your account (a partnership ad) for 90 days from when you post it, always credited to
+        you. Please accept the partnership request when we send it.
+      </p>
+
+      <h3>12. You're independent</h3>
+      <p>
+        You're self-employed, not our employee or agent. You're responsible for your own tax and
+        National Insurance, or the equivalent where you live.
+      </p>
+
+      <h3>13. Ending</h3>
+      <p>
+        Either of us can stop at any time by email. We still pay what's due for approved videos and
+        commission earned up to then, unless you broke these terms.
+      </p>
+
+      <h3>14. Changes</h3>
+      <p>We may update these terms and will email you when we do. Videos already posted stay under the terms they were made under.</p>
+
+      <h3>15. Your details</h3>
+      <p>We use your details only to run the creator programme and pay you. See our <a href="/privacy">privacy policy</a>.</p>
+
+      <h3>16. The law</h3>
+      <p>These terms are governed by the law of England and Wales.</p>
+
+      <p class="cr-help">Questions? Email <a href={`mailto:${SITE.supportEmail}`}>{SITE.supportEmail}</a>.</p>
+    </div>
+  </section>
+</Base>

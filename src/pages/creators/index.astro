@@ -11,7 +11,14 @@
  * The form is a Netlify Form: Netlify reads it from the built HTML at deploy
  * (form detection must be on for the bite-site project) and keeps each
  * application, with an email to the team. No backend of ours. Payment details
- * are a PayPal or Wise email only, never bank details on a web form.
+ * are asked by email once a creator is approved, never on a web form: a UK bank
+ * transfer (free, same day; 2026-11-06, the user: "why do I have to use paypal
+ * or wise?"). Creators must live in the UK (the user, the same day: "limit it to
+ * UK creators only"), ticked on the form with being 18 or over. Their audience
+ * may still be UK or US, as before.
+ *
+ * A video is paid at the offer on the day it is posted, whatever changes later
+ * (the user, the same day); the note under What you get and section 14 say so.
  *
  * The offer (kept in the Mr Bite ads plan): £1.50 per 1,000 views, paid from
  * 1,500 views up to £150 a video, views counted for 30 days; their own code,
@@ -64,7 +71,7 @@ const UPDATED = '6 November 2026';
           <p>{SITE.name} Pro on your own account, once your first video is approved.</p>
         </li>
       </ul>
-      <p class="cr-note">Paid monthly, by PayPal or Wise.</p>
+      <p class="cr-note">For UK creators, paid monthly straight to your bank. The offer may change in future, but each video is paid at the offer on the day you post it.</p>
     </div>
   </section>
 
@@ -149,13 +156,7 @@ const UPDATED = '6 November 2026';
           <input id="ap-best" type="url" name="best_video" placeholder="https://" />
         </div>
 
-        <div class="cr-field">
-          <label for="ap-pay">PayPal or Wise email for payments <span class="cr-opt">(optional, you can send it later)</span></label>
-          <input id="ap-pay" type="email" name="payment_email" />
-          <span class="cr-hint">Never send bank details here.</span>
-        </div>
-
-        <label class="cr-check"><input type="checkbox" name="over_18" value="yes" required />I'm 18 or over.</label>
+        <label class="cr-check"><input type="checkbox" name="over_18_in_uk" value="yes" required />I'm 18 or over and live in the UK.</label>
         <label class="cr-check"><input type="checkbox" name="agree_terms" value="yes" required />I've read and agree to the <a href="#terms">creator terms</a>.</label>
 
         <button class="btn btn-primary cr-submit" type="submit">Apply</button>
@@ -172,9 +173,9 @@ const UPDATED = '6 November 2026';
 
       <h3>1. Joining</h3>
       <ul>
-        <li>You must be 18 or over, with a public account and at least half your audience in the UK or the US.</li>
+        <li>You must be 18 or over and live in the UK, with a public account and at least half your audience in the UK or the US.</li>
         <li>We look at every application and may say no without giving a reason.</li>
-        <li>Once you're approved, we email you your code, a short brief and the page where you send your numbers.</li>
+        <li>Once you're approved, we email you your code, a short brief and the page where you send your numbers, and ask where to pay you.</li>
       </ul>
 
       <h3>2. Your videos</h3>
@@ -237,8 +238,8 @@ const UPDATED = '6 November 2026';
       <h3>10. Getting paid</h3>
       <ul>
         <li>We pay on the 15th of each month, for videos we approved and commission we received in the month before.</li>
-        <li>We pay by PayPal or Wise to the email you give us, in pounds. If your account is in another currency, PayPal or Wise converts it.</li>
-        <li>Make sure the email is right. We can't pay twice for a payment sent to the wrong one.</li>
+        <li>We pay by bank transfer to your UK bank account, in pounds. We ask for your account details by email once you're approved. Never send them through a form on this site.</li>
+        <li>Make sure your details are right. We can't pay twice for a payment sent to the wrong account.</li>
       </ul>
 
       <h3>11. Using your video</h3>
@@ -250,8 +251,8 @@ const UPDATED = '6 November 2026';
 
       <h3>12. You're independent</h3>
       <p>
-        You're self-employed, not our employee or agent. You're responsible for your own tax and
-        National Insurance, or the equivalent where you live.
+        You're self-employed, not our employee or agent. You're responsible for your own income tax
+        and National Insurance.
       </p>
 
       <h3>13. Ending</h3>
@@ -261,7 +262,11 @@ const UPDATED = '6 November 2026';
       </p>
 
       <h3>14. Changes</h3>
-      <p>We may update these terms and will email you when we do. Videos already posted stay under the terms they were made under.</p>
+      <ul>
+        <li>We may change these terms in future, including the pay and what a video needs. We'll update this page and email you when we do.</li>
+        <li>A video is always paid at the pay and rules on this page on the day you post it, even if they change later.</li>
+        <li>Commission on a follower is paid at the rate in place on the day they subscribed with your code.</li>
+      </ul>
 
       <h3>15. Your details</h3>
       <p>We use your details only to run the creator programme and pay you. See our <a href="/privacy">privacy policy</a>.</p>

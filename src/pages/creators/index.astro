@@ -11,9 +11,11 @@
  * The form is a Netlify Form: Netlify reads it from the built HTML at deploy
  * (form detection must be on for the bite-site project) and keeps each
  * application, with an email to the team. No backend of ours. Payment details
- * are asked by email once a creator is approved, never on a web form: a UK bank
- * transfer (free, same day; 2026-11-06, the user: "why do I have to use paypal
- * or wise?"). Creators must live in the UK (the user, the same day: "limit it to
+ * are never asked for on this site or by email: once a creator is approved we
+ * send them a secure Stripe link (scripts/affiliate-onboard.js) where they add
+ * their own bank account, and we pay into it in pounds (a bank payment, free to
+ * them; 2026-11-06, the user: "why do I have to use paypal or wise?"; Stripe
+ * Connect is how it is actually paid, 2026-11-07). Creators must live in the UK (the user, the same day: "limit it to
  * UK creators only"), ticked on the form with being 18 or over. Their audience
  * may still be UK or US, as before.
  *
@@ -30,7 +32,7 @@ import Base from '../../layouts/Base.astro';
 import { SITE } from '../../config';
 import '../../styles/creators.css';
 
-const UPDATED = '6 November 2026';
+const UPDATED = '7 November 2026';
 ---
 
 <Base
@@ -64,7 +66,7 @@ const UPDATED = '6 November 2026';
         </li>
         <li class="cr-card">
           <p class="cr-big">30% of what they pay</p>
-          <p>Your own code gives your followers their first month free, and you get 30% of what they pay for 12 months.</p>
+          <p>Your own link gives your followers their first month free, and you get 30% of what they pay for 12 months.</p>
         </li>
         <li class="cr-card">
           <p class="cr-big">Pro, free for life</p>
@@ -80,7 +82,7 @@ const UPDATED = '6 November 2026';
       <h2>How it works</h2>
       <ol class="cr-steps">
         <li class="cr-step"><span class="cr-num">1</span><div><h3>Apply</h3><p>Tell us about your account below. It takes two minutes.</p></div></li>
-        <li class="cr-step"><span class="cr-num">2</span><div><h3>Get your code</h3><p>We look at your account and email you your code, a short brief and where to send your numbers.</p></div></li>
+        <li class="cr-step"><span class="cr-num">2</span><div><h3>Get your code</h3><p>We look at your account and email you your code and link, a short brief, where to send your numbers and a secure link to add your bank details.</p></div></li>
         <li class="cr-step"><span class="cr-num">3</span><div><h3>Post</h3><p>A 15 to 60 second video of you using the real app, labelled as an ad.</p></div></li>
         <li class="cr-step"><span class="cr-num">4</span><div><h3>Send your numbers</h3><p>After 30 days, send us the link and your insights. We pay on the 15th of each month.</p></div></li>
       </ol>
@@ -175,7 +177,7 @@ const UPDATED = '6 November 2026';
       <ul>
         <li>You must be 18 or over and live in the UK, with a public account and at least half your audience in the UK or the US.</li>
         <li>We look at every application and may say no without giving a reason.</li>
-        <li>Once you're approved, we email you your code, a short brief and the page where you send your numbers, and ask where to pay you.</li>
+        <li>Once you're approved, we email you your code and link, a short brief, the page where you send your numbers and a secure Stripe link where you add the bank account we pay you into.</li>
       </ul>
 
       <h3>2. Your videos</h3>
@@ -226,10 +228,13 @@ const UPDATED = '6 November 2026';
 
       <h3>8. Your code and commission</h3>
       <ul>
-        <li>Your code gives your followers their first month of {SITE.name} Pro free.</li>
+        <li>Once you're approved, we make you your own code, like SARAH, and a link with it built in: bite.coach/pro?code=SARAH.</li>
+        <li>Followers who subscribe through your link, or type your code at checkout on bite.coach, get their first month of {SITE.name} Pro free (a month's price off a yearly plan). Each one is tracked to you automatically.</li>
         <li>You earn 30% of what your followers pay for their first 12 months, or 15% on a yearly plan.</li>
-        <li>Only payments made at bite.coach with your code count. Subscriptions bought in the App Store or Google Play can't carry a code.</li>
-        <li>Commission is worked out on what we actually receive, after VAT, discounts and refunds.</li>
+        <li>Followers can also type your code in the {SITE.name} app, on the first screen or later in Settings. Then what they pay in the App Store or Google Play counts towards your commission too, as long as they enter it before their first payment.</li>
+        <li>Only your link gives the free month. A code typed in the app just tells us you sent them, so send people to your link where you can.</li>
+        <li>If someone uses your link or types a code at checkout on bite.coach, that code counts for that subscription.</li>
+        <li>Commission is worked out on what your followers pay after VAT, discounts and refunds, and for subscriptions in the App Store or Google Play, after the store's fee.</li>
       </ul>
 
       <h3>9. Pro, free for life</h3>
@@ -237,8 +242,8 @@ const UPDATED = '6 November 2026';
 
       <h3>10. Getting paid</h3>
       <ul>
-        <li>We pay on the 15th of each month, for videos we approved and commission we received in the month before.</li>
-        <li>We pay by bank transfer to your UK bank account, in pounds. We ask for your account details by email once you're approved. Never send them through a form on this site.</li>
+        <li>We pay on the 15th of each month, for videos we approved and commission on payments your followers made in the month before.</li>
+        <li>We pay into your UK bank account, in pounds, through Stripe. You add your bank details yourself on Stripe's secure page, using the link we email you once you're approved. We never ask for them by email or on a form on this site.</li>
         <li>Make sure your details are right. We can't pay twice for a payment sent to the wrong account.</li>
       </ul>
 
